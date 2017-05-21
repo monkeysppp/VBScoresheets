@@ -1,0 +1,270 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "https://github.com/monkeysppp/VBScoresheets/schemas/team.json",
+  "title": "Team",
+  "description": "A complete history of scoresheets for a team across multiple seasons",
+  "type": "object",
+  "properties": {
+    "name": {
+      "description": "The name of the team",
+      "type": "string"
+    },
+    "seasons": {
+      "description": "An array of seasons that the team has competed in",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the season, usually the years covered",
+            "type": "string"
+          },
+          "players": {
+            "description": "An array of players from this season",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "description": "Unique id for the player.  This can be common for that player in the team across multiple seasons.",
+                  "type": "number"
+                },
+                "name": {
+                  "description": "The name of the player",
+                  "type": "string"
+                }
+              },
+              "required": [ "id", "name" ]
+            },
+            "minItems": 6,
+            "uniqueItems": true
+          },
+          "matches": {
+            "description": "An array of matches in the season",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "venue": {
+                  "description": "The name of the venue",
+                  "type": "string"
+                },
+                "home_or_away": {
+                  "description": "Is this a home match or an away match",
+                  "type": "string"
+                },
+                "date": {
+                  "description": "The date of the match, in the format DD/MM/YYYY",
+                  "type": "string"
+                },
+                "time": {
+                  "description": "The time of the match, in the format HH:MM using a 24 hour clock",
+                  "type": "string"
+                },
+                "squads": {
+                  "description": "Both squads of players for the match",
+                  "type": "object",
+                  "properties": {
+                    "us": {
+                      "description": "The squad for this team",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "The id of the player",
+                            "type": "number"
+                          },
+                          "number": {
+                            "description": "The shirt number of the player",
+                            "type": "number"
+                          }
+                        },
+                        "required": [ "id", "number" ]
+                      },
+                      "minItems": 6,
+                      "uniqueItems": true
+                    },
+                    "opponents": {
+                      "description": "The squad for the opposition team",
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "description": "The name of the opposition team",
+                          "type": "string"
+                        },
+                        "players": {
+                          "description": "An array of the opposition players",
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "description": "The name of the player",
+                                "type": "string"
+                              },
+                              "number": {
+                                "description": "The shirt number of the player",
+                                "type": "number"
+                              }
+                            },
+                            "required": [ "name", "number" ]
+                          },
+                          "minItems": 6,
+                          "uniqueItems": true
+                        }
+                      },
+                      "required": [ "name", "players" ]
+                    }
+                  },
+                  "required": [ "us", "opponents" ]
+                },
+                "mvp": {
+                  "description": "The id of the player voted Most Valuable Player",
+                  "type": "number"
+                },
+                "sets": {
+                  "description": "An array fo the set date",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "serve": {
+                        "description": "A flag for whether we are serving",
+                        "type": "boolean"
+                      },
+                      "lineups": {
+                        "description": "The starting lineups for the teams",
+                        "type": "object",
+                        "properties": {
+                          "us": {
+                            "description": "The shirt numbers for the starting lineup for our team",
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 0,
+                            "uniqueItems": true
+                          },
+                          "opponents": {
+                            "description": "The shirt numbers for the starting lineup for opponents team",
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 0,
+                            "uniqueItems": true
+                          }
+                        },
+                        "required": [ "us", "opponents" ]
+                      },
+                      "scores": {
+                        "description": "The score progression from the teams",
+                        "type": "object",
+                        "properties": {
+                          "us": {
+                            "description": "The score progression for our team",
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 0,
+                            "uniqueItems": true
+                          },
+                          "opponents": {
+                            "description": "The score progression for opponents team",
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 0,
+                            "uniqueItems": true
+                          }
+                        },
+                        "required": [ "us", "opponents" ]
+                      },
+                      "timeouts": {
+                        "description": "timeout information for this set",
+                        "type": "object",
+                        "properties": {
+                          "us": {
+                            "description": "timeout information for our team",
+                            "type": "array",
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              },
+                              "minItems": 2,
+                              "uniqueItems": false
+                            },
+                            "minItems": 0,
+                            "uniqueItems": true
+                          },
+                          "opponents": {
+                            "description": "timeout information for the opponents team",
+                            "type": "array",
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              },
+                              "minItems": 2,
+                              "uniqueItems": false
+                            },
+                            "minItems": 0,
+                            "uniqueItems": true
+                          }
+                        },
+                        "required": []
+                      },
+                      "substitutions": {
+                        "description": "substitution information for our team",
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "off": {
+                              "description": "the shirt number of the player substituting off",
+                              "type": "number"
+                            },
+                            "on": {
+                              "description": "the shirt number of the player substituting on",
+                              "type": "number"
+                            },
+                            "score": {
+                              "description": "the score when the substitution is made (with our score first)",
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              },
+                              "minItems": 2,
+                              "uniqueItems": false
+                            }
+                          },
+                          "required": [ "off", "on", "score" ]
+                        },
+                        "minItems": 0,
+                        "uniqueItems": true
+                      }
+                    },
+                    "required": [ "serve", "lineups", "scores" ]
+                  },
+                  "minItems": 3,
+                  "uniqueItems": true
+                },
+              },
+              "required": [ "venue", "home_or_away", "date", "time", "squads", "sets" ]
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          }
+        },
+        "required": []
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    }
+  },
+  "required": ["name", "seasons"]
+}
