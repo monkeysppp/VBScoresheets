@@ -1,6 +1,6 @@
 # Data format
 Data is stored as JSON.  The root of a single JSON document is a `team`; separate teams have separate documents.
-The schema for a `team` is availabe in [../schema/team.json](../schema/team.json).
+The schema for a `team` is availabe in [../schemas/team.json](../schemas/team.json).
 
 If a team plays in more than one competition, you will have to enter them as separate teams, and include the league
 in the team name.
