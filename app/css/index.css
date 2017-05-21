@@ -1,0 +1,45 @@
+html,
+body {
+  background: #EEEEEE;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+  -webkit-user-select: none;
+}
+
+.topband {
+  height: auto;
+  overflow: hidden;
+}
+
+.menubar {
+  height: 32px;
+  -webkit-app-region: drag;
+  border-bottom: #bbbbbb 1px solid;
+  width: auto;
+  overflow: hidden;
+}
+
+.close {
+  background: #c84646;
+  color: #eeeeee;
+  cursor: pointer;
+  float: right;
+  height: 32px;
+  width: 64px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.close:hover {
+  background: #e63131;
+}
+
+.close:active {
+  background: #711021;
+}
+
+#main {
+    background: #eeeeee;
+    height: 700px;
+}
