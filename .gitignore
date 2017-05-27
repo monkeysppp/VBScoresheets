@@ -1,4 +1,5 @@
 .idea
+*.log
 coverage
 node_modules
-*.log
+release-builds
