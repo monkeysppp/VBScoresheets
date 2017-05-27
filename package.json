@@ -3,12 +3,22 @@
   "version": "0.0.1",
   "main": "./main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pretest": "eslint */**/*.js",
+    "test": "istanbul cover --report cobertura --report html ./node_modules/mocha/bin/_mocha \"test/**/*-test.js\"",
+    "posttest": "istanbul check-coverage -statememnt100 -branch 100 -function 100 -line 100"
   },
   "dependencies": {
+    "debug": "^2.6.8",
     "nconf": "^0.8.4"
   },
   "devDependencies": {
-    "electron-prebuilt": "^0.30.3"
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "electron-prebuilt": "^1.4.0",
+    "eslint": "^3.19.0",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.4.5",
+    "sinon": "^2.3.1"
   }
 }

@@ -1,6 +1,15 @@
+:root {
+  --main-background-white: #EEEEEE;
+  --main-text-black: #444444;
+
+  --main-button-green: #55BB55;
+  --main-button-hover-green: #55EE55;
+  --main-button-active-green: #559955;
+}
+
 html,
 body {
-  background: #EEEEEE;
+  background: var(--main-background-white);
   height: 100%;
   overflow: hidden;
   width: 100%;
@@ -22,7 +31,7 @@ body {
 
 .close {
   background: #c84646;
-  color: #eeeeee;
+  color: var(--main-background-white);
   cursor: pointer;
   float: right;
   height: 32px;
@@ -39,7 +48,42 @@ body {
   background: #711021;
 }
 
+div.state {
+  display: none;
+}
+
 #main {
-    background: #eeeeee;
-    height: 700px;
+    background: var(--main-background-white);
+    height: 100%;
+}
+
+.new-item-input {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: solid var(--main-text-black);
+  background: var(--main-background-white);
+  color: var(--main-text-black);
+}
+
+.new-item-button {
+  border: none;
+  border-radius: 7px;
+  background-color: var(--main-button-green);
+  color: var(--main-background-white);
+}
+
+.new-item-button:hover {
+  background-color: var(--main-button-hover-green);
+}
+
+.new-item-button:active {
+  background-color: var(--main-button-active-green);
+  outline: none;
+}
+
+.centre-instruction {
+  text-align: center;
+  font-size: 45px;
+  color: var(--main-text-black);
 }

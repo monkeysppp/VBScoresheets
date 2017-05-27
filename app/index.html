@@ -12,7 +12,49 @@
     <div class="menubar"></div>
   </div>
   <div id="main">
-    <p>Stuff</p>
+    <div class="state loading">
+      <div class="breadcrumbs">
+        <p id="loading_breadcrumbs">Team </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Loading...</p>
+      </div>
+    </div>
+
+    <div class="state add-first-team">
+      <div class="breadcrumbs">
+        <p id="add-first-team_breadcrumbs">Team </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Start by defining your first team</p>
+        <input id="input_add-first-team" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Team Name" size="20" />
+        <button class="button new-item-button" id="button_add-first-team">+</button>
+      </div>
+    </div>
+
+    <div class="state pick-a-team">
+      <div class="breadcrumbs">
+        <p id="pick-a-team_breadcrumbs">Team &gt; </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Pick a team</p>
+        <div id="pick-a-team_list"></div>
+      </div>
+    </div>
+
+    <div class="state add-first-season">
+      <div class="breadcrumbs">
+        <p id="add-first-season_breadcrumbs"></p>
+      </div>
+      <p>Add first season page</p>
+    </div>
+
+    <div class="state pick-a-season">
+      <div class="breadcrumbs">
+        <p id="pick-a-season_breadcrumbs"></p>
+      </div>
+      <p>Pick a season page</p>
+    </div>
   </div>
 
   <script src="js/index.js"></script>
