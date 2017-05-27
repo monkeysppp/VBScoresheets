@@ -5,9 +5,10 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const ipc = electron.ipcMain;
 
-const files = require('./lib/files.js');
-
+const path = require('path');
 const debug = require('debug')('vbs:main');
+
+const files = require('./lib/files.js');
 
 let mainWindow;
 let teamDataObj;
@@ -22,7 +23,8 @@ function createWindow() {
     frame: false,
     resizable: true,
     height: 500,
-    width: 800
+    width: 800,
+    icon: path.join(__dirname, 'res/icons/png/64x64.png')
   });
 
   mainWindow.loadURL('file://' + __dirname + '/app/index.html');
