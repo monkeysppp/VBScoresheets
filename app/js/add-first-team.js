@@ -18,16 +18,16 @@ function init(stateManager) {
   let teamName = document.getElementById('input_add-first-team');
 
   teamAddedButton.addEventListener('click', function () {
-    ipc.send('save-team-file', undefined, {name:teamName.value});
+    ipc.send('save-team-data', undefined, {name:teamName.value});
   });
 }
 
 function attach() {
-  ipc.on('team-file-saved', teamSaveListener);
+  ipc.on('team-data-saved', teamSaveListener);
 }
 
 function detach() {
-  ipc.removeListener('team-file-saved', teamSaveListener);
+  ipc.removeListener('team-data-saved', teamSaveListener);
 }
 
 module.exports = {
