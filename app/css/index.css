@@ -52,6 +52,11 @@ div.state {
   display: none;
 }
 
+div.breadcrumbs {
+  margin-left: 20px;
+  margin-right: : 20px;
+}
+
 #main {
     background: var(--main-background-white);
     height: 100%;
@@ -84,6 +89,14 @@ div.state {
 
 .centre-instruction {
   text-align: center;
-  font-size: 45px;
+  font-size: 38px;
   color: var(--main-text-black);
+}
+
+.team-list {
+
+}
+
+div.scrollable {
+  overflow-y: scroll;
 }

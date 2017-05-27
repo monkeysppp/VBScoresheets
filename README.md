@@ -1,4 +1,7 @@
 # VBScoresheets
+
+[![Build Status](https://travis-ci.org/monkeysppp/VBScoresheets.svg?branch=master)](https://travis-ci.org/monkeysppp/VBScoresheets)
+
 Record and analyse volleyball match scoresheets
 
 ## Data format

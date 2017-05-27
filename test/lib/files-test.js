@@ -174,17 +174,36 @@ describe('files-test', () => {
     });
 
     context('when the mkdir fails', () => {
-      beforeEach(() => {
-        fsMkdirStub.yields(new Error('Bang!'));
+      context('because the dir exists', () => {
+        beforeEach(() => {
+          let err = new Error('file or directory already exists');
+          err.code = 'EEXIST';
+          fsMkdirStub.yields(err);
+          fsWriteFileStub.yields(undefined);
+        });
+
+        it('rejects with the error', () => {
+          return expect(files.saveTeamFile(undefined, dataObj)).to.not.be.rejected
+            .then((name) => {
+              expect(fsWriteFileStub).to.be.calledOnce;
+              expect(fsWriteFileStub).to.be.calledWith(path.join(dataDir, expectedFilename), dataString);
+              expect(name).to.equal(expectedFilename);
+            });
+        });
       });
 
-      it('rejects with the error', () => {
-        return expect(files.saveTeamFile(undefined, dataObj)).to.be.rejectedWith('Bang!')
-          .then(() => {
-            expect(fsWriteFileStub).to.not.be.called;
-          });
-      });
+      context('because of a general error', () => {
+        beforeEach(() => {
+          fsMkdirStub.yields(new Error('Bang!'));
+        });
 
+        it('rejects with the error', () => {
+          return expect(files.saveTeamFile(undefined, dataObj)).to.be.rejectedWith('Bang!')
+            .then(() => {
+              expect(fsWriteFileStub).to.not.be.called;
+            });
+        });
+      });
     });
 
   });

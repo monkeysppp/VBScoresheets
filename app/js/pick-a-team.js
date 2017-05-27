@@ -1,18 +1,48 @@
 
 'use strict';
 
+const electron = require('electron');
+const ipc = electron.ipcRenderer;
+
 const state = document.querySelector('.pick-a-team');
-const teamList = document.getElementById('pick-a-team_list');
 
 // var thisStateManager;
 
-const teamFilesListener = (event, teamFileData) => {
+function teamFilesListener(event, teamFileData) {
+  let teamList = document.getElementById('pick-a-team_list');
+  // clean up any pre-existing content
+  let cloneTeamList = teamList.cloneNode(false);
+  teamList.parentNode.replaceChild(cloneTeamList, teamList);
+  teamList = cloneTeamList;
+
   teamFileData.forEach((elem) => {
-    var p = document.createElement('p');
-    p.innerHTML = elem.filename + ' ==&gt; ' + elem.teamname;
+    let p = document.createElement('p');
+    p.innerHTML = elem.teamname;
+    p.onclick = () => {pickFile(elem.filename, elem.teamname);};
     teamList.appendChild(p);
   });
-};
+
+  let i = document.createElement('input');
+  i.id = 'input_add-team';
+  i.class = 'new-item-input';
+  i.type = 'text';
+  i.maxLength = 50;
+  i.minlength = 1;
+  i.placeholder = 'Add Team';
+  i.size = 20;
+  teamList.appendChild(i);
+
+  let b = document.createElement('button');
+  b.class  = 'button new-item-button';
+  b.id = 'button_add-first-team';
+  b.innerHTML = '+';
+  b.onclick = () => {ipc.send('save-team-data', undefined, {name:i.value});};
+  teamList.appendChild(b);
+}
+
+function pickFile(/*filename, teamname*/) {
+
+}
 
 function init(/*stateManager*/) {
   // thisStateManager = stateManager;
