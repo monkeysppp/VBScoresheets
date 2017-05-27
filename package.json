@@ -7,7 +7,10 @@
     "start": "electron .",
     "pretest": "eslint */**/*.js",
     "test": "istanbul cover --report cobertura --report html ./node_modules/mocha/bin/_mocha \"test/**/*-test.js\"",
-    "posttest": "istanbul check-coverage -statememnt100 -branch 100 -function 100 -line 100"
+    "posttest": "istanbul check-coverage -statememnt100 -branch 100 -function 100 -line 100",
+    "build-lin": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds",
+    "build-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=res/icons/mac/icon.icns --prune=true --out=release-builds",
+    "build-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=res/icons/win/icon.ico --prune=true --out=release-builds --asar=true --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"VBScoresheets\""
   },
   "dependencies": {
     "debug": "^2.6.8",
