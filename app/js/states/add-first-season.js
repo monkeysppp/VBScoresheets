@@ -1,8 +1,15 @@
 
 'use strict';
 
+const electron = require('electron');
+const ipc = electron.ipcRenderer;
+
 const state = document.querySelector('.add-first-season');
 const debug = require('../debug.js');
+
+const teamSaveListener = () => {
+  module.exports.internal.stateManager.showState('add-first-season', 'add-first-match');
+};
 
 /**
  * init - description
@@ -16,6 +23,18 @@ function init(stateManager) {
   }
 
   module.exports.internal.stateManager = stateManager;
+
+  let seasonAddedButton = document.getElementById('button_add-first-season');
+  let seasonName = document.getElementById('input_add-first-season');
+
+  seasonAddedButton.onclick = () => {
+    if (seasonName.value.length > 0) {
+      ipc.send('save-team-data', undefined, {name:seasonName.value});
+    }
+  };
+  seasonName.oninput = () => {
+    seasonAddedButton.className = (seasonName.value.length === 0) ? 'button new-item-button-disabled' : 'button new-item-button';
+  };
 }
 
 /**
@@ -25,6 +44,7 @@ function init(stateManager) {
  */
 function attach() {
   debug('attaching add-first-season');
+  ipc.on('team-data-saved', teamSaveListener);
 }
 
 /**
@@ -34,6 +54,7 @@ function attach() {
  */
 function detach() {
   debug('detaching add-first-season');
+  ipc.removeListener('team-data-saved', teamSaveListener);
 }
 
 module.exports = {
@@ -43,6 +64,7 @@ module.exports = {
   attach: attach,
   detach: detach,
   internal: {
+    teamSaveListener: teamSaveListener,
     stateManager: undefined
   }
 };
