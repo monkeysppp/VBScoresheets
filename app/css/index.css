@@ -1,7 +1,9 @@
 :root {
   --main-background-white: #EEEEEE;
   --main-text-black: #444444;
+  --main-text-grey: #999999;
 
+  --main-button-grey: #777777;
   --main-button-green: #55BB55;
   --main-button-hover-green: #55EE55;
   --main-button-active-green: #559955;
@@ -16,12 +18,12 @@ body {
   -webkit-user-select: none;
 }
 
-.topband {
+.top-band {
   height: auto;
   overflow: hidden;
 }
 
-.menubar {
+.menu-bar {
   height: 32px;
   -webkit-app-region: drag;
   border-bottom: #bbbbbb 1px solid;
@@ -69,6 +71,19 @@ div.breadcrumbs {
   border-bottom: solid var(--main-text-black);
   background: var(--main-background-white);
   color: var(--main-text-black);
+  outline: none;
+}
+
+.button {
+  outline: none;
+}
+
+.new-item-button-disabled {
+  border: none;
+  border-radius: 7px;
+  background-color: var(--main-button-grey);
+  color: var(--main-background-white);
+  cursor: default;
 }
 
 .new-item-button {
@@ -87,14 +102,29 @@ div.breadcrumbs {
   outline: none;
 }
 
+.list-item {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: solid 1px var(--main-text-grey);
+  margin-bottom: 3px;
+  background: var(--main-background-white);
+  color: var(--main-text-black);
+  display: block;
+  text-align: left;
+  cursor: pointer;
+}
+
 .centre-instruction {
   text-align: center;
   font-size: 38px;
   color: var(--main-text-black);
 }
 
-.team-list {
-
+div.team-list {
+  height: 250px;
+  width: 515px;
+  margin: auto;
 }
 
 div.scrollable {

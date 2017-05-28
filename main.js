@@ -23,7 +23,9 @@ function createWindow() {
     frame: false,
     resizable: true,
     height: 500,
+    minHeight: 500,
     width: 800,
+    minWidth: 800,
     icon: path.join(__dirname, 'res/icons/png/64x64.png')
   });
 
@@ -72,7 +74,7 @@ ipc.on('close-main-window', () => {
 });
 
 ipc.on('save-team-data', (event, filename, teamData) => {
-  debug('on save-team-data called');
+  debug('on save-team-data called on file ' + filename + ' for team ' + teamData.name);
   teamDataObj = teamData;
   files.saveTeamFile(filename, teamData)
     .then((realFilename) => {

@@ -17,9 +17,14 @@ function init(stateManager) {
   let teamAddedButton = document.getElementById('button_add-first-team');
   let teamName = document.getElementById('input_add-first-team');
 
-  teamAddedButton.addEventListener('click', function () {
-    ipc.send('save-team-data', undefined, {name:teamName.value});
-  });
+  teamAddedButton.onclick = () => {
+    if (teamName.value.length > 0) {
+      ipc.send('save-team-data', undefined, {name:teamName.value});
+    }
+  };
+  teamName.oninput  = () => {
+    teamAddedButton.className = (teamName.value.length === 0) ? 'button new-item-button-disabled' : 'button new-item-button';
+  };
 }
 
 function attach() {

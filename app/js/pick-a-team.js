@@ -6,7 +6,7 @@ const ipc = electron.ipcRenderer;
 
 const state = document.querySelector('.pick-a-team');
 
-// var thisStateManager;
+let thisStateManager;
 
 function teamFilesListener(event, teamFileData) {
   let teamList = document.getElementById('pick-a-team_list');
@@ -16,46 +16,68 @@ function teamFilesListener(event, teamFileData) {
   teamList = cloneTeamList;
 
   teamFileData.forEach((elem) => {
-    let p = document.createElement('p');
+    let p = document.createElement('span');
     p.innerHTML = elem.teamname;
+    p.className = 'list-item';
     p.onclick = () => {pickFile(elem.filename, elem.teamname);};
     teamList.appendChild(p);
   });
 
   let i = document.createElement('input');
   i.id = 'input_add-team';
-  i.class = 'new-item-input';
+  i.className = 'new-item-input';
   i.type = 'text';
   i.maxLength = 50;
   i.minlength = 1;
   i.placeholder = 'Add Team';
   i.size = 20;
-  teamList.appendChild(i);
 
   let b = document.createElement('button');
-  b.class  = 'button new-item-button';
-  b.id = 'button_add-first-team';
+  b.className  = 'button new-item-button-disabled';
   b.innerHTML = '+';
-  b.onclick = () => {ipc.send('save-team-data', undefined, {name:i.value});};
+  b.onclick = () => {
+    if (i.value.length > 0) {
+      ipc.send('save-team-data', undefined, {name:i.value});
+    }
+  };
+
+  i.oninput = () => {
+    b.className = (i.value.length === 0) ? 'button new-item-button-disabled' : 'button new-item-button';
+  };
+
+  teamList.appendChild(i);
   teamList.appendChild(b);
 }
 
-function pickFile(/*filename, teamname*/) {
-
+function pickFile(filename) {
+  ipc.send('load-team-data', filename);
 }
 
-function init(/*stateManager*/) {
-  // thisStateManager = stateManager;
+function teamDataListener(event, filename, teamDataObj) {
+  if (teamDataObj.seasons && teamDataObj.seasons.length > 0) {
+    return thisStateManager.showState('pick-a-team', 'pick-a-season');
+  }
+  thisStateManager.showState('pick-a-team', 'add-first-season');
+}
+function teamDataSavedListener(event, filename) {
+  pickFile(filename);
+}
 
+function init(stateManager) {
+  thisStateManager = stateManager;
 }
 
 function attach() {
   ipc.on('return-team-files', teamFilesListener);
+  ipc.on('team-data-saved', teamDataSavedListener);
+  ipc.on('return-team-data', teamDataListener);
   ipc.send('get-team-files');
 }
 
 function detach() {
   ipc.removeListener('return-team-files', teamFilesListener);
+  ipc.removeListener('team-data-saved', teamDataSavedListener);
+  ipc.removeListener('return-team-data', teamDataListener);
 }
 
 module.exports = {
