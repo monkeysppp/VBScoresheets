@@ -4,7 +4,7 @@ const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
 const debug = require('./js/debug.js');
-const stateManager = require('./js/state-manager.js')();
+const stateManager = require('./js/state-manager.js').getStateManager();
 
 // var Menu = remote.require('menu');
 

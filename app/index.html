@@ -23,7 +23,7 @@
 
     <div class="state add-first-team">
       <div class="breadcrumbs">
-        <p id="add-first-team_breadcrumbs">Team</p>
+        <p id="add-first-team_breadcrumbs_team">Team</p>
       </div>
       <div class="centre-instruction">
         <p>Start by creating your first team</p>
@@ -34,7 +34,7 @@
 
     <div class="state pick-a-team">
       <div class="breadcrumbs">
-        <p id="pick-a-team_breadcrumbs">Team &gt; </p>
+        <p id="pick-a-team_breadcrumbs_team">Team</p>
       </div>
       <div class="centre-instruction">
         <p>Pick a team</p>
@@ -44,16 +44,44 @@
 
     <div class="state add-first-season">
       <div class="breadcrumbs">
-        <p id="add-first-season_breadcrumbs"></p>
+        <p id="add-first-season_breadcrumbs_team">Team &gt; </p>
       </div>
-      <p>Add first season page</p>
+      <div class="centre-instruction">
+        <p>Add your first season</p>
+        <input id="input_add-first-season" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="2016/2017" size="20" />
+        <button class="button new-item-button-disabled" id="button_add-first-season">+</button>
+      </div>
     </div>
 
     <div class="state pick-a-season">
       <div class="breadcrumbs">
-        <p id="pick-a-season_breadcrumbs"></p>
+        <p id="pick-a-season_breadcrumbs_team">Team &gt; </p>
       </div>
-      <p>Pick a season page</p>
+      <div class="centre-instruction">
+        <p>Pick a season</p>
+        <div id="pick-a-season_list" class="scrollable season-list"></div>
+      </div>
+    </div>
+
+    <div class="state add-first-match">
+      <div class="breadcrumbs">
+        <p id="add-first-match_breadcrumbs_team">Team &gt; </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Add your first match</p>
+        <input id="input_add-first-match" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="what is this?" size="20" />
+        <button class="button new-item-button-disabled" id="button_add-first-match">+</button>
+      </div>
+    </div>
+
+    <div class="state pick-a-match">
+      <div class="breadcrumbs">
+        <p id="pick-a-match_breadcrumbs_team">Team &gt; </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Pick a match</p>
+        <div id="pick-a-match_list" class="scrollable match-list"></div>
+      </div>
     </div>
   </div>
 
