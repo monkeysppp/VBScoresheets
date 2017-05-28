@@ -15,15 +15,15 @@ function teamFilesListener(event, teamFileData) {
   teamList = cloneTeamList;
 
   teamFileData.forEach((elem) => {
-    let p = document.createElement('span');
-    p.innerHTML = elem.teamname;
-    p.className = 'list-item';
-    p.onclick = () => {pickFile(elem.filename, elem.teamname);};
-    teamList.appendChild(p);
+    let span = document.createElement('span');
+    span.innerHTML = elem.teamname;
+    span.className = 'list-item';
+    span.onclick = () => {module.exports.internal.pickFile(elem.filename, elem.teamname);};
+    teamList.appendChild(span);
   });
 
   let i = document.createElement('input');
-  i.id = 'input_add-team';
+  i.id = 'input_pick-a-team';
   i.className = 'new-item-input';
   i.type = 'text';
   i.maxLength = 50;
@@ -33,6 +33,7 @@ function teamFilesListener(event, teamFileData) {
 
   let b = document.createElement('button');
   b.className  = 'button new-item-button-disabled';
+  b.id = 'button_pick-a-team';
   b.innerHTML = '+';
   b.onclick = () => {
     if (i.value.length > 0) {
@@ -48,18 +49,44 @@ function teamFilesListener(event, teamFileData) {
   teamList.appendChild(b);
 }
 
+
+/**
+ * pickFile - sends a load-team-data event for the given filename.
+ *
+ * @param  {string} filename name of the file to load
+ * @return
+ */
 function pickFile(filename) {
   ipc.send('load-team-data', filename);
 }
 
+/**
+ * teamDataListener - Handle when a specific team's data is loaded.  This is done in reaction
+ * to selecting a team, which is done via pickFile()
+ *
+ * @param  {object} event       IPC Event
+ * @param  {string} filename    the filename that was loaded
+ * @param  {object} teamDataObj the team data object that was loaded
+ * @return
+ */
 function teamDataListener(event, filename, teamDataObj) {
   if (teamDataObj.seasons && teamDataObj.seasons.length > 0) {
     return module.exports.internal.stateManager.showState('pick-a-team', 'pick-a-season');
   }
   module.exports.internal.stateManager.showState('pick-a-team', 'add-first-season');
 }
+
+
+/**
+ * teamDataSavedListener - Listener for when a new team is saved, and we should
+ * load that file as if it had been selected.
+ *
+ * @param  {object} event    IPC Event
+ * @param  string} filename  the filename that was saved
+ * @return
+ */
 function teamDataSavedListener(event, filename) {
-  pickFile(filename);
+  module.exports.internal.pickFile(filename);
 }
 
 /**
@@ -108,6 +135,10 @@ module.exports = {
   attach: attach,
   detach: detach,
   internal: {
+    teamFilesListener: teamFilesListener,
+    teamDataSavedListener: teamDataSavedListener,
+    teamDataListener: teamDataListener,
+    pickFile: pickFile,
     stateManager: undefined
   }
 };
