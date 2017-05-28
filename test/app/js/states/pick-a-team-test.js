@@ -119,14 +119,6 @@ describe('app/js/pick-a-team', () => {
       {filename: 'file3',teamname: 'team3'}
     ];
 
-    beforeEach(() => {
-    //   showStateStub = sinon.stub();
-    //   stateManagerStub = {
-    //     showState: showStateStub
-    //   };
-    //   pickATeam.init(stateManagerStub);
-    });
-
     it('creates a list of the teams', () => {
       pickATeam.internal.teamFilesListener(undefined, teamFileData);
 
