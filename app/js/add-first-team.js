@@ -5,6 +5,8 @@ const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
 const state = document.querySelector('.add-first-team');
+const debug = require('./debug.js');
+
 let thisStateManager;
 
 const teamSaveListener = (/*event, filename*/) => {
@@ -28,10 +30,12 @@ function init(stateManager) {
 }
 
 function attach() {
+  debug('attaching add-first-team');
   ipc.on('team-data-saved', teamSaveListener);
 }
 
 function detach() {
+  debug('attaching add-first-team');
   ipc.removeListener('team-data-saved', teamSaveListener);
 }
 

@@ -2,6 +2,7 @@
 'use strict';
 
 const state = document.querySelector('.add-first-season');
+const debug = require('./debug.js');
 
 // var thisStateManager;
 
@@ -10,9 +11,11 @@ function init(/*stateManager*/) {
 }
 
 function attach() {
+  debug('attaching add-first-season');
 }
 
 function detach() {
+  debug('detaching add-first-season');
 }
 
 module.exports = {

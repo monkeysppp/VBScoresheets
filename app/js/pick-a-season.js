@@ -2,6 +2,7 @@
 'use strict';
 
 const state = document.querySelector('.pick-a-season');
+const debug = require('./debug.js');
 
 // var thisStateManager;
 
@@ -10,9 +11,11 @@ function init(/*stateManager*/) {
 }
 
 function attach() {
+  debug('attaching pick-a-season');
 }
 
 function detach() {
+  debug('detaching pick-a-season');
 }
 
 module.exports = {

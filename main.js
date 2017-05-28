@@ -7,6 +7,7 @@ const ipc = electron.ipcMain;
 
 const path = require('path');
 const debug = require('debug')('vbs:main');
+const debugUI = require('debug')('vbs:ui');
 
 const files = require('./lib/files.js');
 
@@ -118,6 +119,7 @@ ipc.on('get-team-files', (event) => {
     });
 });
 
-ipc.on('debug', (string) => {
-  debug(string);
+// pipe a ui-debug event to debugUI
+ipc.on('ui-debug', (event, string) => {
+  debugUI(string);
 });

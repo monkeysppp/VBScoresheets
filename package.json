@@ -7,6 +7,7 @@
     "start": "electron .",
     "pretest": "eslint .",
     "test": "nyc --reporter=html --reporter=text ./node_modules/mocha/bin/_mocha \"test/**/*-test.js\"",
+    "test-no-coverage": "mocha \"test/**/*-test.js\"",
     "posttest": "nyc check-coverage --statememnts 100 --branches 100 --functions 100 --lines 100",
     "build-lin": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds",
     "build-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=res/icons/mac/icon.icns --prune=true --out=release-builds",
@@ -25,6 +26,7 @@
     "eslint": "^3.19.0",
     "mocha": "^2.4.5",
     "nyc": "^10.3.2",
+    "proxyquire": "^1.8.0",
     "sinon": "^2.3.1",
     "sinon-chai": "^2.10.0"
   }

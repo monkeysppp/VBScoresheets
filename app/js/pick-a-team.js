@@ -5,6 +5,7 @@ const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
 const state = document.querySelector('.pick-a-team');
+const debug = require('./debug.js');
 
 let thisStateManager;
 
@@ -68,6 +69,7 @@ function init(stateManager) {
 }
 
 function attach() {
+  debug('attaching pick-a-team');
   ipc.on('return-team-files', teamFilesListener);
   ipc.on('team-data-saved', teamDataSavedListener);
   ipc.on('return-team-data', teamDataListener);
@@ -75,6 +77,7 @@ function attach() {
 }
 
 function detach() {
+  debug('detaching pick-a-team');
   ipc.removeListener('return-team-files', teamFilesListener);
   ipc.removeListener('team-data-saved', teamDataSavedListener);
   ipc.removeListener('return-team-data', teamDataListener);
