@@ -33,13 +33,13 @@ describe('app/js/state-manager', () => {
 
     stateManager = proxyquire('../../../app/js/state-manager.js',
       {
-        './add-first-team.js': {init: addFirstTeamInitStub},
-        './add-first-season.js': {init: addFirstSeasonInitStub},
-        './add-first-match.js': {init: addFirstMatchInitStub},
-        './pick-a-team.js': {init: pickATeamInitStub},
-        './pick-a-season.js': {init: pickASeasonInitStub},
-        './pick-a-match.js': {init: pickAMatchInitStub},
-        './loading.js': {init: loadingInitStub}
+        './add-first-team.js': {init: addFirstTeamInitStub, name:'add-first-team'},
+        './add-first-season.js': {init: addFirstSeasonInitStub, name:'add-first-season'},
+        './add-first-match.js': {init: addFirstMatchInitStub, name:'add-first-match'},
+        './pick-a-team.js': {init: pickATeamInitStub, name:'pick-a-team'},
+        './pick-a-season.js': {init: pickASeasonInitStub, name:'pick-a-season'},
+        './pick-a-match.js': {init: pickAMatchInitStub, name:'pick-a-match'},
+        './loading.js': {init: loadingInitStub, name:'loading'}
       }
     );
 
@@ -153,6 +153,7 @@ describe('app/js/state-manager', () => {
         expect(typeof manager.states).to.equal('object');
         expectedStates.forEach((expectedState) => {
           expect(manager.states[expectedState]).not.to.equal(undefined);
+          expect(manager.states[expectedState].name).to.equal(expectedState);
         });
       });
 

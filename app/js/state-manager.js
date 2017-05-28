@@ -13,15 +13,15 @@ let self;
 
 const debug = require('./debug.js');
 
-const states = {
-  'add-first-team': addFirstTeam,
-  'pick-a-team': pickATeam,
-  'add-first-season': addFirstSeason,
-  'pick-a-season': pickASeason,
-  'add-first-match': addFirstMatch,
-  'pick-a-match': pickAMatch,
-  loading: loading
-};
+let states = {};
+states[addFirstTeam.name] = addFirstTeam;
+states[pickATeam.name] = pickATeam;
+states[addFirstSeason.name] = addFirstSeason;
+states[pickASeason.name] = pickASeason;
+states[addFirstMatch.name] = addFirstMatch;
+states[pickAMatch.name] = pickAMatch;
+states[loading.name] = loading;
+
 
 function init(stateManager) {
   addFirstTeam.init(stateManager);
