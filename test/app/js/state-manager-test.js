@@ -33,13 +33,13 @@ describe('app/js/state-manager', () => {
 
     stateManager = proxyquire('../../../app/js/state-manager.js',
       {
-        './add-first-team.js': {init: addFirstTeamInitStub, name:'add-first-team'},
-        './add-first-season.js': {init: addFirstSeasonInitStub, name:'add-first-season'},
-        './add-first-match.js': {init: addFirstMatchInitStub, name:'add-first-match'},
-        './pick-a-team.js': {init: pickATeamInitStub, name:'pick-a-team'},
-        './pick-a-season.js': {init: pickASeasonInitStub, name:'pick-a-season'},
-        './pick-a-match.js': {init: pickAMatchInitStub, name:'pick-a-match'},
-        './loading.js': {init: loadingInitStub, name:'loading'}
+        './states/add-first-team.js': {init: addFirstTeamInitStub, name:'add-first-team'},
+        './states/add-first-season.js': {init: addFirstSeasonInitStub, name:'add-first-season'},
+        './states/add-first-match.js': {init: addFirstMatchInitStub, name:'add-first-match'},
+        './states/pick-a-team.js': {init: pickATeamInitStub, name:'pick-a-team'},
+        './states/pick-a-season.js': {init: pickASeasonInitStub, name:'pick-a-season'},
+        './states/pick-a-match.js': {init: pickAMatchInitStub, name:'pick-a-match'},
+        './states/loading.js': {init: loadingInitStub, name:'loading'}
       }
     );
 

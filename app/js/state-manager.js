@@ -1,13 +1,13 @@
 
 'use strict';
 
-const addFirstTeam = require('./add-first-team.js');
-const addFirstSeason = require('./add-first-season.js');
-const addFirstMatch = require('./add-first-match.js');
-const pickATeam = require('./pick-a-team.js');
-const pickASeason = require('./pick-a-season.js');
-const pickAMatch = require('./pick-a-match.js');
-const loading = require('./loading.js');
+const addFirstTeam = require('./states/add-first-team.js');
+const addFirstSeason = require('./states/add-first-season.js');
+const addFirstMatch = require('./states/add-first-match.js');
+const pickATeam = require('./states/pick-a-team.js');
+const pickASeason = require('./states/pick-a-season.js');
+const pickAMatch = require('./states/pick-a-match.js');
+const loading = require('./states/loading.js');
 
 let self;
 
@@ -23,6 +23,12 @@ states[pickAMatch.name] = pickAMatch;
 states[loading.name] = loading;
 
 
+/**
+ * init - Initialize all of the states in the state manager
+ *
+ * @param  {object} stateManager a bit like a this
+ * @return
+ */
 function init(stateManager) {
   addFirstTeam.init(stateManager);
   addFirstSeason.init(stateManager);
@@ -32,7 +38,6 @@ function init(stateManager) {
   pickAMatch.init(stateManager);
   loading.init(stateManager);
 }
-
 
 /**
  * showState - swap the css display properties to make one state disappear and another appear,

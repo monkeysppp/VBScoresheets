@@ -5,9 +5,7 @@ const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
 const state = document.querySelector('.pick-a-team');
-const debug = require('./debug.js');
-
-let thisStateManager;
+const debug = require('../debug.js');
 
 function teamFilesListener(event, teamFileData) {
   let teamList = document.getElementById('pick-a-team_list');
@@ -56,18 +54,33 @@ function pickFile(filename) {
 
 function teamDataListener(event, filename, teamDataObj) {
   if (teamDataObj.seasons && teamDataObj.seasons.length > 0) {
-    return thisStateManager.showState('pick-a-team', 'pick-a-season');
+    return module.exports.internal.stateManager.showState('pick-a-team', 'pick-a-season');
   }
-  thisStateManager.showState('pick-a-team', 'add-first-season');
+  module.exports.internal.stateManager.showState('pick-a-team', 'add-first-season');
 }
 function teamDataSavedListener(event, filename) {
   pickFile(filename);
 }
 
+/**
+ * init - description
+ *
+ * @param  {object} stateManager the state-manager for this state to send instructions to
+ * @return
+ */
 function init(stateManager) {
-  thisStateManager = stateManager;
+  if (!stateManager) {
+    throw new Error('no state-manager given');
+  }
+
+  module.exports.internal.stateManager = stateManager;
 }
 
+/**
+ * attach - attach the state code to the displayed ui and set up any event handlers
+ *
+ * @return
+ */
 function attach() {
   debug('attaching pick-a-team');
   ipc.on('return-team-files', teamFilesListener);
@@ -76,6 +89,11 @@ function attach() {
   ipc.send('get-team-files');
 }
 
+/**
+ * detach - attach the state code from the displayed ui and clean up any event handlers
+ *
+ * @return
+ */
 function detach() {
   debug('detaching pick-a-team');
   ipc.removeListener('return-team-files', teamFilesListener);
@@ -88,5 +106,8 @@ module.exports = {
   state: state,
   init: init,
   attach: attach,
-  detach: detach
+  detach: detach,
+  internal: {
+    stateManager: undefined
+  }
 };
