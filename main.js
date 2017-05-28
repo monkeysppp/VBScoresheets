@@ -78,6 +78,10 @@ ipc.on('save-team-data', (event, filename, teamData) => {
     .then((realFilename) => {
       teamDataFilename = realFilename;
       event.sender.send('team-data-saved', realFilename);
+    })
+    .catch((err) => {
+      // TODO - what do I do with the error!!!
+      debug(err.toString());
     });
 });
 
@@ -88,6 +92,10 @@ ipc.on('load-team-data', (event, filename) => {
       teamDataObj = dataObj;
       teamDataFilename = filename;
       event.sender.send('return-team-data', teamDataFilename, teamDataObj);
+    })
+    .catch((err) => {
+      // TODO - what do I do with the error!!!
+      debug(err.toString());
     });
 });
 
@@ -101,9 +109,13 @@ ipc.on('get-team-files', (event) => {
   files.listTeamFiles()
     .then((teamFileData) => {
       event.sender.send('return-team-files', teamFileData);
+    })
+    .catch((err) => {
+      // TODO - what do I do with the error!!!
+      debug(err.toString());
     });
 });
 
 ipc.on('debug', (string) => {
-  console.log(string);
+  debug(string);
 });
