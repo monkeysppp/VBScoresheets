@@ -23,7 +23,8 @@ describe('app/js/pick-a-team', () => {
   beforeEach(function () {
     this.timeout(10000);
     jsdomCleanup = jsdomGlobal();
-    document.body.innerHTML = '<div id="pick-a-team_list" class="scrollable team-list"></div>';
+    document.body.innerHTML = '<div class="state pick-a-team"><div id="pick-a-team_list" class="scrollable team-list"></div><input id="input_pick-a-team" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Team Name" size="20" /><button class="button new-item-button-disabled" id="button_pick-a-team_add">+</button></div></div>';
+
     ipcRendererSendStub = sinon.stub();
     ipcRendererOnStub = sinon.stub();
     ipcRendererRemoveListenerStub = sinon.stub();
@@ -55,7 +56,7 @@ describe('app/js/pick-a-team', () => {
   describe('#attach', () => {
     it('registers for return-team-files', () => {
       pickATeam.attach();
-      expect(ipcRendererOnStub).to.be.calledWith('return-team-files', pickATeam.internal.teamFilesListener);
+      expect(ipcRendererOnStub).to.be.calledWith('return-team-files', pickATeam.internal.returnTeamFilesListener);
     });
 
     it('registers for team-data-saved', () => {
@@ -65,7 +66,7 @@ describe('app/js/pick-a-team', () => {
 
     it('registers for return-team-data', () => {
       pickATeam.attach();
-      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', pickATeam.internal.teamDataListener);
+      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', pickATeam.internal.returnTeamDataListener);
     });
 
     it('sends a get-team-files event', () => {
@@ -78,7 +79,7 @@ describe('app/js/pick-a-team', () => {
   describe('#detach', () => {
     it('deregisters for return-team-files', () => {
       pickATeam.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-files', pickATeam.internal.teamFilesListener);
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-files', pickATeam.internal.returnTeamFilesListener);
     });
 
     it('deregisters for team-data-saved', () => {
@@ -88,7 +89,7 @@ describe('app/js/pick-a-team', () => {
 
     it('deregisters for return-team-data', () => {
       pickATeam.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', pickATeam.internal.teamDataListener);
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', pickATeam.internal.returnTeamDataListener);
     });
   });
 
@@ -104,181 +105,162 @@ describe('app/js/pick-a-team', () => {
 
       beforeEach(() => {
         stateManagerStub = {};
+        pickATeam.init(stateManagerStub);
       });
 
       it('saves the state manager', () => {
-        pickATeam.init(stateManagerStub);
         expect(pickATeam.internal.stateManager).to.equal(stateManagerStub);
+      });
+
+      it('finds the teamAdd button', () => {
+        expect(pickATeam.internal.teamAddButton).to.equal(document.getElementById('button_pick-a-team_add'));
+      });
+
+      it('finds the teamName textbox', () => {
+        expect(pickATeam.internal.teamName).to.equal(document.getElementById('input_pick-a-team'));
+      });
+
+      it('finds the teamList div', () => {
+        expect(pickATeam.internal.teamList).to.equal(document.getElementById('pick-a-team_list'));
+      });
+
+      it('sets the teamAdd onclick listener for the button', () => {
+        expect(pickATeam.internal.teamAddButton.onclick).to.equal(pickATeam.internal.teamAddOnClick);
+      });
+
+      it('sets the oninput listener for the input', () => {
+        expect(pickATeam.internal.teamName.oninput).to.equal(pickATeam.internal.teamNameOnInput);
       });
     });
   });
 
-  describe('#teamFilesListener', () => {
+  describe('#teamAddOnClick', () => {
+    beforeEach(() => {
+      pickATeam.init({});
+    });
+
+    context('when input is zero length', () => {
+      beforeEach(() => {
+        pickATeam.internal.teamName.value = '';
+        pickATeam.internal.teamAddOnClick();
+      });
+
+      it('disables the button', () => {
+        expect(ipcRendererSendStub).to.not.be.called;
+      });
+    });
+
+    context('when input is longer than zero length', () => {
+      beforeEach(() => {
+        pickATeam.internal.teamName.value = 'abc';
+        pickATeam.internal.teamAddOnClick();
+      });
+
+      it('enables the button', () => {
+        expect(ipcRendererSendStub).to.be.calledWith('save-team-data', undefined, {name:'abc'});
+      });
+    });
+  });
+
+  describe('#teamNameOnInput', () => {
+    beforeEach(() => {
+      pickATeam.init({});
+      pickATeam.internal.teamAddButton.className = 'null';
+    });
+
+    context('when input is zero length', () => {
+      beforeEach(() => {
+        pickATeam.internal.teamName.value = '';
+        pickATeam.internal.teamNameOnInput();
+      });
+
+      it('sets the button class to disabled', () => {
+        expect(pickATeam.internal.teamAddButton.className).to.equal('button new-item-button-disabled');
+      });
+    });
+
+    context('when input is longer than zero length', () => {
+      beforeEach(() => {
+        pickATeam.internal.teamName.value = 'abc';
+        pickATeam.internal.teamNameOnInput();
+      });
+
+      it('sets the button class to enabled', () => {
+        expect(pickATeam.internal.teamAddButton.className).to.equal('button new-item-button');
+      });
+    });
+  });
+
+  describe('#returnTeamFilesListener', () => {
     let teamFileData = [
       {filename: 'file1',teamname: 'team1'},
       {filename: 'file2',teamname: 'team2'},
       {filename: 'file3',teamname: 'team3'}
     ];
+    let stateManagerStub;
+
+    beforeEach(() => {
+      stateManagerStub = {};
+      pickATeam.init(stateManagerStub);
+    });
 
     it('creates a list of the teams', () => {
-      pickATeam.internal.teamFilesListener(undefined, teamFileData);
+      pickATeam.internal.returnTeamFilesListener(undefined, teamFileData);
+      expect(pickATeam.internal.teamList.childNodes.length).to.equal(3);
+    });
 
-      let listItems = document.getElementById('pick-a-team_list').getElementsByClassName('list-item');
-      expect(listItems.length).to.equal(3);
+    it('clears the curent teamName input and add button', () => {
+      pickATeam.internal.teamName.value = 'sometext';
+      pickATeam.internal.returnTeamFilesListener(undefined, teamFileData);
+      expect(pickATeam.internal.teamName.value).to.equal('');
+      expect(pickATeam.internal.teamAddButton.className).to.equal('button new-item-button-disabled');
     });
 
     context('the list items', () => {
-      let pickFileStub;
+      it('have an onclick that loads the team file', () => {
+        pickATeam.internal.returnTeamFilesListener(undefined, teamFileData);
 
-      beforeEach(() => {
-        pickFileStub = sinon.stub(pickATeam.internal, 'pickFile');
-      });
-
-      afterEach(() => {
-        pickFileStub.restore();
-      });
-
-      it('have an onclick that picks the related file', () => {
-        pickATeam.internal.teamFilesListener(undefined, teamFileData);
-
-        let listItems = document.getElementById('pick-a-team_list').getElementsByClassName('list-item');
+        let listItems = pickATeam.internal.teamList.getElementsByClassName('list-item');
 
         expect(listItems[0].innerHTML).to.equal('team1');
         expect(typeof listItems[0].onclick).to.equal('function');
         listItems[0].onclick();
-        expect(pickFileStub).to.be.calledWith('file1', 'team1');
+        expect(ipcRendererSendStub).to.be.calledWith('load-team-data', 'file1');
 
         expect(listItems[1].innerHTML).to.equal('team2');
         expect(typeof listItems[1].onclick).to.equal('function');
         listItems[1].onclick();
-        expect(pickFileStub).to.be.calledWith('file2', 'team2');
+        expect(ipcRendererSendStub).to.be.calledWith('load-team-data', 'file2');
 
         expect(listItems[2].innerHTML).to.equal('team3');
         expect(typeof listItems[2].onclick).to.equal('function');
         listItems[2].onclick();
-        expect(pickFileStub).to.be.calledWith('file3', 'team3');
+        expect(ipcRendererSendStub).to.be.calledWith('load-team-data', 'file3');
+      });
+
+      it('get cleaned out on each load call', () => {
+        pickATeam.internal.returnTeamFilesListener(undefined, teamFileData);
+        pickATeam.internal.returnTeamFilesListener(undefined, teamFileData);
+        pickATeam.internal.returnTeamFilesListener(undefined, teamFileData);
+
+        let listItems = pickATeam.internal.teamList.getElementsByClassName('list-item');
+        expect(pickATeam.internal.teamList.childNodes.length).to.equal(3);
+        expect(listItems[0].innerHTML).to.equal('team1');
+        expect(listItems[1].innerHTML).to.equal('team2');
+        expect(listItems[2].innerHTML).to.equal('team3');
       });
     });
 
-    it('adds a button for a new team with onclick listener', () => {
-      pickATeam.internal.teamFilesListener(undefined, teamFileData);
-
-      let button = document.getElementById('button_pick-a-team');
-
-      expect(typeof button.onclick).to.equal('function');
-    });
-
-    context('the onclick listener', () => {
-      context('when input is zero length', () => {
-        let button;
-        let input;
-
-        beforeEach(() => {
-          pickATeam.internal.teamFilesListener(undefined, teamFileData);
-          button = document.getElementById('button_pick-a-team');
-          input = document.getElementById('input_pick-a-team');
-          input.value = '';
-          button.onclick();
-        });
-
-        it('disables the button', () => {
-          expect(ipcRendererSendStub).to.not.be.called;
-        });
-      });
-
-      context('when input is longer than zero length', () => {
-        let button;
-        let input;
-
-        beforeEach(() => {
-          pickATeam.internal.teamFilesListener(undefined, teamFileData);
-          button = document.getElementById('button_pick-a-team');
-          input = document.getElementById('input_pick-a-team');
-          input.value = 'abc';
-          button.onclick();
-        });
-
-        it('enables the button', () => {
-          expect(ipcRendererSendStub).to.be.calledWith('save-team-data', undefined, {name:'abc'});
-        });
-      });
-    });
-
-    it('adds an input for a new team with oninput listener', () => {
-      pickATeam.internal.teamFilesListener(undefined, teamFileData);
-
-      let input = document.getElementById('input_pick-a-team');
-
-      expect(typeof input.oninput).to.equal('function');
-    });
-
-    context('the oninput listener', () => {
-      context('when input is zero length', () => {
-        let button;
-        let input;
-
-        beforeEach(() => {
-          pickATeam.internal.teamFilesListener(undefined, teamFileData);
-          button = document.getElementById('button_pick-a-team');
-          input = document.getElementById('input_pick-a-team');
-          input.value = '';
-          input.oninput();
-        });
-
-        it('sets the button class to disabled', () => {
-          expect(button.className).to.equal('button new-item-button-disabled');
-        });
-      });
-
-      context('when input is longer than zero length', () => {
-        let button;
-        let input;
-
-        beforeEach(() => {
-          pickATeam.internal.teamFilesListener(undefined, teamFileData);
-          button = document.getElementById('button_pick-a-team');
-          input = document.getElementById('input_pick-a-team');
-          input.value = 'abc';
-          input.oninput();
-        });
-
-        it('sets the button class to enabled', () => {
-          expect(button.className).to.equal('button new-item-button');
-        });
-      });
-    });
-
-    it('cleans out previous DOM elements', () => {
-      pickATeam.internal.teamFilesListener(undefined, teamFileData);
-      pickATeam.internal.teamFilesListener(undefined, teamFileData);
-      pickATeam.internal.teamFilesListener(undefined, teamFileData);
-
-      let listItems = document.getElementById('pick-a-team_list').getElementsByClassName('list-item');
-      expect(listItems.length).to.equal(3);
-      expect(listItems[0].innerHTML).to.equal('team1');
-      expect(listItems[1].innerHTML).to.equal('team2');
-      expect(listItems[2].innerHTML).to.equal('team3');
-    });
   });
 
   describe('#teamDataSavedListener', () => {
-    let pickFileStub;
-
-    beforeEach(() => {
-      pickFileStub = sinon.stub(pickATeam.internal, 'pickFile');
-    });
-
-    afterEach(() => {
-      pickFileStub.restore();
-    });
-
-    it('calls pickFile', () => {
-      pickATeam.internal.teamDataSavedListener(undefined, 'aFileName');
-      expect(pickFileStub).to.be.calledWith('aFileName');
+    it('calls to load the team data again', () => {
+      pickATeam.internal.teamDataSavedListener(undefined, 'file1');
+      expect(ipcRendererSendStub).to.be.calledWith('load-team-data', 'file1');
     });
   });
 
-  describe('#teamDataListener', () => {
+  describe('#returnTeamDataListener', () => {
     let stateManagerStub;
     let showStateStub;
 
@@ -296,7 +278,7 @@ describe('app/js/pick-a-team', () => {
       };
 
       it('calls to change state from pick-a-team to add-first-season', () => {
-        pickATeam.internal.teamDataListener(undefined, 'file1', teamDataObj);
+        pickATeam.internal.returnTeamDataListener(undefined, 'file1', teamDataObj);
         expect(showStateStub).to.be.calledWith('pick-a-team', 'add-first-season');
       });
     });
@@ -308,17 +290,9 @@ describe('app/js/pick-a-team', () => {
       };
 
       it('calls to change state from pick-a-team to pick-a-season', () => {
-        pickATeam.internal.teamDataListener(undefined, 'file1', teamDataObj);
+        pickATeam.internal.returnTeamDataListener(undefined, 'file1', teamDataObj);
         expect(showStateStub).to.be.calledWith('pick-a-team', 'pick-a-season');
       });
-
-    });
-  });
-
-  describe('#pickFile', () => {
-    it('sends load-team-data for the requested filename', () => {
-      pickATeam.internal.pickFile('someFileName');
-      expect(ipcRendererSendStub).to.be.calledWith('load-team-data', 'someFileName');
     });
   });
 });

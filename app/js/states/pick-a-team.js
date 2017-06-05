@@ -7,76 +7,51 @@ const ipc = electron.ipcRenderer;
 const state = document.querySelector('.pick-a-team');
 const debug = require('../debug.js');
 
-function teamFilesListener(event, teamFileData) {
-  let teamList = document.getElementById('pick-a-team_list');
-  // clean up any pre-existing content
-  let cloneTeamList = teamList.cloneNode(false);
-  teamList.parentNode.replaceChild(cloneTeamList, teamList);
-  teamList = cloneTeamList;
-
-  teamFileData.forEach((elem) => {
-    let span = document.createElement('span');
-    span.innerHTML = elem.teamname;
-    span.className = 'list-item';
-    span.onclick = () => {module.exports.internal.pickFile(elem.filename, elem.teamname);};
-    teamList.appendChild(span);
-  });
-
-  // TODO - move the add out of the scrollable
-  let i = document.createElement('input');
-  i.id = 'input_pick-a-team';
-  i.className = 'new-item-input';
-  i.type = 'text';
-  i.maxLength = 50;
-  i.minlength = 1;
-  i.placeholder = 'Add Team';
-  i.size = 20;
-
-  let b = document.createElement('button');
-  b.className  = 'button new-item-button-disabled';
-  b.id = 'button_pick-a-team';
-  b.innerHTML = '+';
-  b.onclick = () => {
-    if (i.value.length > 0) {
-      ipc.send('save-team-data', undefined, {name:i.value});
-    }
-  };
-
-  i.oninput = () => {
-    b.className = (i.value.length === 0) ? 'button new-item-button-disabled' : 'button new-item-button';
-  };
-
-  teamList.appendChild(i);
-  teamList.appendChild(b);
-}
-
-
 /**
- * pickFile - sends a load-team-data event for the given filename.
+ * init - Initialize the page handler, ataching the state manager and discovering any interactive elements
  *
- * @param  {string} filename name of the file to load
- * @private
+ * @param  {object} stateManager the state-manager for this state to send instructions to
  */
-function pickFile(filename) {
-  ipc.send('load-team-data', filename);
-}
-
-/**
- * teamDataListener - Handle when a specific team's data is loaded.  This is done in reaction
- * to selecting a team, which is done via pickFile()
- *
- * @param  {object} event       IPC Event
- * @param  {string} filename    the filename that was loaded
- * @param  {object} teamDataObj the team data object that was loaded
- * @private
- */
-function teamDataListener(event, filename, teamDataObj) {
-  if (teamDataObj.seasons && teamDataObj.seasons.length > 0) {
-    return module.exports.internal.stateManager.showState('pick-a-team', 'pick-a-season');
+function init(stateManager) {
+  if (!stateManager) {
+    throw new Error('no state-manager given');
   }
-  module.exports.internal.stateManager.showState('pick-a-team', 'add-first-season');
+
+  module.exports.internal.stateManager = stateManager;
+
+  module.exports.internal.teamAddButton = document.getElementById('button_pick-a-team_add');
+  module.exports.internal.teamName = document.getElementById('input_pick-a-team');
+  module.exports.internal.teamList = document.getElementById('pick-a-team_list');
+
+  module.exports.internal.teamAddButton.onclick = module.exports.internal.teamAddOnClick;
+  module.exports.internal.teamName.oninput = module.exports.internal.teamNameOnInput;
 }
 
+/**
+ * returnTeamFilesListener - React to a return-team-files event by populating the team list div
+ *
+ * @param  {type} event        description
+ * @param  {type} teamFileData description
+ * @return {type}              description
+ */
+function returnTeamFilesListener(event, teamFileData) {
+  // Clean up the input text box
+  module.exports.internal.teamName.value = '';
+  teamNameOnInput();
+
+  // Clean up the list div
+  let cloneTeamList = module.exports.internal.teamList.cloneNode(false);
+  module.exports.internal.teamList.parentNode.replaceChild(cloneTeamList, module.exports.internal.teamList);
+  module.exports.internal.teamList = cloneTeamList;
+
+  teamFileData.forEach((team) => {
+    let span = document.createElement('span');
+    span.innerHTML = team.teamname;
+    span.className = 'list-item';
+    span.onclick = () => {ipc.send('load-team-data', team.filename);};
+    module.exports.internal.teamList.appendChild(span);
+  });
+}
 
 /**
  * teamDataSavedListener - Listener for when a new team is saved, and we should
@@ -87,20 +62,49 @@ function teamDataListener(event, filename, teamDataObj) {
  * @private
  */
 function teamDataSavedListener(event, filename) {
-  module.exports.internal.pickFile(filename);
+  ipc.send('load-team-data', filename);
 }
 
 /**
- * init - description
+ * returnTeamDataListener - Handle when a specific team's data is loaded.  This is done in reaction
+ * to selecting a team, which is done via pickFile()
  *
- * @param  {object} stateManager the state-manager for this state to send instructions to
+ * @param  {object} event       IPC Event
+ * @param  {string} filename    the filename that was loaded
+ * @param  {object} teamDataObj the team data object that was loaded
+ * @private
  */
-function init(stateManager) {
-  if (!stateManager) {
-    throw new Error('no state-manager given');
+function returnTeamDataListener(event, filename, teamDataObj) {
+  if (teamDataObj.seasons && teamDataObj.seasons.length > 0) {
+    return module.exports.internal.stateManager.showState('pick-a-team', 'pick-a-season');
   }
+  module.exports.internal.stateManager.showState('pick-a-team', 'add-first-season');
+}
 
-  module.exports.internal.stateManager = stateManager;
+/**
+ * teamAddOnClick - A click handler for when the "add team" button is clicked.  This only
+ * acts if the team name text value contains more than 0 characters
+ *
+ * @private
+ */
+function teamAddOnClick() {
+  if (module.exports.internal.teamName.value.length > 0) {
+    ipc.send('save-team-data', undefined, {name:module.exports.internal.teamName.value});
+  }
+}
+
+/**
+ * teamNameOnInput - An on-input handler for the team name text field.  This greys out the
+ * "add" button when there is no text in the team name.
+ *
+ * @private
+ */
+function teamNameOnInput() {
+  if (module.exports.internal.teamName.value.length === 0) {
+    module.exports.internal.teamAddButton.className = 'button new-item-button-disabled';
+  } else {
+    module.exports.internal.teamAddButton.className = 'button new-item-button';
+  }
 }
 
 /**
@@ -108,9 +112,9 @@ function init(stateManager) {
  */
 function attach() {
   debug('attaching pick-a-team');
-  ipc.on('return-team-files', teamFilesListener);
-  ipc.on('team-data-saved', teamDataSavedListener);
-  ipc.on('return-team-data', teamDataListener);
+  ipc.on('return-team-files', module.exports.internal.returnTeamFilesListener);
+  ipc.on('team-data-saved', module.exports.internal.teamDataSavedListener);
+  ipc.on('return-team-data', module.exports.internal.returnTeamDataListener);
   ipc.send('get-team-files');
 }
 
@@ -119,9 +123,9 @@ function attach() {
  */
 function detach() {
   debug('detaching pick-a-team');
-  ipc.removeListener('return-team-files', teamFilesListener);
-  ipc.removeListener('team-data-saved', teamDataSavedListener);
-  ipc.removeListener('return-team-data', teamDataListener);
+  ipc.removeListener('return-team-files', module.exports.internal.returnTeamFilesListener);
+  ipc.removeListener('team-data-saved', module.exports.internal.teamDataSavedListener);
+  ipc.removeListener('return-team-data', module.exports.internal.returnTeamDataListener);
 }
 
 module.exports = {
@@ -131,10 +135,14 @@ module.exports = {
   attach: attach,
   detach: detach,
   internal: {
-    teamFilesListener: teamFilesListener,
+    returnTeamFilesListener: returnTeamFilesListener,
     teamDataSavedListener: teamDataSavedListener,
-    teamDataListener: teamDataListener,
-    pickFile: pickFile,
-    stateManager: undefined
+    returnTeamDataListener: returnTeamDataListener,
+    teamAddOnClick: teamAddOnClick,
+    teamNameOnInput: teamNameOnInput,
+    stateManager: undefined,
+    teamAddButton: undefined,
+    teamName: undefined,
+    teamList: undefined
   }
 };
