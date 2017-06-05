@@ -1,6 +1,7 @@
 .idea
 *.log
 .nyc_output
-coverage
-node_modules
-release-builds
+/coverage
+/jsdoc
+/node_modules
+/release-builds

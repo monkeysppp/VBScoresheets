@@ -12,8 +12,6 @@ const files = require('./lib/files.js');
 
 /**
  * mainWindowClose - handle the main window being closed and null the mainWindow
- *
- * @return
  */
 function mainWindowClose() {
   module.exports.internal.mainWindow = null;
@@ -49,8 +47,6 @@ app.on('ready', createWindow);
  * windowAllClosedListener - Act on the window-all-closed event.
  * On OS X it is common for applications and their menu bar to stay
  * active until the user quits explicitly with Cmd + Q
- *
- * @return
  */
 function windowAllClosedListener() {
   if (process.platform !== 'darwin') {
@@ -63,8 +59,6 @@ app.on('window-all-closed', windowAllClosedListener);
  * activateListener - Act on the activate event.  On OS X it's common
  * to re-create a window in the app when the dock icon is clicked and
  * there are no other windows open.
- *
- * @return {type}  description
  */
 function activateListener() {
   if (module.exports.internal.mainWindow === null) {
@@ -103,8 +97,6 @@ ipc.on('index-ready', indexReadyListener);
 
 /**
  * closeMainWindowListener - react to close-main-window and call quit.
- *
- * @return
  */
 function closeMainWindowListener() {
   debug('on close-main-window called');
@@ -189,7 +181,6 @@ ipc.on('load-team-data', loadTeamDataListener);
  *
  * @param  {object} event  IPC Event
  * @param  {number} season The id of the season selected
- * @return
  */
 function storeTeamSeasonListener(event, season) {
   debug('on store-team-season called with ' + season);
@@ -204,7 +195,6 @@ ipc.on('store-team-season', storeTeamSeasonListener);
  *
  * @param  {object} event  IPC Event
  * @param  {number} match  The id of the match selected
- * @return
  */
 function storeTeamMatchListener(event, match) {
   debug('on store-team-match called with ' + match);
@@ -219,7 +209,6 @@ ipc.on('store-team-match', storeTeamMatchListener);
  *
  * @param  {object} event  IPC Event
  * @param  {number} player The id of the player selected
- * @return
  */
 function storeTeamPlayerListener(event, player) {
   debug('on store-team-player called with ' + player);
@@ -233,7 +222,6 @@ ipc.on('store-team-player', storeTeamPlayerListener);
  * selectors such as the selected season or player.
  *
  * @param  {object} event IPC Event
- * @return
  */
 function getTeamDataListener(event) {
   debug('on get-team-data called');
@@ -251,7 +239,6 @@ ipc.on('get-team-data', getTeamDataListener);
  *
  * @param  {object} event  IPC Event
  * @param  {string} string The message to pipe to debug output
- * @return
  */
 function reportDebugUI(event, string) {
   debugUI(string);

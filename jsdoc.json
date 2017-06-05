@@ -1,0 +1,23 @@
+{
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  },
+  "source": {
+    "exclude": ["node_modules", "coverage", "release-builds", "jsdoc", "doc"],
+    "includePatterns": ".+\\.js(doc)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": [],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  },
+  "opts": {
+    "encoding": "utf8",
+    "destination": "jsdoc",
+    "recurse": true,
+    "private": false,
+    "pedantic": true
+  }
+}
