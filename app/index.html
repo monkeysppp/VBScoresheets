@@ -28,7 +28,42 @@
       <div class="centre-instruction">
         <p>Start by creating your first team</p>
         <input id="input_add-first-team" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Team Name" size="20" />
-        <button class="button new-item-button-disabled" id="button_add-first-team">+</button>
+        <button class="button new-item-button-disabled" id="button_add-first-team_add">+</button>
+      </div>
+    </div>
+
+    <div class="state add-first-season">
+      <div class="breadcrumbs">
+        <p id="add-first-season_breadcrumbs_team">Team &gt; </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Add your first season</p>
+        <input id="input_add-first-season" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="2016/2017" size="20" />
+        <button class="button new-item-button-disabled" id="button_add-first-season_add">+</button>
+      </div>
+    </div>
+
+    <div class="state add-first-squad">
+      <div class="breadcrumbs">
+        <p id="add-first-squad_breadcrumbs_team">Team &gt; </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Create your squad</p>
+        <input id="input_add-first-squad" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Player Name" size="20" />
+        <button class="button new-item-button-disabled" id="button_add-first-squad_add">+</button>
+        <div id="add-first-squad_list" class="scrollable player-list"></div>
+        <button class="button done-button-disabled" id="button_add-first-squad_done">Done</button>
+      </div>
+    </div>
+
+    <div class="state add-first-match">
+      <div class="breadcrumbs">
+        <p id="add-first-match_breadcrumbs_team">Team &gt; </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Add your first match</p>
+        <input id="input_add-first-match" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="what is this?" size="20" />
+        <button class="button new-item-button-disabled" id="button_add-first-match_add">+</button>
       </div>
     </div>
 
@@ -42,17 +77,6 @@
       </div>
     </div>
 
-    <div class="state add-first-season">
-      <div class="breadcrumbs">
-        <p id="add-first-season_breadcrumbs_team">Team &gt; </p>
-      </div>
-      <div class="centre-instruction">
-        <p>Add your first season</p>
-        <input id="input_add-first-season" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="2016/2017" size="20" />
-        <button class="button new-item-button-disabled" id="button_add-first-season">+</button>
-      </div>
-    </div>
-
     <div class="state pick-a-season">
       <div class="breadcrumbs">
         <p id="pick-a-season_breadcrumbs_team">Team &gt; </p>
@@ -63,14 +87,13 @@
       </div>
     </div>
 
-    <div class="state add-first-match">
+    <div class="state pick-a-player">
       <div class="breadcrumbs">
-        <p id="add-first-match_breadcrumbs_team">Team &gt; </p>
+        <p id="pick-a-player_breadcrumbs_team">Team &gt; </p>
       </div>
       <div class="centre-instruction">
-        <p>Add your first match</p>
-        <input id="input_add-first-match" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="what is this?" size="20" />
-        <button class="button new-item-button-disabled" id="button_add-first-match">+</button>
+        <p>Pick a player</p>
+        <div id="pick-a-player_list" class="scrollable player-list"></div>
       </div>
     </div>
 
@@ -83,6 +106,43 @@
         <div id="pick-a-match_list" class="scrollable match-list"></div>
       </div>
     </div>
+
+    <div class="state main-branch">
+      <div class="breadcrumbs">
+        <p id="main-branch_breadcrumbs_team">Team &gt; </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Pick your branch</p>
+      </div>
+    </div>
+
+    <div class="state season-stats">
+      <div class="breadcrumbs">
+        <p id="season-stats_breadcrumbs_team">Team &gt; </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Season stats</p>
+      </div>
+    </div>
+
+    <div class="state player-stats">
+      <div class="breadcrumbs">
+        <p id="player-stats_breadcrumbs_team">Team &gt; </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Player stats</p>
+      </div>
+    </div>
+
+    <div class="state match-stats">
+      <div class="breadcrumbs">
+        <p id="match-stats_breadcrumbs_team">Team &gt; </p>
+      </div>
+      <div class="centre-instruction">
+        <p>Match stats</p>
+      </div>
+    </div>
+
   </div>
 
   <script src="js/index.js"></script>

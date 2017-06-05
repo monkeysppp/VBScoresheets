@@ -102,6 +102,34 @@ div.breadcrumbs {
   outline: none;
 }
 
+.done-button-disabled {
+  border: none;
+  border-radius: 7px;
+  background-color: var(--main-button-grey);
+  color: var(--main-background-white);
+  cursor: default;
+  margin: 5px;
+  margin-left: 300px;
+}
+
+.done-button {
+  border: none;
+  border-radius: 7px;
+  background-color: var(--main-button-green);
+  color: var(--main-background-white);
+  margin-top: 5px;
+  margin-left: 300px;
+}
+
+.done-button:hover {
+  background-color: var(--main-button-hover-green);
+}
+
+.done-button:active {
+  background-color: var(--main-button-active-green);
+  outline: none;
+}
+
 .list-item {
   border-top: none;
   border-left: none;
@@ -129,6 +157,12 @@ div.team-list {
 
 div.season-list {
   height: 250px;
+  width: 515px;
+  margin: auto;
+}
+
+div.player-list {
+  height: 170px;
   width: 515px;
   margin: auto;
 }
