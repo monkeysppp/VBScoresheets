@@ -4,10 +4,9 @@
 const state = document.querySelector('.loading');
 
 /**
- * init - description
+ * init - attach the state manager
  *
  * @param  {object} stateManager the state-manager for this state to send instructions to
- * @return
  */
 function init(stateManager) {
   if (!stateManager) {
@@ -19,16 +18,12 @@ function init(stateManager) {
 
 /**
  * attach - attach the state code to the displayed ui and set up any event handlers
- *
- * @return
  */
 function attach() {
 }
 
 /**
  * detach - attach the state code from the displayed ui and clean up any event handlers
- *
- * @return
  */
 function detach() {
 }

@@ -3,6 +3,7 @@
 
 const addFirstTeam = require('./states/add-first-team.js');
 const addFirstSeason = require('./states/add-first-season.js');
+const addFirstSquad = require('./states/add-first-squad.js');
 const addFirstMatch = require('./states/add-first-match.js');
 const pickATeam = require('./states/pick-a-team.js');
 const pickASeason = require('./states/pick-a-season.js');
@@ -18,6 +19,7 @@ states[addFirstTeam.name] = addFirstTeam;
 states[pickATeam.name] = pickATeam;
 states[addFirstSeason.name] = addFirstSeason;
 states[pickASeason.name] = pickASeason;
+states[addFirstSquad.name] = addFirstSquad;
 states[addFirstMatch.name] = addFirstMatch;
 states[pickAMatch.name] = pickAMatch;
 states[loading.name] = loading;
@@ -27,11 +29,12 @@ states[loading.name] = loading;
  * init - Initialize all of the states in the state manager
  *
  * @param  {object} stateManager a bit like a this
- * @return
+ * @private
  */
 function init(stateManager) {
   addFirstTeam.init(stateManager);
   addFirstSeason.init(stateManager);
+  addFirstSquad.init(stateManager);
   addFirstMatch.init(stateManager);
   pickATeam.init(stateManager);
   pickASeason.init(stateManager);
@@ -48,7 +51,6 @@ function init(stateManager) {
  *
  * @param  {string} from name of the state to remove
  * @param  {string} to   name of the state to display
- * @return
  */
 function showState(from, to) {
   if (!to) {

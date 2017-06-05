@@ -127,6 +127,12 @@ div.team-list {
   margin: auto;
 }
 
+div.season-list {
+  height: 250px;
+  width: 515px;
+  margin: auto;
+}
+
 div.scrollable {
   overflow-y: scroll;
 }

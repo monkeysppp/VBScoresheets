@@ -2,7 +2,7 @@
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const expect = require('chai').expect;
+const expect = chai.expect;
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 chai.use(chaiAsPromised);
@@ -71,6 +71,7 @@ describe('app/js/pick-a-team', () => {
     it('sends a get-team-files event', () => {
       pickATeam.attach();
       expect(ipcRendererSendStub).to.be.calledOnce;
+      expect(ipcRendererSendStub).to.be.calledWith('get-team-files');
     });
   });
 

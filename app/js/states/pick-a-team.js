@@ -22,6 +22,7 @@ function teamFilesListener(event, teamFileData) {
     teamList.appendChild(span);
   });
 
+  // TODO - move the add out of the scrollable
   let i = document.createElement('input');
   i.id = 'input_pick-a-team';
   i.className = 'new-item-input';
@@ -54,7 +55,7 @@ function teamFilesListener(event, teamFileData) {
  * pickFile - sends a load-team-data event for the given filename.
  *
  * @param  {string} filename name of the file to load
- * @return
+ * @private
  */
 function pickFile(filename) {
   ipc.send('load-team-data', filename);
@@ -67,7 +68,7 @@ function pickFile(filename) {
  * @param  {object} event       IPC Event
  * @param  {string} filename    the filename that was loaded
  * @param  {object} teamDataObj the team data object that was loaded
- * @return
+ * @private
  */
 function teamDataListener(event, filename, teamDataObj) {
   if (teamDataObj.seasons && teamDataObj.seasons.length > 0) {
@@ -83,7 +84,7 @@ function teamDataListener(event, filename, teamDataObj) {
  *
  * @param  {object} event    IPC Event
  * @param  string} filename  the filename that was saved
- * @return
+ * @private
  */
 function teamDataSavedListener(event, filename) {
   module.exports.internal.pickFile(filename);
@@ -93,7 +94,6 @@ function teamDataSavedListener(event, filename) {
  * init - description
  *
  * @param  {object} stateManager the state-manager for this state to send instructions to
- * @return
  */
 function init(stateManager) {
   if (!stateManager) {
@@ -105,8 +105,6 @@ function init(stateManager) {
 
 /**
  * attach - attach the state code to the displayed ui and set up any event handlers
- *
- * @return
  */
 function attach() {
   debug('attaching pick-a-team');
@@ -118,8 +116,6 @@ function attach() {
 
 /**
  * detach - attach the state code from the displayed ui and clean up any event handlers
- *
- * @return
  */
 function detach() {
   debug('detaching pick-a-team');

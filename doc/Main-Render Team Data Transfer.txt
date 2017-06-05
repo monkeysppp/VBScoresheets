@@ -1,0 +1,58 @@
+title Main - Render : team data transfer
+
+Render->+Main: get-team-files()
+Main->+files: listTeamFiles()
+files-->-Main: teamFileData
+Main-->-Render: return-team-files(teamFileData)
+
+Render->+Main: save-team-data(filename, data)
+Main->+files: saveTeamFile(filename, data)
+files-->-Main: realFilename
+Main->+teamFilename: realFilename
+teamFilename-->-Main:
+Main->+teamData: data
+teamData-->-Main:
+Main-->-Render: team-data-saved(realFilename)
+
+Render->+Main: load-team-data(filename)
+Main->+files: loadTeamFile(filename)
+files-->-Main: data
+Main->+teamFilename: filename
+teamFilename-->-Main:
+Main->+teamData: data
+teamData-->-Main:
+Main->+teamSeason: undefined
+teamSeason-->-Main:
+Main->+teamMatch: undefined
+teamMatch-->-Main:
+Main->+teamPlayer: undefined
+teamPlayer-->-Main:
+Main-->-Render: return-team-data(filename, data)
+
+Render->+Main: store-team-season(season)
+Main->+teamSeason: season
+teamSeason-->-Main:
+Main-->-Render: team-season-stored
+
+Render->+Main: store-team-match(match)
+Main->+teamMatch: match
+teamMatch-->-Main:
+Main-->-Render: team-match-stored
+
+Render->+Main: store-team-player(player)
+Main->+teamPlayer: player
+teamPlayer-->-Main:
+Main-->-Render: team-player-stored
+
+Render->+Main: get-team-data()
+Main->+teamFilename:
+teamFilename-->-Main:
+Main->+teamData:
+teamData-->-Main:
+Main->+teamSeason:
+teamSeason-->-Main:
+Main->+teamMatch:
+teamMatch-->-Main:
+Main->+teamPlayer:
+teamPlayer-->-Main:
+Main-->-Render: return-team-data(teamFilename, teamData, teamSeason, teamMatch, teamPlayer)

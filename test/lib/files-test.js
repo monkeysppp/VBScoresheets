@@ -1,7 +1,7 @@
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const expect = require('chai').expect;
+const expect = chai.expect;
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 chai.use(chaiAsPromised);

@@ -2,7 +2,7 @@
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const expect = require('chai').expect;
+const expect = chai.expect;
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 chai.use(chaiAsPromised);
@@ -23,7 +23,7 @@ describe('app/js/add-first-team', () => {
   beforeEach(function () {
     this.timeout(10000);
     jsdomCleanup = jsdomGlobal();
-    document.body.innerHTML = '<div class="add-first-team"><input id="input_add-first-team"/><button class="button new-item-button-disabled" id="button_add-first-team">+</button></div>';
+    document.body.innerHTML = '<div class="add-first-team"><input id="input_add-first-team"/><button class="button new-item-button-disabled" id="button_add-first-team_add">+</button></div>';
     ipcRendererSendStub = sinon.stub();
     ipcRendererOnStub = sinon.stub();
     ipcRendererRemoveListenerStub = sinon.stub();
@@ -75,85 +75,87 @@ describe('app/js/add-first-team', () => {
 
     context('called with a state-manager', () => {
       let stateManagerStub;
-      let teamAddedButton;
-      let teamName;
 
       beforeEach(() => {
         stateManagerStub = {};
-        teamAddedButton = document.getElementById('button_add-first-team');
-        teamName = document.getElementById('input_add-first-team');
+        addFirstTeam.init(stateManagerStub);
       });
 
       it('saves the state manager', () => {
-        addFirstTeam.init(stateManagerStub);
         expect(addFirstTeam.internal.stateManager).to.equal(stateManagerStub);
       });
 
-      it('sets an onclick listener for the button', () => {
-        addFirstTeam.init(stateManagerStub);
-        expect(typeof teamAddedButton.onclick).to.equal('function');
+      it('finds the teamAdd button', () => {
+        expect(addFirstTeam.internal.teamAddButton).to.equal(document.getElementById('button_add-first-team_add'));
       });
 
-      context('the onclick listener', () => {
-        beforeEach(() => {
-          addFirstTeam.init(stateManagerStub);
-        });
-
-        context('when input is zero length', () => {
-          beforeEach(() => {
-            teamName.value = '';
-            teamAddedButton.onclick();
-          });
-
-          it('disables the button', () => {
-            expect(ipcRendererSendStub).to.not.be.called;
-          });
-        });
-
-        context('when input is longer than zero length', () => {
-          beforeEach(() => {
-            teamName.value = 'abc';
-            teamAddedButton.onclick();
-          });
-
-          it('enables the button', () => {
-            expect(ipcRendererSendStub).to.be.calledWith('save-team-data', undefined, {name:'abc'});
-          });
-        });
+      it('finds the teamName textbox', () => {
+        expect(addFirstTeam.internal.teamName).to.equal(document.getElementById('input_add-first-team'));
       });
 
-      it('sets an oninput listener for the input', () => {
-        addFirstTeam.init(stateManagerStub);
-        expect(typeof teamName.oninput).to.equal('function');
+      it('sets the teamAdd onclick listener for the button', () => {
+        expect(addFirstTeam.internal.teamAddButton.onclick).to.equal(addFirstTeam.internal.teamAddOnClick);
       });
 
-      context('the oninput listener', () => {
-        beforeEach(() => {
-          addFirstTeam.init(stateManagerStub);
-          teamAddedButton.className = 'null';
-        });
+      it('sets the oninput listener for the input', () => {
+        expect(addFirstTeam.internal.teamName.oninput).to.equal(addFirstTeam.internal.teamNameOnInput);
+      });
+    });
+  });
 
-        context('when input is zero length', () => {
-          beforeEach(() => {
-            teamName.value = '';
-            teamName.oninput();
-          });
+  describe('#teamAddOnClick', () => {
+    beforeEach(() => {
+      addFirstTeam.init({});
+    });
 
-          it('sets the button class to disabled', () => {
-            expect(teamAddedButton.className).to.equal('button new-item-button-disabled');
-          });
-        });
+    context('when input is zero length', () => {
+      beforeEach(() => {
+        addFirstTeam.internal.teamName.value = '';
+        addFirstTeam.internal.teamAddOnClick();
+      });
 
-        context('when input is longer than zero length', () => {
-          beforeEach(() => {
-            teamName.value = 'abc';
-            teamName.oninput();
-          });
+      it('disables the button', () => {
+        expect(ipcRendererSendStub).to.not.be.called;
+      });
+    });
 
-          it('sets the button class to enabled', () => {
-            expect(teamAddedButton.className).to.equal('button new-item-button');
-          });
-        });
+    context('when input is longer than zero length', () => {
+      beforeEach(() => {
+        addFirstTeam.internal.teamName.value = 'abc';
+        addFirstTeam.internal.teamAddOnClick();
+      });
+
+      it('enables the button', () => {
+        expect(ipcRendererSendStub).to.be.calledWith('save-team-data', undefined, {name:'abc'});
+      });
+    });
+  });
+
+  describe('#teamNameOnInput', () => {
+    beforeEach(() => {
+      addFirstTeam.init({});
+      addFirstTeam.internal.teamAddButton.className = 'null';
+    });
+
+    context('when input is zero length', () => {
+      beforeEach(() => {
+        addFirstTeam.internal.teamName.value = '';
+        addFirstTeam.internal.teamNameOnInput();
+      });
+
+      it('sets the button class to disabled', () => {
+        expect(addFirstTeam.internal.teamAddButton.className).to.equal('button new-item-button-disabled');
+      });
+    });
+
+    context('when input is longer than zero length', () => {
+      beforeEach(() => {
+        addFirstTeam.internal.teamName.value = 'abc';
+        addFirstTeam.internal.teamNameOnInput();
+      });
+
+      it('sets the button class to enabled', () => {
+        expect(addFirstTeam.internal.teamAddButton.className).to.equal('button new-item-button');
       });
     });
   });

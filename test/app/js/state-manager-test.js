@@ -2,7 +2,7 @@
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const expect = require('chai').expect;
+const expect = chai.expect;
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 chai.use(chaiAsPromised);
@@ -14,6 +14,7 @@ describe('app/js/state-manager', () => {
 
   let addFirstTeamInitStub;
   let addFirstSeasonInitStub;
+  let addFirstSquadInitStub;
   let addFirstMatchInitStub;
   let pickATeamInitStub;
   let pickASeasonInitStub;
@@ -25,6 +26,7 @@ describe('app/js/state-manager', () => {
   beforeEach(() => {
     addFirstTeamInitStub = sinon.stub();
     addFirstSeasonInitStub = sinon.stub();
+    addFirstSquadInitStub = sinon.stub();
     addFirstMatchInitStub = sinon.stub();
     pickATeamInitStub = sinon.stub();
     pickASeasonInitStub = sinon.stub();
@@ -35,6 +37,7 @@ describe('app/js/state-manager', () => {
       {
         './states/add-first-team.js': {init: addFirstTeamInitStub, name:'add-first-team'},
         './states/add-first-season.js': {init: addFirstSeasonInitStub, name:'add-first-season'},
+        './states/add-first-squad.js': {init: addFirstSquadInitStub, name:'add-first-squad'},
         './states/add-first-match.js': {init: addFirstMatchInitStub, name:'add-first-match'},
         './states/pick-a-team.js': {init: pickATeamInitStub, name:'pick-a-team'},
         './states/pick-a-season.js': {init: pickASeasonInitStub, name:'pick-a-season'},
@@ -67,6 +70,7 @@ describe('app/js/state-manager', () => {
 
       expect(addFirstTeamInitStub).to.be.calledOnce;
       expect(addFirstSeasonInitStub).to.be.calledOnce;
+      expect(addFirstSquadInitStub).to.be.calledOnce;
       expect(addFirstMatchInitStub).to.be.calledOnce;
       expect(pickATeamInitStub).to.be.calledOnce;
       expect(pickASeasonInitStub).to.be.calledOnce;
