@@ -9,6 +9,7 @@ const pickATeam = require('./states/pick-a-team.js');
 const pickASeason = require('./states/pick-a-season.js');
 const pickAMatch = require('./states/pick-a-match.js');
 const loading = require('./states/loading.js');
+const mainBranch = require('./states/main-branch.js');
 
 let self;
 
@@ -23,6 +24,7 @@ states[addFirstSquad.name] = addFirstSquad;
 states[addFirstMatch.name] = addFirstMatch;
 states[pickAMatch.name] = pickAMatch;
 states[loading.name] = loading;
+states[mainBranch.name] = mainBranch;
 
 
 /**
@@ -40,6 +42,7 @@ function init(stateManager) {
   pickASeason.init(stateManager);
   pickAMatch.init(stateManager);
   loading.init(stateManager);
+  mainBranch.init(stateManager);
 }
 
 /**

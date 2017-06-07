@@ -7,6 +7,8 @@
   --main-button-green: #55BB55;
   --main-button-hover-green: #55EE55;
   --main-button-active-green: #559955;
+
+  --main-font-size-big: 28px;
 }
 
 html,
@@ -145,7 +147,7 @@ div.breadcrumbs {
 
 .centre-instruction {
   text-align: center;
-  font-size: 38px;
+  font-size: var(--main-font-size-big);
   color: var(--main-text-black);
 }
 
