@@ -18,6 +18,7 @@ describe('app/js/state-manager', () => {
   let addFirstTeamInitStub;
   let loadingInitStub;
   let mainBranchStub;
+  let matchEditorStub;
   let matchStatsStub;
   let pickAMatchInitStub;
   let pickAPlayerInitStub;
@@ -35,6 +36,7 @@ describe('app/js/state-manager', () => {
     addFirstTeamInitStub = sinon.stub();
     loadingInitStub = sinon.stub();
     mainBranchStub = sinon.stub();
+    matchEditorStub = sinon.stub();
     matchStatsStub = sinon.stub();
     pickAMatchInitStub = sinon.stub();
     pickAPlayerInitStub = sinon.stub();
@@ -51,6 +53,7 @@ describe('app/js/state-manager', () => {
         './states/add-first-team.js': {init: addFirstTeamInitStub, name:'add-first-team'},
         './states/loading.js': {init: loadingInitStub, name:'loading'},
         './states/main-branch.js': {init: mainBranchStub, name:'main-branch'},
+        './states/match-editor.js': {init: matchEditorStub, name:'match-editor'},
         './states/match-stats.js': {init: matchStatsStub, name:'match-stats'},
         './states/pick-a-match.js': {init: pickAMatchInitStub, name:'pick-a-match'},
         './states/pick-a-player.js': {init: pickAPlayerInitStub, name:'pick-a-player'},
@@ -68,6 +71,7 @@ describe('app/js/state-manager', () => {
       'add-first-team',
       'loading',
       'main-branch',
+      'match-editor',
       'match-stats',
       'pick-a-match',
       'pick-a-player',
@@ -95,6 +99,7 @@ describe('app/js/state-manager', () => {
       expect(addFirstTeamInitStub).to.be.calledOnce;
       expect(loadingInitStub).to.be.calledOnce;
       expect(mainBranchStub).to.be.calledOnce;
+      expect(matchEditorStub).to.be.calledOnce;
       expect(matchStatsStub).to.be.calledOnce;
       expect(pickAMatchInitStub).to.be.calledOnce;
       expect(pickAPlayerInitStub).to.be.calledOnce;
