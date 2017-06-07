@@ -41,18 +41,18 @@ function init(stateManager) {
  */
 function playerAddOnClick() {
   if (module.exports.internal.playerName.value.length > 0) {
-    if (!module.exports.internal.dataObj.seasons[0].players) {
-      module.exports.internal.dataObj.seasons[0].players = [];
+    if (!module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].players) {
+      module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].players = [];
     }
 
     let player = {
-      id: module.exports.internal.dataObj.seasons[0].players.length + 1,
+      id: module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].players.length + 1,
       name: module.exports.internal.playerName.value
     };
-    module.exports.internal.dataObj.seasons[0].players.push(player);
+    module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].players.push(player);
 
     debug('adding player ' + JSON.stringify(player));
-    ipc.send('save-team-data', undefined, module.exports.internal.dataObj);
+    ipc.send('save-team-data', module.exports.internal.filename, module.exports.internal.dataObj);
   }
 }
 
@@ -99,13 +99,16 @@ function teamSaveListener() {
  * @param  {object} event    IPC Event
  * @param  {string} filename the filename that was loaded
  * @param  {object} dataObj  the team data
+ * @param  {number} seasonId the currently selected season
  *
  * @private
  */
-function teamGetListener(event, filename, dataObj) {
+function teamGetListener(event, filename, dataObj, seasonId) {
   debug('team data loaded');
   module.exports.internal.dataObj = dataObj;
-  if (dataObj.seasons[0].players.length >= 6) {
+  module.exports.internal.filename = filename;
+  module.exports.internal.seasonId = seasonId;
+  if (dataObj.seasons[seasonId].players.length >= 6) {
     module.exports.internal.pageComplete = true;
     module.exports.internal.doneButton.className = 'button done-button';
   } else {
@@ -122,7 +125,7 @@ function teamGetListener(event, filename, dataObj) {
   module.exports.internal.playerList.parentNode.replaceChild(clonePlayerList, module.exports.internal.playerList);
   module.exports.internal.playerList = clonePlayerList;
 
-  dataObj.seasons[0].players.forEach((player) => {
+  dataObj.seasons[seasonId].players.forEach((player) => {
     let span = document.createElement('span');
     span.innerHTML = player.name;
     span.className = 'list-item';
@@ -170,6 +173,8 @@ module.exports = {
     playerList: undefined,
     doneButton: undefined,
     pageComplete: undefined,
-    dataObj: undefined
+    filename: undefined,
+    dataObj: undefined,
+    seasonId: undefined
   }
 };

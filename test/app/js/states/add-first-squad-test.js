@@ -23,7 +23,7 @@ describe('app/js/add-first-squad', () => {
   beforeEach(function () {
     this.timeout(10000);
     jsdomCleanup = jsdomGlobal();
-    document.body.innerHTML = '<div class="state add-first-squad"><input id="input_add-first-squad"/><button class="button new-item-button-disabled" id="button_add-first-squad_add">+</button><div id="add-first-squad_list" class="scrollable player-list"></div><button class="button done-button-disabled" id="button_add-first-squad_done">+</button>';
+    document.body.innerHTML = '<div class="state add-first-squad"><input id="input_add-first-squad"/><button class="button new-item-button-disabled" id="button_add-first-squad_add">+</button><div id="add-first-squad_list" class="scrollable player-list"></div><button class="button done-button-disabled" id="button_add-first-squad_done">+</button></div>';
     ipcRendererSendStub = sinon.stub();
     ipcRendererOnStub = sinon.stub();
     ipcRendererRemoveListenerStub = sinon.stub();
@@ -139,11 +139,13 @@ describe('app/js/add-first-squad', () => {
     beforeEach(() => {
       startingDataObj = {
         name:'team1',
-        seasons:[{name:'abc'}]
+        seasons:[{name:'xyz'},{name:'abc'}]
       };
       expectedDataObj1 = {
         name:'team1',
         seasons:[{
+          name:'xyz'
+        },{
           name:'abc',
           players: [
             {'id': 1, 'name': 'Alice Alison'}
@@ -153,6 +155,8 @@ describe('app/js/add-first-squad', () => {
       expectedDataObj2 = {
         name:'team1',
         seasons:[{
+          name:'xyz'
+        },{
           name:'abc',
           players: [
             {'id': 1, 'name': 'Alice Alison'},
@@ -161,6 +165,8 @@ describe('app/js/add-first-squad', () => {
         }]
       };
       addFirstSquad.init({});
+      addFirstSquad.internal.filename = 'someFileName';
+      addFirstSquad.internal.seasonId = 1;
       addFirstSquad.internal.dataObj = startingDataObj;
     });
 
@@ -182,13 +188,13 @@ describe('app/js/add-first-squad', () => {
       });
 
       it('enables the button', () => {
-        expect(ipcRendererSendStub).to.be.calledWith('save-team-data', undefined, expectedDataObj1);
+        expect(ipcRendererSendStub).to.be.calledWith('save-team-data', 'someFileName', expectedDataObj1);
       });
 
       it('adds players to the list', () => {
         addFirstSquad.internal.playerName.value = 'Bob Roberts';
         addFirstSquad.internal.playerAddOnClick();
-        expect(ipcRendererSendStub).to.be.calledWith('save-team-data', undefined, expectedDataObj2);
+        expect(ipcRendererSendStub).to.be.calledWith('save-team-data', 'someFileName', expectedDataObj2);
       });
     });
   });
@@ -277,6 +283,27 @@ describe('app/js/add-first-squad', () => {
           players: [
             {id: 1, name: 'Alice Alison'},
           ]
+        },
+        {
+          name: 'season2',
+          players: [
+            {id: 1, name: 'Alice Alison'},
+            {id: 2, name: 'Bob Roberts'},
+            {id: 3, name: 'Charlie Charlson'},
+            {id: 4, name: 'Debbie Davis'},
+            {id: 5, name: 'Emma Emerton'},
+          ]
+        },
+        {
+          name: 'season3',
+          players: [
+            {id: 1, name: 'Alice Alison'},
+            {id: 2, name: 'Bob Roberts'},
+            {id: 3, name: 'Charlie Charlson'},
+            {id: 4, name: 'Debbie Davis'},
+            {id: 5, name: 'Emma Emerton'},
+            {id: 6, name: 'Freda Ferguson'},
+          ]
         }
       ]
     };
@@ -285,40 +312,36 @@ describe('app/js/add-first-squad', () => {
     beforeEach(() => {
       stateManagerStub = {};
       addFirstSquad.internal.dataObj = {};
+      addFirstSquad.internal.filename = 'foo';
+      addFirstSquad.internal.seasonId = 0;
       addFirstSquad.init(stateManagerStub);
     });
 
     it('locally stores the team data', () => {
-      addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj);
+      addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 0);
       expect(addFirstSquad.internal.dataObj).to.deep.equal(dataObj);
+    });
+
+    it('locally stores the filename', () => {
+      addFirstSquad.internal.teamGetListener(undefined, 'someFileName', dataObj, 0);
+      expect(addFirstSquad.internal.filename).to.equal('someFileName');
+    });
+
+    it('locally stores the seasonId', () => {
+      addFirstSquad.internal.teamGetListener(undefined, 'someFileName', dataObj, 2);
+      expect(addFirstSquad.internal.seasonId).to.equal(2);
     });
 
     it('clears the curent playerName input and add button', () => {
       addFirstSquad.internal.playerName.value = 'sometext';
-      addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj);
+      addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 0);
       expect(addFirstSquad.internal.playerName.value).to.equal('');
       expect(addFirstSquad.internal.playerAddButton.className).to.equal('button new-item-button-disabled');
     });
 
     context('when 5 players exist', () => {
-      let fivePlayers = {
-        name: 'team1',
-        seasons: [
-          {
-            name: 'season1',
-            players: [
-              {id: 1, name: 'Alice Alison'},
-              {id: 2, name: 'Bob Roberts'},
-              {id: 3, name: 'Charlie Charlson'},
-              {id: 4, name: 'Debbie Davis'},
-              {id: 5, name: 'Emma Emerton'},
-            ]
-          }
-        ]
-      };
-
       beforeEach(() => {
-        addFirstSquad.internal.teamGetListener(undefined, undefined, fivePlayers);
+        addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 1);
       });
 
       it('adds the players to the list', () => {
@@ -332,25 +355,8 @@ describe('app/js/add-first-squad', () => {
     });
 
     context('when 6 players exist', () => {
-      let sixPlayers = {
-        name: 'team1',
-        seasons: [
-          {
-            name: 'season1',
-            players: [
-              {id: 1, name: 'Alice Alison'},
-              {id: 2, name: 'Bob Roberts'},
-              {id: 3, name: 'Charlie Charlson'},
-              {id: 4, name: 'Debbie Davis'},
-              {id: 5, name: 'Emma Emerton'},
-              {id: 6, name: 'Freda Ferguson'},
-            ]
-          }
-        ]
-      };
-
       beforeEach(() => {
-        addFirstSquad.internal.teamGetListener(undefined, undefined, sixPlayers);
+        addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 2);
       });
 
       it('enables the done button', () => {
