@@ -20,6 +20,7 @@ describe('app/js/state-manager', () => {
   let pickASeasonInitStub;
   let pickAMatchInitStub;
   let loadingInitStub;
+  let mainBranchStub;
 
   let expectedStates;
 
@@ -32,6 +33,7 @@ describe('app/js/state-manager', () => {
     pickASeasonInitStub = sinon.stub();
     pickAMatchInitStub = sinon.stub();
     loadingInitStub = sinon.stub();
+    mainBranchStub = sinon.stub();
 
     stateManager = proxyquire('../../../app/js/state-manager.js',
       {
@@ -42,7 +44,8 @@ describe('app/js/state-manager', () => {
         './states/pick-a-team.js': {init: pickATeamInitStub, name:'pick-a-team'},
         './states/pick-a-season.js': {init: pickASeasonInitStub, name:'pick-a-season'},
         './states/pick-a-match.js': {init: pickAMatchInitStub, name:'pick-a-match'},
-        './states/loading.js': {init: loadingInitStub, name:'loading'}
+        './states/loading.js': {init: loadingInitStub, name:'loading'},
+        './states/main-branch.js': {init: mainBranchStub, name:'main-branch'}
       }
     );
 
@@ -53,7 +56,8 @@ describe('app/js/state-manager', () => {
       'pick-a-season',
       'add-first-match',
       'pick-a-match',
-      'loading'
+      'loading',
+      'main-branch'
     ];
   });
 
@@ -76,6 +80,7 @@ describe('app/js/state-manager', () => {
       expect(pickASeasonInitStub).to.be.calledOnce;
       expect(pickAMatchInitStub).to.be.calledOnce;
       expect(loadingInitStub).to.be.calledOnce;
+      expect(mainBranchStub).to.be.calledOnce;
     });
   });
 
