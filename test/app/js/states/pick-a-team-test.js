@@ -23,7 +23,7 @@ describe('app/js/pick-a-team', () => {
   beforeEach(function () {
     this.timeout(10000);
     jsdomCleanup = jsdomGlobal();
-    document.body.innerHTML = '<div class="state pick-a-team"><div id="pick-a-team_list" class="scrollable team-list"></div><input id="input_pick-a-team" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Team Name" size="20" /><button class="button new-item-button-disabled" id="button_pick-a-team_add">+</button></div></div>';
+    document.body.innerHTML = '<div class="state pick-a-team"><div id="pick-a-team_list" class="scrollable team-list"></div><input id="input_pick-a-team" /><button class="button new-item-button-disabled" id="button_pick-a-team_add">+</button></div>';
 
     ipcRendererSendStub = sinon.stub();
     ipcRendererOnStub = sinon.stub();
@@ -250,7 +250,6 @@ describe('app/js/pick-a-team', () => {
         expect(listItems[2].innerHTML).to.equal('team3');
       });
     });
-
   });
 
   describe('#teamDataSavedListener', () => {

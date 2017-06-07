@@ -8,72 +8,7 @@ const state = document.querySelector('.pick-a-season');
 const debug = require('../debug.js');
 
 /**
- * teamDataListener - Handle when a specific team's data is loaded.  This effectively sets the view of
- * this page.
- *
- * @param  {object} event       IPC Event
- * @param  {string} filename    the filename that was loaded
- * @param  {object} teamDataObj the team data object that was loaded
- *
- * @private
- */
-function teamDataListener(event, filename, teamDataObj) {
-  let seasonList = document.getElementById('pick-a-season_list');
-  // clean up any pre-existing content
-  let cloneSeasonList = seasonList.cloneNode(false);
-  seasonList.parentNode.replaceChild(cloneSeasonList, seasonList);
-  seasonList = cloneSeasonList;
-
-  teamDataObj.seasons.forEach((elem) => {
-    let span = document.createElement('span');
-    span.innerHTML = elem.name;
-    span.className = 'list-item';
-    span.onclick = () => {/* do something! */};
-    seasonList.appendChild(span);
-  });
-
-  let i = document.createElement('input');
-  i.id = 'input_pick-a-season';
-  i.className = 'new-item-input';
-  i.type = 'text';
-  i.maxLength = 50;
-  i.minlength = 1;
-  i.placeholder = '2016/2017';
-  i.size = 20;
-
-  let b = document.createElement('button');
-  b.className  = 'button new-item-button-disabled';
-  b.id = 'button_pick-a-season';
-  b.innerHTML = '+';
-  b.onclick = () => {
-    if (i.value.length > 0) {
-      ipc.send('save-team-data', undefined, {name:i.value});
-    }
-  };
-
-  i.oninput = () => {
-    b.className = (i.value.length === 0) ? 'button new-item-button-disabled' : 'button new-item-button';
-  };
-
-  seasonList.appendChild(i);
-  seasonList.appendChild(b);
-}
-
-/**
- * teamDataSavedListener - Listener for when a new season is saved, and we should
- * load that season as if it had been selected.
- *
- * @param  {object} event    IPC Event
- * @param  {string} filename  the filename that was saved
- *
- * @private
- */
-function teamDataSavedListener() {
-
-}
-
-/**
- * init - description
+ * init - Initialize the page handler, ataching the state manager and discovering any interactive elements
  *
  * @param  {object} stateManager the state-manager for this state to send instructions to
  */
@@ -83,6 +18,106 @@ function init(stateManager) {
   }
 
   module.exports.internal.stateManager = stateManager;
+
+  module.exports.internal.seasonAddButton = document.getElementById('button_pick-a-season_add');
+  module.exports.internal.seasonName = document.getElementById('input_pick-a-season');
+  module.exports.internal.seasonList = document.getElementById('pick-a-season_list');
+
+  module.exports.internal.seasonAddButton.onclick = module.exports.internal.seasonAddOnClick;
+  module.exports.internal.seasonName.oninput = module.exports.internal.seasonNameOnInput;
+}
+
+/**
+ * returnTeamDataListener - Handle when a specific team's data is loaded.  This effectively sets the view of
+ * this page.
+ *
+ * @param  {object} event       IPC Event
+ * @param  {string} filename    the filename that was loaded
+ * @param  {object} dataObj     the team data object that was loaded
+ *
+ * @private
+ */
+function returnTeamDataListener(event, filename, dataObj) {
+  debug('team data loaded');
+  module.exports.internal.dataObj = dataObj;
+  module.exports.internal.filename = filename;
+
+  // Clean up the input text box
+  module.exports.internal.seasonName.value = '';
+  seasonNameOnInput();
+
+  // clean up any pre-existing content
+  let cloneSeasonList = module.exports.internal.seasonList.cloneNode(false);
+  module.exports.internal.seasonList.parentNode.replaceChild(cloneSeasonList, module.exports.internal.seasonList);
+  module.exports.internal.seasonList = cloneSeasonList;
+
+  dataObj.seasons.forEach((elem, index) => {
+    let span = document.createElement('span');
+    span.innerHTML = elem.name;
+    span.className = 'list-item';
+    span.onclick = () => {ipc.send('store-team-season', index);};
+    module.exports.internal.seasonList.appendChild(span);
+  });
+}
+
+/**
+ * teamDataSavedListener - Listener for when a new season is saved and stores
+ * a season selector for that season.
+ *
+ * @private
+ */
+function teamDataSavedListener() {
+  ipc.send('store-team-season', module.exports.internal.dataObj.seasons.length - 1);
+}
+
+/**
+ * teamSeasonStoredListener - Reacts to the season selector being stored, then chooses the next
+ * page to load:
+ *  - if the season has fewer than 6 players then show add-first-squad else...
+ *  - if the season has no matches then show add-first-match else...
+ *  - show main-branch
+ *
+ * @param  {object} event       IPC Event
+ * @param  {number} seasonId    the seasson id that was stored
+ *
+ * @private
+ */
+function teamSeasonStoredListener(event, seasonId) {
+  if (!module.exports.internal.dataObj.seasons[seasonId].players || module.exports.internal.dataObj.seasons[seasonId].players.length < 6) {
+    module.exports.internal.stateManager.showState('pick-a-season', 'add-first-squad');
+  } else if (!module.exports.internal.dataObj.seasons[seasonId].matches) {
+    module.exports.internal.stateManager.showState('pick-a-season', 'add-first-match');
+  } else {
+    module.exports.internal.stateManager.showState('pick-a-season', 'main-branch');
+  }
+}
+
+
+/**
+ * seasonAddOnClick - A click handler for when the "add season" button is clicked.  This only
+ * acts if the season name text value contains more than 0 characters
+ *
+ * @private
+ */
+function seasonAddOnClick() {
+  if (module.exports.internal.seasonName.value.length > 0) {
+    module.exports.internal.dataObj.seasons.push({name:module.exports.internal.seasonName.value});
+    ipc.send('save-team-data', module.exports.internal.filename, module.exports.internal.dataObj);
+  }
+}
+
+/**
+ * seasonNameOnInput - An on-input handler for the season name text field.  This greys out the
+ * "add" button when there is no text in the season name.
+ *
+ * @private
+ */
+function seasonNameOnInput() {
+  if (module.exports.internal.seasonName.value.length === 0) {
+    module.exports.internal.seasonAddButton.className = 'button new-item-button-disabled';
+  } else {
+    module.exports.internal.seasonAddButton.className = 'button new-item-button';
+  }
 }
 
 /**
@@ -90,8 +125,9 @@ function init(stateManager) {
  */
 function attach() {
   debug('attaching pick-a-season');
-  ipc.on('return-team-data', teamDataListener);
-  ipc.on('team-data-saved', teamDataSavedListener);
+  ipc.on('return-team-data', module.exports.internal.returnTeamDataListener);
+  ipc.on('team-data-saved', module.exports.internal.teamDataSavedListener);
+  ipc.on('team-season-stored', module.exports.internal.teamSeasonStoredListener);
   ipc.send('get-team-data');
 }
 
@@ -100,8 +136,9 @@ function attach() {
  */
 function detach() {
   debug('detaching pick-a-season');
-  ipc.removeListener('return-team-data', teamDataListener);
-  ipc.removeListener('team-data-saved', teamDataSavedListener);
+  ipc.removeListener('return-team-data', module.exports.internal.returnTeamDataListener);
+  ipc.removeListener('team-data-saved', module.exports.internal.teamDataSavedListener);
+  ipc.removeListener('team-season-stored', module.exports.internal.teamSeasonStoredListener);
 }
 
 module.exports = {
@@ -111,7 +148,16 @@ module.exports = {
   attach: attach,
   detach: detach,
   internal: {
-    teamDataListener: teamDataListener,
-    stateManager: undefined
+    returnTeamDataListener: returnTeamDataListener,
+    teamDataSavedListener: teamDataSavedListener,
+    teamSeasonStoredListener: teamSeasonStoredListener,
+    seasonAddOnClick: seasonAddOnClick,
+    seasonNameOnInput: seasonNameOnInput,
+    stateManager: undefined,
+    seasonAddButton: undefined,
+    seasonName: undefined,
+    seasonList: undefined,
+    filename: undefined,
+    dataObj: undefined
   }
 };

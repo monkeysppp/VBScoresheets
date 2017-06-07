@@ -23,7 +23,8 @@ describe('app/js/pick-a-season', () => {
   beforeEach(function () {
     this.timeout(10000);
     jsdomCleanup = jsdomGlobal();
-    document.body.innerHTML = '<div id="pick-a-season_list" class="scrollable season-list"></div>';
+    document.body.innerHTML = '<div class="state pick-a-season"><div id="pick-a-season_list" class="scrollable season-list"></div><input id="input_pick-a-season" /><button class="button new-item-button-disabled" id="button_pick-a-season_add">+</button></div>';
+
     ipcRendererSendStub = sinon.stub();
     ipcRendererOnStub = sinon.stub();
     ipcRendererRemoveListenerStub = sinon.stub();
@@ -53,11 +54,6 @@ describe('app/js/pick-a-season', () => {
   });
 
   describe('#attach', () => {
-    // it('registers for return-team-files', () => {
-    //   pickASeason.attach();
-    //   expect(ipcRendererOnStub).to.be.calledWith('return-team-files', pickASeason.internal.teamFilesListener);
-    // });
-
     it('registers for team-data-saved', () => {
       pickASeason.attach();
       expect(ipcRendererOnStub).to.be.calledWith('team-data-saved', pickASeason.internal.teamDataSavedListener);
@@ -65,7 +61,12 @@ describe('app/js/pick-a-season', () => {
 
     it('registers for return-team-data', () => {
       pickASeason.attach();
-      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', pickASeason.internal.teamDataListener);
+      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', pickASeason.internal.returnTeamDataListener);
+    });
+
+    it('registers for team-season-stored', () => {
+      pickASeason.attach();
+      expect(ipcRendererOnStub).to.be.calledWith('team-season-stored', pickASeason.internal.teamSeasonStoredListener);
     });
 
     it('sends a get-team-data event', () => {
@@ -76,19 +77,19 @@ describe('app/js/pick-a-season', () => {
   });
 
   describe('#detach', () => {
-    // it('deregisters for return-team-files', () => {
-    //   pickASeason.detach();
-    //   expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-files', pickASeason.internal.teamFilesListener);
-    // });
-    //
-    // it('deregisters for team-data-saved', () => {
-    //   pickASeason.detach();
-    //   expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', pickASeason.internal.teamDataSavedListener);
-    // });
+    it('deregisters for team-data-saved', () => {
+      pickASeason.detach();
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', pickASeason.internal.teamDataSavedListener);
+    });
 
     it('deregisters for return-team-data', () => {
       pickASeason.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', pickASeason.internal.teamDataListener);
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', pickASeason.internal.returnTeamDataListener);
+    });
+
+    it('deregisters for team-season-stored', () => {
+      pickASeason.detach();
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-season-stored', pickASeason.internal.teamSeasonStoredListener);
     });
   });
 
@@ -104,221 +105,282 @@ describe('app/js/pick-a-season', () => {
 
       beforeEach(() => {
         stateManagerStub = {};
+        pickASeason.init(stateManagerStub);
       });
 
       it('saves the state manager', () => {
-        pickASeason.init(stateManagerStub);
         expect(pickASeason.internal.stateManager).to.equal(stateManagerStub);
+      });
+
+      it('finds the seasonAdd button', () => {
+        expect(pickASeason.internal.seasonAddButton).to.equal(document.getElementById('button_pick-a-season_add'));
+      });
+
+      it('finds the seasonName textbox', () => {
+        expect(pickASeason.internal.seasonName).to.equal(document.getElementById('input_pick-a-season'));
+      });
+
+      it('finds the seasonList div', () => {
+        expect(pickASeason.internal.seasonList).to.equal(document.getElementById('pick-a-season_list'));
+      });
+
+      it('sets the seasonAdd onclick listener for the button', () => {
+        expect(pickASeason.internal.seasonAddButton.onclick).to.equal(pickASeason.internal.seasonAddOnClick);
+      });
+
+      it('sets the oninput listener for the input', () => {
+        expect(pickASeason.internal.seasonName.oninput).to.equal(pickASeason.internal.seasonNameOnInput);
       });
     });
   });
 
-  // describe('#teamFilesListener', () => {
-  //   let teamFileData = [
-  //     {filename: 'file1',teamname: 'team1'},
-  //     {filename: 'file2',teamname: 'team2'},
-  //     {filename: 'file3',teamname: 'team3'}
-  //   ];
-  //
-  //   it('creates a list of the teams', () => {
-  //     pickASeason.internal.teamFilesListener(undefined, teamFileData);
-  //
-  //     let listItems = document.getElementById('pick-a-team_list').getElementsByClassName('list-item');
-  //     expect(listItems.length).to.equal(3);
-  //   });
-  //
-  //   context('the list items', () => {
-  //     let pickFileStub;
-  //
-  //     beforeEach(() => {
-  //       pickFileStub = sinon.stub(pickASeason.internal, 'pickFile');
-  //     });
-  //
-  //     afterEach(() => {
-  //       pickFileStub.restore();
-  //     });
-  //
-  //     it('have an onclick that picks the related file', () => {
-  //       pickASeason.internal.teamFilesListener(undefined, teamFileData);
-  //
-  //       let listItems = document.getElementById('pick-a-team_list').getElementsByClassName('list-item');
-  //
-  //       expect(listItems[0].innerHTML).to.equal('team1');
-  //       expect(typeof listItems[0].onclick).to.equal('function');
-  //       listItems[0].onclick();
-  //       expect(pickFileStub).to.be.calledWith('file1', 'team1');
-  //
-  //       expect(listItems[1].innerHTML).to.equal('team2');
-  //       expect(typeof listItems[1].onclick).to.equal('function');
-  //       listItems[1].onclick();
-  //       expect(pickFileStub).to.be.calledWith('file2', 'team2');
-  //
-  //       expect(listItems[2].innerHTML).to.equal('team3');
-  //       expect(typeof listItems[2].onclick).to.equal('function');
-  //       listItems[2].onclick();
-  //       expect(pickFileStub).to.be.calledWith('file3', 'team3');
-  //     });
-  //   });
-  //
-  //   it('adds a button for a new team with onclick listener', () => {
-  //     pickASeason.internal.teamFilesListener(undefined, teamFileData);
-  //
-  //     let button = document.getElementById('button_pick-a-team');
-  //
-  //     expect(typeof button.onclick).to.equal('function');
-  //   });
-  //
-  //   context('the onclick listener', () => {
-  //     context('when input is zero length', () => {
-  //       let button;
-  //       let input;
-  //
-  //       beforeEach(() => {
-  //         pickASeason.internal.teamFilesListener(undefined, teamFileData);
-  //         button = document.getElementById('button_pick-a-team');
-  //         input = document.getElementById('input_pick-a-team');
-  //         input.value = '';
-  //         button.onclick();
-  //       });
-  //
-  //       it('disables the button', () => {
-  //         expect(ipcRendererSendStub).to.not.be.called;
-  //       });
-  //     });
-  //
-  //     context('when input is longer than zero length', () => {
-  //       let button;
-  //       let input;
-  //
-  //       beforeEach(() => {
-  //         pickASeason.internal.teamFilesListener(undefined, teamFileData);
-  //         button = document.getElementById('button_pick-a-team');
-  //         input = document.getElementById('input_pick-a-team');
-  //         input.value = 'abc';
-  //         button.onclick();
-  //       });
-  //
-  //       it('enables the button', () => {
-  //         expect(ipcRendererSendStub).to.be.calledWith('save-team-data', undefined, {name:'abc'});
-  //       });
-  //     });
-  //   });
-  //
-  //   it('adds an input for a new team with oninput listener', () => {
-  //     pickASeason.internal.teamFilesListener(undefined, teamFileData);
-  //
-  //     let input = document.getElementById('input_pick-a-team');
-  //
-  //     expect(typeof input.oninput).to.equal('function');
-  //   });
-  //
-  //   context('the oninput listener', () => {
-  //     context('when input is zero length', () => {
-  //       let button;
-  //       let input;
-  //
-  //       beforeEach(() => {
-  //         pickASeason.internal.teamFilesListener(undefined, teamFileData);
-  //         button = document.getElementById('button_pick-a-team');
-  //         input = document.getElementById('input_pick-a-team');
-  //         input.value = '';
-  //         input.oninput();
-  //       });
-  //
-  //       it('sets the button class to disabled', () => {
-  //         expect(button.className).to.equal('button new-item-button-disabled');
-  //       });
-  //     });
-  //
-  //     context('when input is longer than zero length', () => {
-  //       let button;
-  //       let input;
-  //
-  //       beforeEach(() => {
-  //         pickASeason.internal.teamFilesListener(undefined, teamFileData);
-  //         button = document.getElementById('button_pick-a-team');
-  //         input = document.getElementById('input_pick-a-team');
-  //         input.value = 'abc';
-  //         input.oninput();
-  //       });
-  //
-  //       it('sets the button class to enabled', () => {
-  //         expect(button.className).to.equal('button new-item-button');
-  //       });
-  //     });
-  //   });
-  //
-  //   it('cleans out previous DOM elements', () => {
-  //     pickASeason.internal.teamFilesListener(undefined, teamFileData);
-  //     pickASeason.internal.teamFilesListener(undefined, teamFileData);
-  //     pickASeason.internal.teamFilesListener(undefined, teamFileData);
-  //
-  //     let listItems = document.getElementById('pick-a-team_list').getElementsByClassName('list-item');
-  //     expect(listItems.length).to.equal(3);
-  //     expect(listItems[0].innerHTML).to.equal('team1');
-  //     expect(listItems[1].innerHTML).to.equal('team2');
-  //     expect(listItems[2].innerHTML).to.equal('team3');
-  //   });
-  // });
-  //
-  // describe('#teamDataSavedListener', () => {
-  //   let pickFileStub;
-  //
-  //   beforeEach(() => {
-  //     pickFileStub = sinon.stub(pickASeason.internal, 'pickFile');
-  //   });
-  //
-  //   afterEach(() => {
-  //     pickFileStub.restore();
-  //   });
-  //
-  //   it('calls pickFile', () => {
-  //     pickASeason.internal.teamDataSavedListener(undefined, 'aFileName');
-  //     expect(pickFileStub).to.be.calledWith('aFileName');
-  //   });
-  // });
-  //
-  // describe('#teamDataListener', () => {
-  //   let stateManagerStub;
-  //   let showStateStub;
-  //
-  //   beforeEach(() => {
-  //     showStateStub = sinon.stub();
-  //     stateManagerStub = {
-  //       showState: showStateStub
-  //     };
-  //     pickASeason.init(stateManagerStub);
-  //   });
-  //
-  //   context('when the team data does not have seasons', () => {
-  //     let teamDataObj = {
-  //       name: 'team1'
-  //     };
-  //
-  //     it('calls to change state from pick-a-team to add-first-season', () => {
-  //       pickASeason.internal.teamDataListener(undefined, 'file1', teamDataObj);
-  //       expect(showStateStub).to.be.calledWith('pick-a-team', 'add-first-season');
-  //     });
-  //   });
-  //
-  //   context('when the team data has seasons', () => {
-  //     let teamDataObj = {
-  //       name: 'team1',
-  //       seasons: ['one', 'two', 'three']
-  //     };
-  //
-  //     it('calls to change state from pick-a-team to pick-a-season', () => {
-  //       pickASeason.internal.teamDataListener(undefined, 'file1', teamDataObj);
-  //       expect(showStateStub).to.be.calledWith('pick-a-team', 'pick-a-season');
-  //     });
-  //
-  //   });
-  // });
+  describe('#seasonAddOnClick', () => {
+    let startingDataObj;
+    let expectedDataObj;
 
-  // describe('#pickFile', () => {
-  //   it('sends load-team-data for the requested filename', () => {
-  //     pickASeason.internal.pickFile('someFileName');
-  //     expect(ipcRendererSendStub).to.be.calledWith('load-team-data', 'someFileName');
-  //   });
-  // });
+    beforeEach(() => {
+      startingDataObj = {
+        name: 'team1',
+        seasons: [
+          {name: 'abc'}
+        ]
+      };
+      expectedDataObj = {
+        name: 'team1',
+        seasons: [
+          {name: 'abc'},
+          {name: 'xyz'}
+        ]
+      };
+      pickASeason.init({});
+      pickASeason.internal.dataObj = startingDataObj;
+      pickASeason.internal.filename = 'someFileName';
+    });
+
+    context('when input is zero length', () => {
+      beforeEach(() => {
+        pickASeason.internal.seasonName.value = '';
+        pickASeason.internal.seasonAddOnClick();
+      });
+
+      it('disables the button', () => {
+        expect(ipcRendererSendStub).to.not.be.called;
+      });
+    });
+
+    context('when input is longer than zero length', () => {
+      beforeEach(() => {
+        pickASeason.internal.seasonName.value = 'xyz';
+        pickASeason.internal.seasonAddOnClick();
+      });
+
+      it('adds the season to the team data', () => {
+        expect(ipcRendererSendStub).to.be.calledWith('save-team-data', 'someFileName', expectedDataObj);
+      });
+    });
+  });
+
+  describe('#seasonNameOnInput', () => {
+    beforeEach(() => {
+      pickASeason.init({});
+      pickASeason.internal.seasonAddButton.className = 'null';
+    });
+
+    context('when input is zero length', () => {
+      beforeEach(() => {
+        pickASeason.internal.seasonName.value = '';
+        pickASeason.internal.seasonNameOnInput();
+      });
+
+      it('sets the button class to disabled', () => {
+        expect(pickASeason.internal.seasonAddButton.className).to.equal('button new-item-button-disabled');
+      });
+    });
+
+    context('when input is longer than zero length', () => {
+      beforeEach(() => {
+        pickASeason.internal.seasonName.value = 'abc';
+        pickASeason.internal.seasonNameOnInput();
+      });
+
+      it('sets the button class to enabled', () => {
+        expect(pickASeason.internal.seasonAddButton.className).to.equal('button new-item-button');
+      });
+    });
+  });
+
+  describe('#returnTeamDataListener', () => {
+    let stateManagerStub;
+    let showStateStub;
+    let dataObj = {
+      name: 'team1',
+      seasons: [
+        {name: 'season1'},
+        {name: 'season2'},
+        {name: 'season3'}
+      ]
+    };
+
+    beforeEach(() => {
+      showStateStub = sinon.stub();
+      stateManagerStub = {
+        showState: showStateStub
+      };
+      pickASeason.init(stateManagerStub);
+      pickASeason.internal.dataObj = {};
+    });
+
+    it('locally stores the filename', () => {
+      pickASeason.internal.returnTeamDataListener(undefined, 'someFileName', dataObj);
+      expect(pickASeason.internal.filename).to.equal('someFileName');
+    });
+
+    it('locally stores the team data', () => {
+      pickASeason.internal.returnTeamDataListener(undefined, undefined, dataObj);
+      expect(pickASeason.internal.dataObj).to.deep.equal(dataObj);
+    });
+
+    it('clears the curent seasonName input and add button', () => {
+      pickASeason.internal.seasonName.value = 'sometext';
+      pickASeason.internal.returnTeamDataListener(undefined, undefined, dataObj);
+      expect(pickASeason.internal.seasonName.value).to.equal('');
+      expect(pickASeason.internal.seasonAddButton.className).to.equal('button new-item-button-disabled');
+    });
+
+    context('the list items', () => {
+      it('have an onclick that loads the team file', () => {
+        pickASeason.internal.returnTeamDataListener(undefined, undefined, dataObj);
+
+        let listItems = pickASeason.internal.seasonList.getElementsByClassName('list-item');
+
+        expect(listItems[0].innerHTML).to.equal('season1');
+        expect(typeof listItems[0].onclick).to.equal('function');
+        listItems[0].onclick();
+        expect(ipcRendererSendStub).to.be.calledWith('store-team-season', 0);
+
+        expect(listItems[1].innerHTML).to.equal('season2');
+        expect(typeof listItems[1].onclick).to.equal('function');
+        listItems[1].onclick();
+        expect(ipcRendererSendStub).to.be.calledWith('store-team-season', 1);
+
+        expect(listItems[2].innerHTML).to.equal('season3');
+        expect(typeof listItems[2].onclick).to.equal('function');
+        listItems[2].onclick();
+        expect(ipcRendererSendStub).to.be.calledWith('store-team-season', 2);
+      });
+
+      it('get cleaned out on each load call', () => {
+        pickASeason.internal.returnTeamDataListener(undefined, undefined, dataObj);
+        pickASeason.internal.returnTeamDataListener(undefined, undefined, dataObj);
+        pickASeason.internal.returnTeamDataListener(undefined, undefined, dataObj);
+
+        let listItems = pickASeason.internal.seasonList.getElementsByClassName('list-item');
+        expect(pickASeason.internal.seasonList.childNodes.length).to.equal(3);
+        expect(listItems[0].innerHTML).to.equal('season1');
+        expect(listItems[1].innerHTML).to.equal('season2');
+        expect(listItems[2].innerHTML).to.equal('season3');
+      });
+    });
+  });
+
+  describe('#teamDataSavedListener', () => {
+    beforeEach(() => {
+      pickASeason.internal.dataObj = {
+        name: 'team1',
+        seasons: [
+          {name: 'abc'},
+          {name: 'xyz'},
+          {name: '123/456'}
+        ]
+      };
+    });
+
+    it('calls to store the newly created season', () => {
+      pickASeason.internal.teamDataSavedListener();
+      expect(ipcRendererSendStub).to.be.calledWith('store-team-season', 2);
+    });
+  });
+
+  describe('#teamSeasonStoredListener', () => {
+    let stateManagerStub;
+    let showStateStub;
+
+    beforeEach(() => {
+      showStateStub = sinon.stub();
+      stateManagerStub = {
+        showState: showStateStub
+      };
+      pickASeason.init(stateManagerStub);
+      pickASeason.internal.dataObj = {
+        name: 'team1',
+        seasons: [
+          {
+            name: 'abc'
+          },
+          {
+            name: 'def',
+            players: [
+              {'id': 1, 'name': 'Alice Alison'},
+              {'id': 2, 'name': 'Bob Roberts'}
+            ]
+          },
+          {
+            name: 'ghi',
+            players: [
+              {'id': 1, 'name': 'Alice Alison'},
+              {'id': 2, 'name': 'Bob Roberts'},
+              {'id': 3, 'name': 'Charlie Charlson'},
+              {'id': 4, 'name': 'Debbie Davis'},
+              {'id': 5, 'name': 'Emma Emerton'},
+              {'id': 6, 'name': 'Freda Ferguson'}
+            ]
+          },
+          {
+            name: 'jkl',
+            players: [
+              {'id': 1, 'name': 'Alice Alison'},
+              {'id': 2, 'name': 'Bob Roberts'},
+              {'id': 3, 'name': 'Charlie Charlson'},
+              {'id': 4, 'name': 'Debbie Davis'},
+              {'id': 5, 'name': 'Emma Emerton'},
+              {'id': 6, 'name': 'Freda Ferguson'}
+            ],
+            matches: [
+              {venue:'some sports hall'}
+            ]
+          },
+        ]
+      };
+    });
+
+    context('when the selected season has no players', () => {
+      it('shows add-first-squad', () => {
+        pickASeason.internal.teamSeasonStoredListener(undefined, 0);
+        expect(showStateStub).to.be.calledWith('pick-a-season', 'add-first-squad');
+      });
+    });
+
+    context('when the selected season has less than 6 players', () => {
+      it('shows add-first-squad', () => {
+        pickASeason.internal.teamSeasonStoredListener(undefined, 1);
+        expect(showStateStub).to.be.calledWith('pick-a-season', 'add-first-squad');
+      });
+    });
+
+    context('when the selected season has 6 players', () => {
+      context('but no matches defined', () => {
+        it('shows add-first-match', () => {
+          pickASeason.internal.teamSeasonStoredListener(undefined, 2);
+          expect(showStateStub).to.be.calledWith('pick-a-season', 'add-first-match');
+        });
+      });
+
+      context('and matches defined', () => {
+        it('shows main-branch', () => {
+          pickASeason.internal.teamSeasonStoredListener(undefined, 3);
+          expect(showStateStub).to.be.calledWith('pick-a-season', 'main-branch');
+        });
+      });
+    });
+  });
 });

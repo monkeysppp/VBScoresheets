@@ -185,7 +185,7 @@ ipc.on('load-team-data', loadTeamDataListener);
 function storeTeamSeasonListener(event, season) {
   debug('on store-team-season called with ' + season);
   module.exports.internal.teamSeason = season;
-  event.sender.send('team-season-stored');
+  event.sender.send('team-season-stored', season);
 }
 ipc.on('store-team-season', storeTeamSeasonListener);
 
@@ -199,7 +199,7 @@ ipc.on('store-team-season', storeTeamSeasonListener);
 function storeTeamMatchListener(event, match) {
   debug('on store-team-match called with ' + match);
   module.exports.internal.teamMatch = match;
-  event.sender.send('team-match-stored');
+  event.sender.send('team-match-stored', match);
 }
 ipc.on('store-team-match', storeTeamMatchListener);
 
@@ -213,7 +213,7 @@ ipc.on('store-team-match', storeTeamMatchListener);
 function storeTeamPlayerListener(event, player) {
   debug('on store-team-player called with ' + player);
   module.exports.internal.teamPlayer = player;
-  event.sender.send('team-player-stored');
+  event.sender.send('team-player-stored', player);
 }
 ipc.on('store-team-player', storeTeamPlayerListener);
 

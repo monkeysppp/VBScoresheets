@@ -67,7 +67,7 @@ function teamDataSavedListener(event, filename) {
 
 /**
  * returnTeamDataListener - Handle when a specific team's data is loaded.  This is done in reaction
- * to selecting a team, which is done via pickFile()
+ * to selecting a team, or adding a new team.
  *
  * @param  {object} event       IPC Event
  * @param  {string} filename    the filename that was loaded

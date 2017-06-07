@@ -465,10 +465,10 @@ describe('main', function() {
         };
       });
 
-      it('stores the id of the selected season, then acknowledges', () => {
+      it('stores the id of the selected season, then acknowledges with the id', () => {
         main.internal.storeTeamSeasonListener(event, 2);
         expect(main.internal.teamSeason).to.equal(2);
-        expect(event.sender.send).to.be.calledWith('team-season-stored');
+        expect(event.sender.send).to.be.calledWith('team-season-stored', 2);
       });
     });
 
@@ -487,10 +487,10 @@ describe('main', function() {
         };
       });
 
-      it('stores the id of the selected match, then acknowledges', () => {
+      it('stores the id of the selected match, then acknowledges with the id', () => {
         main.internal.storeTeamMatchListener(event, 2);
         expect(main.internal.teamMatch).to.equal(2);
-        expect(event.sender.send).to.be.calledWith('team-match-stored');
+        expect(event.sender.send).to.be.calledWith('team-match-stored', 2);
       });
     });
 
@@ -509,10 +509,10 @@ describe('main', function() {
         };
       });
 
-      it('stores the id of the selected player, then acknowledges', () => {
+      it('stores the id of the selected player, then acknowledges with the id', () => {
         main.internal.storeTeamPlayerListener(event, 2);
         expect(main.internal.teamPlayer).to.equal(2);
-        expect(event.sender.send).to.be.calledWith('team-player-stored');
+        expect(event.sender.send).to.be.calledWith('team-player-stored', 2);
       });
     });
 
