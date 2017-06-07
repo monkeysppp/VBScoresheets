@@ -1,31 +1,38 @@
 
 'use strict';
 
-const addFirstTeam = require('./states/add-first-team.js');
+const addFirstMatch = require('./states/add-first-match.js');
 const addFirstSeason = require('./states/add-first-season.js');
 const addFirstSquad = require('./states/add-first-squad.js');
-const addFirstMatch = require('./states/add-first-match.js');
-const pickATeam = require('./states/pick-a-team.js');
-const pickASeason = require('./states/pick-a-season.js');
-const pickAMatch = require('./states/pick-a-match.js');
+const addFirstTeam = require('./states/add-first-team.js');
 const loading = require('./states/loading.js');
 const mainBranch = require('./states/main-branch.js');
+const matchStats = require('./states/match-stats.js');
+const pickAMatch = require('./states/pick-a-match.js');
+const pickAPlayer = require('./states/pick-a-player.js');
+const pickASeason = require('./states/pick-a-season.js');
+const pickATeam = require('./states/pick-a-team.js');
+const playerStats = require('./states/player-stats.js');
+const seasonStats = require('./states/season-stats.js');
 
 let self;
 
 const debug = require('./debug.js');
 
 let states = {};
-states[addFirstTeam.name] = addFirstTeam;
-states[pickATeam.name] = pickATeam;
-states[addFirstSeason.name] = addFirstSeason;
-states[pickASeason.name] = pickASeason;
-states[addFirstSquad.name] = addFirstSquad;
 states[addFirstMatch.name] = addFirstMatch;
-states[pickAMatch.name] = pickAMatch;
+states[addFirstSeason.name] = addFirstSeason;
+states[addFirstSquad.name] = addFirstSquad;
+states[addFirstTeam.name] = addFirstTeam;
 states[loading.name] = loading;
 states[mainBranch.name] = mainBranch;
-
+states[matchStats.name] = matchStats;
+states[pickAMatch.name] = pickAMatch;
+states[pickAPlayer.name] = pickAPlayer;
+states[pickASeason.name] = pickASeason;
+states[pickATeam.name] = pickATeam;
+states[playerStats.name] = playerStats;
+states[seasonStats.name] = seasonStats;
 
 /**
  * init - Initialize all of the states in the state manager
@@ -34,15 +41,19 @@ states[mainBranch.name] = mainBranch;
  * @private
  */
 function init(stateManager) {
-  addFirstTeam.init(stateManager);
+  addFirstMatch.init(stateManager);
   addFirstSeason.init(stateManager);
   addFirstSquad.init(stateManager);
-  addFirstMatch.init(stateManager);
-  pickATeam.init(stateManager);
-  pickASeason.init(stateManager);
-  pickAMatch.init(stateManager);
+  addFirstTeam.init(stateManager);
   loading.init(stateManager);
   mainBranch.init(stateManager);
+  matchStats.init(stateManager);
+  pickAMatch.init(stateManager);
+  pickAPlayer.init(stateManager);
+  pickASeason.init(stateManager);
+  pickATeam.init(stateManager);
+  playerStats.init(stateManager);
+  seasonStats.init(stateManager);
 }
 
 /**

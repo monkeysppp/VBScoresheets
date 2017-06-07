@@ -12,52 +12,69 @@ const proxyquire = require('proxyquire').noCallThru();
 describe('app/js/state-manager', () => {
   let stateManager;
 
-  let addFirstTeamInitStub;
+  let addFirstMatchInitStub;
   let addFirstSeasonInitStub;
   let addFirstSquadInitStub;
-  let addFirstMatchInitStub;
-  let pickATeamInitStub;
-  let pickASeasonInitStub;
-  let pickAMatchInitStub;
+  let addFirstTeamInitStub;
   let loadingInitStub;
   let mainBranchStub;
+  let matchStatsStub;
+  let pickAMatchInitStub;
+  let pickAPlayerInitStub;
+  let pickASeasonInitStub;
+  let pickATeamInitStub;
+  let playerStatsStub;
+  let seasonStatsStub;
 
   let expectedStates;
 
   beforeEach(() => {
-    addFirstTeamInitStub = sinon.stub();
+    addFirstMatchInitStub = sinon.stub();
     addFirstSeasonInitStub = sinon.stub();
     addFirstSquadInitStub = sinon.stub();
-    addFirstMatchInitStub = sinon.stub();
-    pickATeamInitStub = sinon.stub();
-    pickASeasonInitStub = sinon.stub();
-    pickAMatchInitStub = sinon.stub();
+    addFirstTeamInitStub = sinon.stub();
     loadingInitStub = sinon.stub();
     mainBranchStub = sinon.stub();
+    matchStatsStub = sinon.stub();
+    pickAMatchInitStub = sinon.stub();
+    pickAPlayerInitStub = sinon.stub();
+    pickASeasonInitStub = sinon.stub();
+    pickATeamInitStub = sinon.stub();
+    playerStatsStub = sinon.stub();
+    seasonStatsStub = sinon.stub();
 
     stateManager = proxyquire('../../../app/js/state-manager.js',
       {
-        './states/add-first-team.js': {init: addFirstTeamInitStub, name:'add-first-team'},
+        './states/add-first-match.js': {init: addFirstMatchInitStub, name:'add-first-match'},
         './states/add-first-season.js': {init: addFirstSeasonInitStub, name:'add-first-season'},
         './states/add-first-squad.js': {init: addFirstSquadInitStub, name:'add-first-squad'},
-        './states/add-first-match.js': {init: addFirstMatchInitStub, name:'add-first-match'},
-        './states/pick-a-team.js': {init: pickATeamInitStub, name:'pick-a-team'},
-        './states/pick-a-season.js': {init: pickASeasonInitStub, name:'pick-a-season'},
-        './states/pick-a-match.js': {init: pickAMatchInitStub, name:'pick-a-match'},
+        './states/add-first-team.js': {init: addFirstTeamInitStub, name:'add-first-team'},
         './states/loading.js': {init: loadingInitStub, name:'loading'},
-        './states/main-branch.js': {init: mainBranchStub, name:'main-branch'}
+        './states/main-branch.js': {init: mainBranchStub, name:'main-branch'},
+        './states/match-stats.js': {init: matchStatsStub, name:'match-stats'},
+        './states/pick-a-match.js': {init: pickAMatchInitStub, name:'pick-a-match'},
+        './states/pick-a-player.js': {init: pickAPlayerInitStub, name:'pick-a-player'},
+        './states/pick-a-season.js': {init: pickASeasonInitStub, name:'pick-a-season'},
+        './states/pick-a-team.js': {init: pickATeamInitStub, name:'pick-a-team'},
+        './states/player-stats.js': {init: playerStatsStub, name:'player-stats'},
+        './states/season-stats.js': {init: seasonStatsStub, name:'season-stats'}
       }
     );
 
     expectedStates = [
-      'add-first-team',
-      'pick-a-team',
-      'add-first-season',
-      'pick-a-season',
       'add-first-match',
-      'pick-a-match',
+      'add-first-season',
+      'add-first-squad',
+      'add-first-team',
       'loading',
-      'main-branch'
+      'main-branch',
+      'match-stats',
+      'pick-a-match',
+      'pick-a-player',
+      'pick-a-season',
+      'pick-a-team',
+      'player-stats',
+      'season-stats'
     ];
   });
 
@@ -72,15 +89,19 @@ describe('app/js/state-manager', () => {
     it('initializes all pages', () => {
       stateManager.internal.init();
 
-      expect(addFirstTeamInitStub).to.be.calledOnce;
+      expect(addFirstMatchInitStub).to.be.calledOnce;
       expect(addFirstSeasonInitStub).to.be.calledOnce;
       expect(addFirstSquadInitStub).to.be.calledOnce;
-      expect(addFirstMatchInitStub).to.be.calledOnce;
-      expect(pickATeamInitStub).to.be.calledOnce;
-      expect(pickASeasonInitStub).to.be.calledOnce;
-      expect(pickAMatchInitStub).to.be.calledOnce;
+      expect(addFirstTeamInitStub).to.be.calledOnce;
       expect(loadingInitStub).to.be.calledOnce;
       expect(mainBranchStub).to.be.calledOnce;
+      expect(matchStatsStub).to.be.calledOnce;
+      expect(pickAMatchInitStub).to.be.calledOnce;
+      expect(pickAPlayerInitStub).to.be.calledOnce;
+      expect(pickASeasonInitStub).to.be.calledOnce;
+      expect(pickATeamInitStub).to.be.calledOnce;
+      expect(playerStatsStub).to.be.calledOnce;
+      expect(seasonStatsStub).to.be.calledOnce;
     });
   });
 
