@@ -61,6 +61,10 @@ div.breadcrumbs {
   margin-right: : 20px;
 }
 
+div.link {
+  cursor: pointer;
+}
+
 #main {
     background: var(--main-background-white);
     height: 100%;
