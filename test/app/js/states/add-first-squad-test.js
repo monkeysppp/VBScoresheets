@@ -10,6 +10,8 @@ chai.use(sinonChai);
 
 const proxyquire = require('proxyquire').noCallThru();
 const jsdomGlobal = require('jsdom-global');
+const fs = require('fs');
+const path = require('path');
 
 describe('app/js/add-first-squad', () => {
   let jsdomCleanup;
@@ -20,10 +22,18 @@ describe('app/js/add-first-squad', () => {
   let ipcRendererOnStub;
   let ipcRendererRemoveListenerStub;
 
-  beforeEach(function () {
+  beforeEach(function (done) {
     this.timeout(10000);
     jsdomCleanup = jsdomGlobal();
-    document.body.innerHTML = '<div class="state add-first-squad"><input id="input_add-first-squad"/><button class="button new-item-button-disabled" id="button_add-first-squad_add">+</button><div id="add-first-squad_list" class="scrollable player-list"></div><button class="button done-button-disabled" id="button_add-first-squad_done">+</button></div>';
+
+    fs.readFile(path.join(__dirname, '..', '..', '..', '..', 'app', 'index.html'), {encodig: 'utf8'}, (err, index) => {
+      if (err) {
+        throw err;
+      }
+      document.body.innerHTML = index;
+      done();
+    });
+
     ipcRendererSendStub = sinon.stub();
     ipcRendererOnStub = sinon.stub();
     ipcRendererRemoveListenerStub = sinon.stub();
@@ -38,6 +48,16 @@ describe('app/js/add-first-squad', () => {
         }
       }
     );
+
+    addFirstSquad.internal.stateManager = undefined;
+    addFirstSquad.internal.playerAddButton = undefined;
+    addFirstSquad.internal.playerName = undefined;
+    addFirstSquad.internal.playerList = undefined;
+    addFirstSquad.internal.doneButton = undefined;
+    addFirstSquad.internal.pageComplete = undefined;
+    addFirstSquad.internal.filename = undefined;
+    addFirstSquad.internal.dataObj = undefined;
+    addFirstSquad.internal.seasonId = undefined;
   });
 
   afterEach(() => {

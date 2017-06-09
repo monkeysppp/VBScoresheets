@@ -4,17 +4,29 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const jsdomGlobal = require('jsdom-global');
+const fs = require('fs');
+const path = require('path');
 
 describe('app/js/add-first-team', () => {
   let jsdomCleanup;
 
   let loading;
 
-  beforeEach(function () {
+  beforeEach(function (done) {
     this.timeout(10000);
     jsdomCleanup = jsdomGlobal();
-    document.body.innerHTML = '<div class="loading"></div>';
+
+    fs.readFile(path.join(__dirname, '..', '..', '..', '..', 'app', 'index.html'), {encodig: 'utf8'}, (err, index) => {
+      if (err) {
+        throw err;
+      }
+      document.body.innerHTML = index;
+      done();
+    });
+
     loading = require('../../../../app/js/states/loading.js');
+
+    loading.internal.stateManager = undefined;
   });
 
   afterEach(() => {

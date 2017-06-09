@@ -22,6 +22,7 @@ function init(stateManager) {
   module.exports.internal.seasonAddButton = document.getElementById('button_pick-a-season_add');
   module.exports.internal.seasonName = document.getElementById('input_pick-a-season');
   module.exports.internal.seasonList = document.getElementById('pick-a-season_list');
+  module.exports.internal.breadcrumb = document.getElementById('pick-a-season_breadcrumbs_team');
 
   module.exports.internal.seasonAddButton.onclick = module.exports.internal.seasonAddOnClick;
   module.exports.internal.seasonName.oninput = module.exports.internal.seasonNameOnInput;
@@ -45,6 +46,9 @@ function returnTeamDataListener(event, filename, dataObj) {
   // Clean up the input text box
   module.exports.internal.seasonName.value = '';
   seasonNameOnInput();
+
+  // generate the breadcrumb
+  module.exports.internal.generateBreadcrumb();
 
   // clean up any pre-existing content
   let cloneSeasonList = module.exports.internal.seasonList.cloneNode(false);
@@ -121,6 +125,35 @@ function seasonNameOnInput() {
 }
 
 /**
+ * generateBreadcrumb - Generate the breadcrumb for this page:
+ *  Home > $TeamName
+ *
+ * Home links back to pick a team.
+ *
+ * @private
+ */
+function generateBreadcrumb() {
+  let cloneBreadcrumb = module.exports.internal.breadcrumb.cloneNode(false);
+  module.exports.internal.breadcrumb.parentNode.replaceChild(cloneBreadcrumb, module.exports.internal.breadcrumb);
+  module.exports.internal.breadcrumb = cloneBreadcrumb;
+
+  let spanHome = document.createElement('span');
+  spanHome.innerHTML = 'Home';
+  spanHome.className = 'link';
+  spanHome.onclick = () => {module.exports.internal.stateManager.showState('pick-a-season', 'pick-a-team');};
+  module.exports.internal.breadcrumb.appendChild(spanHome);
+
+  let spanSep1 = document.createElement('span');
+  spanSep1.innerHTML = '&nbsp;&gt;&nbsp;';
+  module.exports.internal.breadcrumb.appendChild(spanSep1);
+
+  let spanTeam = document.createElement('span');
+  spanTeam.innerHTML = module.exports.internal.dataObj.name;
+  module.exports.internal.breadcrumb.appendChild(spanTeam);
+
+}
+
+/**
  * attach - attach the state code to the displayed ui and set up any event handlers
  */
 function attach() {
@@ -153,10 +186,12 @@ module.exports = {
     teamSeasonStoredListener: teamSeasonStoredListener,
     seasonAddOnClick: seasonAddOnClick,
     seasonNameOnInput: seasonNameOnInput,
+    generateBreadcrumb: generateBreadcrumb,
     stateManager: undefined,
     seasonAddButton: undefined,
     seasonName: undefined,
     seasonList: undefined,
+    breadcrumb: undefined,
     filename: undefined,
     dataObj: undefined
   }

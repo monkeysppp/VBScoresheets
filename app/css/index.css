@@ -65,6 +65,10 @@ div.link {
   cursor: pointer;
 }
 
+span.link {
+  cursor: pointer;
+}
+
 #main {
     background: var(--main-background-white);
     height: 100%;

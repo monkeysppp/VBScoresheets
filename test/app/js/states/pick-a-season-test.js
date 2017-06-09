@@ -10,6 +10,8 @@ chai.use(sinonChai);
 
 const proxyquire = require('proxyquire').noCallThru();
 const jsdomGlobal = require('jsdom-global');
+const fs = require('fs');
+const path = require('path');
 
 describe('app/js/pick-a-season', () => {
   let jsdomCleanup;
@@ -20,10 +22,17 @@ describe('app/js/pick-a-season', () => {
   let ipcRendererOnStub;
   let ipcRendererRemoveListenerStub;
 
-  beforeEach(function () {
+  beforeEach(function (done) {
     this.timeout(10000);
     jsdomCleanup = jsdomGlobal();
-    document.body.innerHTML = '<div class="state pick-a-season"><div id="pick-a-season_list" class="scrollable season-list"></div><input id="input_pick-a-season" /><button class="button new-item-button-disabled" id="button_pick-a-season_add">+</button></div>';
+
+    fs.readFile(path.join(__dirname, '..', '..', '..', '..', 'app', 'index.html'), {encodig: 'utf8'}, (err, index) => {
+      if (err) {
+        throw err;
+      }
+      document.body.innerHTML = index;
+      done();
+    });
 
     ipcRendererSendStub = sinon.stub();
     ipcRendererOnStub = sinon.stub();
@@ -39,6 +48,14 @@ describe('app/js/pick-a-season', () => {
         }
       }
     );
+
+    pickASeason.internal.stateManager = undefined;
+    pickASeason.internal.seasonAddButton = undefined;
+    pickASeason.internal.seasonName = undefined;
+    pickASeason.internal.seasonList = undefined;
+    pickASeason.internal.breadcrumb = undefined;
+    pickASeason.internal.filename = undefined;
+    pickASeason.internal.dataObj = undefined;
   });
 
   afterEach(() => {
@@ -124,6 +141,10 @@ describe('app/js/pick-a-season', () => {
         expect(pickASeason.internal.seasonList).to.equal(document.getElementById('pick-a-season_list'));
       });
 
+      it('finds the breadcrumb div', () => {
+        expect(pickASeason.internal.breadcrumb).to.equal(document.getElementById('pick-a-season_breadcrumbs_team'));
+      });
+
       it('sets the seasonAdd onclick listener for the button', () => {
         expect(pickASeason.internal.seasonAddButton.onclick).to.equal(pickASeason.internal.seasonAddOnClick);
       });
@@ -131,6 +152,49 @@ describe('app/js/pick-a-season', () => {
       it('sets the oninput listener for the input', () => {
         expect(pickASeason.internal.seasonName.oninput).to.equal(pickASeason.internal.seasonNameOnInput);
       });
+    });
+  });
+
+  describe('#generateBreadcrumb', () => {
+    let stateManagerStub;
+    let showStateStub;
+    let dataObj;
+    let breadcrumbParts;
+
+    beforeEach(() => {
+      showStateStub = sinon.stub();
+      stateManagerStub = {
+        showState: showStateStub
+      };
+      dataObj = {
+        name: 'team1',
+        seasons: [
+          {name: 'season1'},
+          {name: 'season2'},
+          {name: 'season3'}
+        ]
+      };
+      pickASeason.internal.dataObj = dataObj;
+      pickASeason.init(stateManagerStub);
+      pickASeason.internal.generateBreadcrumb();
+      breadcrumbParts = document.getElementById('pick-a-season_breadcrumbs_team').childNodes;
+    });
+
+    it('generates a breadcrumb', () => {
+      expect(breadcrumbParts[0].innerHTML).to.equal('Home');
+      expect(breadcrumbParts[2].innerHTML).to.equal(dataObj.name);
+    });
+
+    it('cleans out the old breadcrumb on each call', () => {
+      pickASeason.internal.generateBreadcrumb();
+      pickASeason.internal.generateBreadcrumb();
+      expect(breadcrumbParts.length).to.equal(3);
+    });
+
+    it('', () => {
+      expect(typeof breadcrumbParts[0].onclick).to.equal('function');
+      breadcrumbParts[0].onclick();
+      expect(showStateStub).to.be.calledWith('pick-a-season', 'pick-a-team');
     });
   });
 
@@ -212,6 +276,7 @@ describe('app/js/pick-a-season', () => {
   describe('#returnTeamDataListener', () => {
     let stateManagerStub;
     let showStateStub;
+    let generateBreadcrumbStub;
     let dataObj = {
       name: 'team1',
       seasons: [
@@ -226,8 +291,13 @@ describe('app/js/pick-a-season', () => {
       stateManagerStub = {
         showState: showStateStub
       };
+      generateBreadcrumbStub = sinon.stub(pickASeason.internal, 'generateBreadcrumb');
       pickASeason.init(stateManagerStub);
       pickASeason.internal.dataObj = {};
+    });
+
+    afterEach(() => {
+      generateBreadcrumbStub.restore();
     });
 
     it('locally stores the filename', () => {
@@ -245,6 +315,11 @@ describe('app/js/pick-a-season', () => {
       pickASeason.internal.returnTeamDataListener(undefined, undefined, dataObj);
       expect(pickASeason.internal.seasonName.value).to.equal('');
       expect(pickASeason.internal.seasonAddButton.className).to.equal('button new-item-button-disabled');
+    });
+
+    it('calls to generate the breadcrumb', () => {
+      pickASeason.internal.returnTeamDataListener(undefined, undefined, dataObj);
+      expect(generateBreadcrumbStub).to.be.calledOnce;
     });
 
     context('the list items', () => {

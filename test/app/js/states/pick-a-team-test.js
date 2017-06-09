@@ -10,6 +10,8 @@ chai.use(sinonChai);
 
 const proxyquire = require('proxyquire').noCallThru();
 const jsdomGlobal = require('jsdom-global');
+const fs = require('fs');
+const path = require('path');
 
 describe('app/js/pick-a-team', () => {
   let jsdomCleanup;
@@ -20,10 +22,17 @@ describe('app/js/pick-a-team', () => {
   let ipcRendererOnStub;
   let ipcRendererRemoveListenerStub;
 
-  beforeEach(function () {
+  beforeEach(function (done) {
     this.timeout(10000);
     jsdomCleanup = jsdomGlobal();
-    document.body.innerHTML = '<div class="state pick-a-team"><div id="pick-a-team_list" class="scrollable team-list"></div><input id="input_pick-a-team" /><button class="button new-item-button-disabled" id="button_pick-a-team_add">+</button></div>';
+
+    fs.readFile(path.join(__dirname, '..', '..', '..', '..', 'app', 'index.html'), {encodig: 'utf8'}, (err, index) => {
+      if (err) {
+        throw err;
+      }
+      document.body.innerHTML = index;
+      done();
+    });
 
     ipcRendererSendStub = sinon.stub();
     ipcRendererOnStub = sinon.stub();
@@ -39,6 +48,11 @@ describe('app/js/pick-a-team', () => {
         }
       }
     );
+
+    pickATeam.internal.stateManager = undefined;
+    pickATeam.internal.teamAddButton = undefined;
+    pickATeam.internal.teamName = undefined;
+    pickATeam.internal.teamList = undefined;
   });
 
   afterEach(() => {

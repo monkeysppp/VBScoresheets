@@ -10,6 +10,8 @@ chai.use(sinonChai);
 
 const proxyquire = require('proxyquire').noCallThru();
 const jsdomGlobal = require('jsdom-global');
+const fs = require('fs');
+const path = require('path');
 
 describe('app/js/main-branch', () => {
   let jsdomCleanup;
@@ -20,10 +22,18 @@ describe('app/js/main-branch', () => {
   let ipcRendererOnStub;
   let ipcRendererRemoveListenerStub;
 
-  beforeEach(function () {
+  beforeEach(function (done) {
     this.timeout(10000);
     jsdomCleanup = jsdomGlobal();
-    document.body.innerHTML = '<div class="main-branch"><div id="main-branch_players"><p>Players</p></div><div id="main-branch_matches"><p>Matches</p></div><div id="main-branch_season"><p>Season Stats</p></div></div>';
+
+    fs.readFile(path.join(__dirname, '..', '..', '..', '..', 'app', 'index.html'), {encodig: 'utf8'}, (err, index) => {
+      if (err) {
+        throw err;
+      }
+      document.body.innerHTML = index;
+      done();
+    });
+
     ipcRendererSendStub = sinon.stub();
     ipcRendererOnStub = sinon.stub();
     ipcRendererRemoveListenerStub = sinon.stub();
@@ -38,6 +48,11 @@ describe('app/js/main-branch', () => {
         }
       }
     );
+
+    mainBranch.internal.stateManager = undefined;
+    mainBranch.internal.players = undefined;
+    mainBranch.internal.teams = undefined;
+    mainBranch.internal.seasons = undefined;
   });
 
   afterEach(() => {

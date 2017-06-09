@@ -10,6 +10,8 @@ chai.use(sinonChai);
 
 const proxyquire = require('proxyquire').noCallThru();
 const jsdomGlobal = require('jsdom-global');
+const fs = require('fs');
+const path = require('path');
 
 describe('app/js/add-first-season', () => {
   let jsdomCleanup;
@@ -20,10 +22,18 @@ describe('app/js/add-first-season', () => {
   let ipcRendererOnStub;
   let ipcRendererRemoveListenerStub;
 
-  beforeEach(function () {
+  beforeEach(function (done) {
     this.timeout(10000);
     jsdomCleanup = jsdomGlobal();
-    document.body.innerHTML = '<div class="add-first-team"><input id="input_add-first-season"/><button class="button new-item-button-disabled" id="button_add-first-season_add">+</button></div>';
+
+    fs.readFile(path.join(__dirname, '..', '..', '..', '..', 'app', 'index.html'), {encodig: 'utf8'}, (err, index) => {
+      if (err) {
+        throw err;
+      }
+      document.body.innerHTML = index;
+      done();
+    });
+
     ipcRendererSendStub = sinon.stub();
     ipcRendererOnStub = sinon.stub();
     ipcRendererRemoveListenerStub = sinon.stub();
@@ -38,6 +48,12 @@ describe('app/js/add-first-season', () => {
         }
       }
     );
+
+    addFirstSeason.internal.stateManager = undefined;
+    addFirstSeason.internal.seasonAddButton = undefined;
+    addFirstSeason.internal.seasonName = undefined;
+    addFirstSeason.internal.filename = undefined;
+    addFirstSeason.internal.dataObj = undefined;
   });
 
   afterEach(() => {
