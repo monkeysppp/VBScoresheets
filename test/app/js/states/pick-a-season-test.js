@@ -142,7 +142,7 @@ describe('app/js/pick-a-season', () => {
       });
 
       it('finds the breadcrumb div', () => {
-        expect(pickASeason.internal.breadcrumb).to.equal(document.getElementById('pick-a-season_breadcrumbs_team'));
+        expect(pickASeason.internal.breadcrumb).to.equal(document.getElementById('pick-a-season_breadcrumbs'));
       });
 
       it('sets the seasonAdd onclick listener for the button', () => {
@@ -177,7 +177,7 @@ describe('app/js/pick-a-season', () => {
       pickASeason.internal.dataObj = dataObj;
       pickASeason.init(stateManagerStub);
       pickASeason.internal.generateBreadcrumb();
-      breadcrumbParts = document.getElementById('pick-a-season_breadcrumbs_team').childNodes;
+      breadcrumbParts = document.getElementById('pick-a-season_breadcrumbs').childNodes;
     });
 
     it('generates a breadcrumb', () => {

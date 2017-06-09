@@ -52,6 +52,7 @@ describe('app/js/add-first-season', () => {
     addFirstSeason.internal.stateManager = undefined;
     addFirstSeason.internal.seasonAddButton = undefined;
     addFirstSeason.internal.seasonName = undefined;
+    addFirstSeason.internal.breadcrumb = undefined;
     addFirstSeason.internal.filename = undefined;
     addFirstSeason.internal.dataObj = undefined;
   });
@@ -135,6 +136,10 @@ describe('app/js/add-first-season', () => {
         expect(addFirstSeason.internal.seasonName).to.equal(document.getElementById('input_add-first-season'));
       });
 
+      it('finds the breadcrumb div', () => {
+        expect(addFirstSeason.internal.breadcrumb).to.equal(document.getElementById('add-first-season_breadcrumbs'));
+      });
+
       it('sets the seasonAdd onclick listener for the button', () => {
         expect(addFirstSeason.internal.seasonAddButton.onclick).to.equal(addFirstSeason.internal.seasonAddOnClick);
       });
@@ -142,6 +147,44 @@ describe('app/js/add-first-season', () => {
       it('sets the oninput listener for the input', () => {
         expect(addFirstSeason.internal.seasonName.oninput).to.equal(addFirstSeason.internal.seasonNameOnInput);
       });
+    });
+  });
+
+  describe('#generateBreadcrumb', () => {
+    let stateManagerStub;
+    let showStateStub;
+    let dataObj;
+    let breadcrumbParts;
+
+    beforeEach(() => {
+      showStateStub = sinon.stub();
+      stateManagerStub = {
+        showState: showStateStub
+      };
+      dataObj = {
+        name: 'team1'
+      };
+      addFirstSeason.internal.dataObj = dataObj;
+      addFirstSeason.init(stateManagerStub);
+      addFirstSeason.internal.generateBreadcrumb();
+      breadcrumbParts = document.getElementById('add-first-season_breadcrumbs').childNodes;
+    });
+
+    it('generates a breadcrumb', () => {
+      expect(breadcrumbParts[0].innerHTML).to.equal('Home');
+      expect(breadcrumbParts[2].innerHTML).to.equal(dataObj.name);
+    });
+
+    it('cleans out the old breadcrumb on each call', () => {
+      addFirstSeason.internal.generateBreadcrumb();
+      addFirstSeason.internal.generateBreadcrumb();
+      expect(breadcrumbParts.length).to.equal(3);
+    });
+
+    it('', () => {
+      expect(typeof breadcrumbParts[0].onclick).to.equal('function');
+      breadcrumbParts[0].onclick();
+      expect(showStateStub).to.be.calledWith('add-first-season', 'pick-a-team');
     });
   });
 
@@ -226,12 +269,25 @@ describe('app/js/add-first-season', () => {
   });
 
   describe('#teamGetListener', () => {
+    let stateManagerStub;
+    let showStateStub;
+    let generateBreadcrumbStub;
     let dataObj = {
       name: 'team1'
     };
 
     beforeEach(() => {
+      showStateStub = sinon.stub();
+      stateManagerStub = {
+        showState: showStateStub
+      };
+      generateBreadcrumbStub = sinon.stub(addFirstSeason.internal, 'generateBreadcrumb');
+      addFirstSeason.init(stateManagerStub);
       addFirstSeason.internal.dataObj = {};
+    });
+
+    afterEach(() => {
+      generateBreadcrumbStub.restore();
     });
 
     it('locally stores the filename', () => {
@@ -242,6 +298,18 @@ describe('app/js/add-first-season', () => {
     it('locally stores the team data', () => {
       addFirstSeason.internal.teamGetListener(undefined, undefined, dataObj);
       expect(addFirstSeason.internal.dataObj).to.deep.equal(dataObj);
+    });
+
+    it('clears the curent seasonName input and add button', () => {
+      addFirstSeason.internal.seasonName.value = 'sometext';
+      addFirstSeason.internal.teamGetListener(undefined, undefined, dataObj);
+      expect(addFirstSeason.internal.seasonName.value).to.equal('');
+      expect(addFirstSeason.internal.seasonAddButton.className).to.equal('button new-item-button-disabled');
+    });
+
+    it('calls to generate the breadcrumb', () => {
+      addFirstSeason.internal.teamGetListener(undefined, undefined, dataObj);
+      expect(generateBreadcrumbStub).to.be.calledOnce;
     });
   });
 

@@ -22,7 +22,7 @@ function init(stateManager) {
   module.exports.internal.seasonAddButton = document.getElementById('button_pick-a-season_add');
   module.exports.internal.seasonName = document.getElementById('input_pick-a-season');
   module.exports.internal.seasonList = document.getElementById('pick-a-season_list');
-  module.exports.internal.breadcrumb = document.getElementById('pick-a-season_breadcrumbs_team');
+  module.exports.internal.breadcrumb = document.getElementById('pick-a-season_breadcrumbs');
 
   module.exports.internal.seasonAddButton.onclick = module.exports.internal.seasonAddOnClick;
   module.exports.internal.seasonName.oninput = module.exports.internal.seasonNameOnInput;
@@ -150,7 +150,6 @@ function generateBreadcrumb() {
   let spanTeam = document.createElement('span');
   spanTeam.innerHTML = module.exports.internal.dataObj.name;
   module.exports.internal.breadcrumb.appendChild(spanTeam);
-
 }
 
 /**

@@ -21,6 +21,7 @@ function init(stateManager) {
 
   module.exports.internal.seasonAddButton = document.getElementById('button_add-first-season_add');
   module.exports.internal.seasonName = document.getElementById('input_add-first-season');
+  module.exports.internal.breadcrumb = document.getElementById('add-first-season_breadcrumbs');
 
   module.exports.internal.seasonAddButton.onclick = module.exports.internal.seasonAddOnClick;
   module.exports.internal.seasonName.oninput = module.exports.internal.seasonNameOnInput;
@@ -59,6 +60,13 @@ function teamGetListener(event, filename, dataObj) {
   debug('team data loaded');
   module.exports.internal.filename = filename;
   module.exports.internal.dataObj = dataObj;
+
+  // Clean up the input text box
+  module.exports.internal.seasonName.value = '';
+  seasonNameOnInput();
+
+  // generate the breadcrumb
+  module.exports.internal.generateBreadcrumb();
 }
 
 /**
@@ -94,6 +102,35 @@ function seasonNameOnInput() {
 }
 
 /**
+ * generateBreadcrumb - Generate the breadcrumb for this page:
+ *  Home > $TeamName
+ *
+ * Home links back to pick a team.
+ *
+ * @private
+ */
+function generateBreadcrumb() {
+  let cloneBreadcrumb = module.exports.internal.breadcrumb.cloneNode(false);
+  module.exports.internal.breadcrumb.parentNode.replaceChild(cloneBreadcrumb, module.exports.internal.breadcrumb);
+  module.exports.internal.breadcrumb = cloneBreadcrumb;
+
+  let spanHome = document.createElement('span');
+  spanHome.innerHTML = 'Home';
+  spanHome.className = 'link';
+  spanHome.onclick = () => {module.exports.internal.stateManager.showState('add-first-season', 'pick-a-team');};
+  module.exports.internal.breadcrumb.appendChild(spanHome);
+
+  let spanSep1 = document.createElement('span');
+  spanSep1.innerHTML = '&nbsp;&gt;&nbsp;';
+  module.exports.internal.breadcrumb.appendChild(spanSep1);
+
+  let spanTeam = document.createElement('span');
+  spanTeam.innerHTML = module.exports.internal.dataObj.name;
+  module.exports.internal.breadcrumb.appendChild(spanTeam);
+
+}
+
+/**
  * attach - Set up any event handlers
  */
 function attach() {
@@ -126,9 +163,11 @@ module.exports = {
     teamGetListener: teamGetListener,
     seasonAddOnClick: seasonAddOnClick,
     seasonNameOnInput: seasonNameOnInput,
+    generateBreadcrumb: generateBreadcrumb,
     stateManager: undefined,
     seasonAddButton: undefined,
     seasonName: undefined,
+    breadcrumb: undefined,
     filename: undefined,
     dataObj: undefined
   }

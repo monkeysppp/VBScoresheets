@@ -58,7 +58,9 @@ div.state {
 
 div.breadcrumbs {
   margin-left: 20px;
-  margin-right: : 20px;
+  margin-right: 20px;
+  padding-bottom: 7px;
+  padding-top: 7px;
 }
 
 div.link {
