@@ -141,9 +141,10 @@ function teamGetListener(event, filename, dataObj, seasonId) {
 
 /**
  * generateBreadcrumb - Generate the breadcrumb for this page:
- *  Home > $TeamName
+ *  Home > $TeamName > $SeasonName
  *
  * Home links back to pick a team.
+ * $TeamName links back to pick a season
  *
  * @private
  */

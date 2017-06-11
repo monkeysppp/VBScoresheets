@@ -1,6 +1,9 @@
 
 'use strict';
 
+const electron = require('electron');
+const ipc = electron.ipcRenderer;
+
 const state = document.querySelector('.add-first-match');
 const debug = require('../debug.js');
 
@@ -15,6 +18,148 @@ function init(stateManager) {
   }
 
   module.exports.internal.stateManager = stateManager;
+
+  module.exports.internal.matchAddButton = document.getElementById('button_add-first-match_add');
+  module.exports.internal.matchDate = document.getElementById('input_add-first-match_date');
+  module.exports.internal.matchOpponent = document.getElementById('input_add-first-match_opponent');
+  module.exports.internal.breadcrumb = document.getElementById('add-first-match_breadcrumbs');
+
+  module.exports.internal.matchAddButton.onclick = module.exports.internal.matchAddOnClick;
+  module.exports.internal.matchDate.oninput = module.exports.internal.matchDateOnInput;
+  module.exports.internal.matchOpponent.oninput = module.exports.internal.matchOpponentOnInput;
+}
+
+/**
+ * teamSaveListener - React to team data being saved, by storing the match id
+ *
+ * @private
+ */
+function teamSaveListener() {
+  debug('team data saved, storing match selector');
+  ipc.send('store-team-match', 0);
+}
+
+/**
+ * teamMatchStoredListener - React to match selector being stored, by switching state to 'match-editor'
+ *
+ * @private
+ */
+function teamMatchStoredListener() {
+  debug('team match selector stored, loading match-editor');
+  module.exports.internal.stateManager.showState('add-first-match', 'match-editor');
+}
+
+/**
+ * teamGetListener - React to a request to get the known team data
+ *
+ * @param  {object} event    IPC Event
+ * @param  {string} filename the filename that was loaded
+ * @param  {object} dataObj  the team data
+ * @param  {number} seasonId the currently selected season
+ *
+ * @private
+ */
+function teamGetListener(event, filename, dataObj, seasonId) {
+  debug('team data loaded');
+  module.exports.internal.filename = filename;
+  module.exports.internal.dataObj = dataObj;
+  module.exports.internal.seasonId = seasonId;
+
+  // Clean up the input text box
+  module.exports.internal.matchDate.value = '';
+  module.exports.internal.matchOpponent.value = '';
+  matchDateOnInput();
+
+  // generate the breadcrumb
+  module.exports.internal.generateBreadcrumb();
+}
+
+/**
+ * matchAddOnClick - A click handler for when the "add match" button is clicked.  This only
+ * acts if the match date is defined and match opponent text value contains more than 0 characters
+ *
+ * @private
+ */
+function matchAddOnClick() {
+  if (module.exports.internal.matchDate.value.length !== 0 && module.exports.internal.matchOpponent.value.length !== 0) {
+    module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].matches = [
+      {
+        date: module.exports.internal.matchDate.value,
+        opponent: {
+          name: module.exports.internal.matchOpponent.value
+        }
+      }
+    ];
+    debug('adding match ' + module.exports.internal.matchDate.value + ' ' + module.exports.internal.matchOpponent.value);
+    ipc.send('save-team-data', module.exports.internal.filename, module.exports.internal.dataObj);
+  }
+}
+
+/**
+ * matchDateOnInput - An on-input handler for the match date field.  This greys out the
+ * "add" button when there is no complete date in the date field.
+ *
+ * @private
+ */
+function matchDateOnInput() {
+  if (module.exports.internal.matchDate.value.length === 0 || module.exports.internal.matchOpponent.value.length === 0) {
+    module.exports.internal.matchAddButton.className = 'button new-item-button-disabled';
+  } else {
+    module.exports.internal.matchAddButton.className = 'button new-item-button';
+  }
+}
+
+/**
+ * matchOpponentOnInput - An on-input handler for the opponent name text field.  This greys out the
+ * "add" button when there is no text in the opponent name.
+ *
+ * @private
+ */
+function matchOpponentOnInput() {
+  if (module.exports.internal.matchDate.value.length === 0 || module.exports.internal.matchOpponent.value.length === 0) {
+    module.exports.internal.matchAddButton.className = 'button new-item-button-disabled';
+  } else {
+    module.exports.internal.matchAddButton.className = 'button new-item-button';
+  }
+}
+
+/**
+ * generateBreadcrumb - Generate the breadcrumb for this page:
+ *  Home > $TeamName > $SeasonName
+ *
+ * Home links back to pick a team.
+ * $TeamName links back to pick a season
+ *
+ * @private
+ */
+function generateBreadcrumb() {
+  let cloneBreadcrumb = module.exports.internal.breadcrumb.cloneNode(false);
+  module.exports.internal.breadcrumb.parentNode.replaceChild(cloneBreadcrumb, module.exports.internal.breadcrumb);
+  module.exports.internal.breadcrumb = cloneBreadcrumb;
+
+  let spanHome = document.createElement('span');
+  spanHome.innerHTML = 'Home';
+  spanHome.className = 'link';
+  spanHome.onclick = () => {module.exports.internal.stateManager.showState('add-first-match', 'pick-a-team');};
+  module.exports.internal.breadcrumb.appendChild(spanHome);
+
+  let spanSep1 = document.createElement('span');
+  spanSep1.innerHTML = '&nbsp;&gt;&nbsp;';
+  module.exports.internal.breadcrumb.appendChild(spanSep1);
+
+  let spanTeam = document.createElement('span');
+  spanTeam.innerHTML = module.exports.internal.dataObj.name;
+  spanTeam.className = 'link';
+  spanTeam.onclick = () => {module.exports.internal.stateManager.showState('add-first-match', 'pick-a-season');};
+  module.exports.internal.breadcrumb.appendChild(spanTeam);
+
+  let spanSep2 = document.createElement('span');
+  spanSep2.innerHTML = '&nbsp;&gt;&nbsp;';
+  module.exports.internal.breadcrumb.appendChild(spanSep2);
+
+  let spanSeason = document.createElement('span');
+  spanSeason.innerHTML = module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].name;
+  module.exports.internal.breadcrumb.appendChild(spanSeason);
 }
 
 /**
@@ -22,6 +167,10 @@ function init(stateManager) {
  */
 function attach() {
   debug('attaching add-first-match');
+  ipc.on('team-data-saved', module.exports.internal.teamSaveListener);
+  ipc.on('team-match-stored', module.exports.internal.teamMatchStoredListener);
+  ipc.on('return-team-data', module.exports.internal.teamGetListener);
+  ipc.send('get-team-data');
 }
 
 /**
@@ -29,6 +178,9 @@ function attach() {
  */
 function detach() {
   debug('detaching add-first-match');
+  ipc.removeListener('team-data-saved', module.exports.internal.teamSaveListener);
+  ipc.removeListener('team-match-stored', module.exports.internal.teamMatchStoredListener);
+  ipc.removeListener('return-team-data', module.exports.internal.teamGetListener);
 }
 
 module.exports = {
@@ -38,6 +190,19 @@ module.exports = {
   attach: attach,
   detach: detach,
   internal: {
-    stateManager: undefined
+    teamSaveListener: teamSaveListener,
+    teamMatchStoredListener: teamMatchStoredListener,
+    teamGetListener: teamGetListener,
+    matchAddOnClick: matchAddOnClick,
+    matchDateOnInput: matchDateOnInput,
+    matchOpponentOnInput: matchOpponentOnInput,
+    generateBreadcrumb: generateBreadcrumb,
+    stateManager: undefined,
+    matchAddButton: undefined,
+    matchDate: undefined,
+    matchOpponent: undefined,
+    breadcrumb: undefined,
+    filename: undefined,
+    dataObj: undefined
   }
 };

@@ -28,7 +28,7 @@ in the team name.
         {
           "venue": "Sports Centre",
           "home_or_away": "home",
-          "date": "21/05/2017",
+          "date": "2017-05-21",
           "time": "11:00",
           "squads": {
             "us": [
@@ -41,7 +41,7 @@ in the team name.
               {"id": 7, "number": 2},
               {"id": 8, "number": 9},
             ],
-            "opponents": {
+            "opponent": {
               "name": "Newtown City",
               "players": [
                 {"name": "Alice Player", "number": 1},
@@ -59,15 +59,15 @@ in the team name.
               "serve": true,
               "lineups": {
                 "us": [ 1,2,3,4,5,6 ],
-                "opponents": [ 1,2,3,4,5,6 ]
+                "opponent": [ 1,2,3,4,5,6 ]
               },
               "scores": {
                 "us": [ 3,4,6,7,10,12,14,17,18,25 ],
-                "opponents": [ 1,3,5,7,8,10,11,12,21,22 ]
+                "opponent": [ 1,3,5,7,8,10,11,12,21,22 ]
               },
               "timeouts": {
                 "us": [ [17,16], [17,20] ],
-                "opponents": [[3,6]]
+                "opponent": [[3,6]]
               },
               "substitutions": [
                 {"off": 3, "on": 7, "score": [17,18]}

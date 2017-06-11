@@ -85,7 +85,7 @@
                       "minItems": 6,
                       "uniqueItems": true
                     },
-                    "opponents": {
+                    "opponent": {
                       "description": "The squad for the opposition team",
                       "type": "object",
                       "properties": {
@@ -117,7 +117,7 @@
                       "required": [ "name", "players" ]
                     }
                   },
-                  "required": [ "us", "opponents" ]
+                  "required": [ "us", "opponent" ]
                 },
                 "mvp": {
                   "description": "The id of the player voted Most Valuable Player",
@@ -146,8 +146,8 @@
                             "minItems": 0,
                             "uniqueItems": true
                           },
-                          "opponents": {
-                            "description": "The shirt numbers for the starting lineup for opponents team",
+                          "opponent": {
+                            "description": "The shirt numbers for the starting lineup for opponent team",
                             "type": "array",
                             "items": {
                               "type": "number"
@@ -156,7 +156,7 @@
                             "uniqueItems": true
                           }
                         },
-                        "required": [ "us", "opponents" ]
+                        "required": [ "us", "opponent" ]
                       },
                       "scores": {
                         "description": "The score progression from the teams",
@@ -171,8 +171,8 @@
                             "minItems": 0,
                             "uniqueItems": true
                           },
-                          "opponents": {
-                            "description": "The score progression for opponents team",
+                          "opponent": {
+                            "description": "The score progression for opponent team",
                             "type": "array",
                             "items": {
                               "type": "number"
@@ -181,7 +181,7 @@
                             "uniqueItems": true
                           }
                         },
-                        "required": [ "us", "opponents" ]
+                        "required": [ "us", "opponent" ]
                       },
                       "timeouts": {
                         "description": "timeout information for this set",
@@ -201,8 +201,8 @@
                             "minItems": 0,
                             "uniqueItems": true
                           },
-                          "opponents": {
-                            "description": "timeout information for the opponents team",
+                          "opponent": {
+                            "description": "timeout information for the opponent team",
                             "type": "array",
                             "items": {
                               "type": "array",
