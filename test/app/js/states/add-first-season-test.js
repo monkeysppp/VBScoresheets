@@ -181,7 +181,7 @@ describe('app/js/add-first-season', () => {
       expect(breadcrumbParts.length).to.equal(3);
     });
 
-    it('', () => {
+    it('makes the home button show "pick-a-team"', () => {
       expect(typeof breadcrumbParts[0].onclick).to.equal('function');
       breadcrumbParts[0].onclick();
       expect(showStateStub).to.be.calledWith('add-first-season', 'pick-a-team');
