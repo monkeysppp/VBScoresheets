@@ -54,6 +54,7 @@ describe('app/js/add-first-squad', () => {
     addFirstSquad.internal.playerName = undefined;
     addFirstSquad.internal.playerList = undefined;
     addFirstSquad.internal.doneButton = undefined;
+    addFirstSquad.internal.breadcrumb = undefined;
     addFirstSquad.internal.pageComplete = undefined;
     addFirstSquad.internal.filename = undefined;
     addFirstSquad.internal.dataObj = undefined;
@@ -137,6 +138,10 @@ describe('app/js/add-first-squad', () => {
         expect(addFirstSquad.internal.playerList).to.equal(document.getElementById('add-first-squad_list'));
       });
 
+      it('finds the breadcrumb div', () => {
+        expect(addFirstSquad.internal.breadcrumb).to.equal(document.getElementById('add-first-squad_breadcrumbs'));
+      });
+
       it('sets the playerAdd onclick listener for the button', () => {
         expect(addFirstSquad.internal.playerAddButton.onclick).to.equal(addFirstSquad.internal.playerAddOnClick);
       });
@@ -148,6 +153,55 @@ describe('app/js/add-first-squad', () => {
       it('sets the done onclick listener for the button', () => {
         expect(addFirstSquad.internal.doneButton.onclick).to.equal(addFirstSquad.internal.doneOnClick);
       });
+    });
+  });
+
+  describe('#generateBreadcrumb', () => {
+    let stateManagerStub;
+    let showStateStub;
+    let dataObj;
+    let breadcrumbParts;
+
+    beforeEach(() => {
+      showStateStub = sinon.stub();
+      stateManagerStub = {
+        showState: showStateStub
+      };
+      dataObj = {
+        name: 'team1',
+        seasons: [
+          {name:'season1'}
+        ]
+      };
+      addFirstSquad.internal.dataObj = dataObj;
+      addFirstSquad.internal.seasonId = 0;
+      addFirstSquad.init(stateManagerStub);
+      addFirstSquad.internal.generateBreadcrumb();
+      breadcrumbParts = document.getElementById('add-first-squad_breadcrumbs').childNodes;
+    });
+
+    it('generates a breadcrumb', () => {
+      expect(breadcrumbParts[0].innerHTML).to.equal('Home');
+      expect(breadcrumbParts[2].innerHTML).to.equal(dataObj.name);
+      expect(breadcrumbParts[4].innerHTML).to.equal(dataObj.seasons[0].name);
+    });
+
+    it('cleans out the old breadcrumb on each call', () => {
+      addFirstSquad.internal.generateBreadcrumb();
+      addFirstSquad.internal.generateBreadcrumb();
+      expect(breadcrumbParts.length).to.equal(5);
+    });
+
+    it('makes the home button show "pick-a-team"', () => {
+      expect(typeof breadcrumbParts[0].onclick).to.equal('function');
+      breadcrumbParts[0].onclick();
+      expect(showStateStub).to.be.calledWith('add-first-squad', 'pick-a-team');
+    });
+
+    it('makes the team button show "pick-a-season"', () => {
+      expect(typeof breadcrumbParts[0].onclick).to.equal('function');
+      breadcrumbParts[2].onclick();
+      expect(showStateStub).to.be.calledWith('add-first-squad', 'pick-a-season');
     });
   });
 
@@ -328,13 +382,19 @@ describe('app/js/add-first-squad', () => {
       ]
     };
     let stateManagerStub;
+    let generateBreadcrumbStub;
 
     beforeEach(() => {
       stateManagerStub = {};
       addFirstSquad.internal.dataObj = {};
       addFirstSquad.internal.filename = 'foo';
       addFirstSquad.internal.seasonId = 0;
+      generateBreadcrumbStub = sinon.stub(addFirstSquad.internal, 'generateBreadcrumb');
       addFirstSquad.init(stateManagerStub);
+    });
+
+    afterEach(() => {
+      generateBreadcrumbStub.restore();
     });
 
     it('locally stores the team data', () => {
@@ -357,6 +417,11 @@ describe('app/js/add-first-squad', () => {
       addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 0);
       expect(addFirstSquad.internal.playerName.value).to.equal('');
       expect(addFirstSquad.internal.playerAddButton.className).to.equal('button new-item-button-disabled');
+    });
+
+    it('calls to generate the breadcrumb', () => {
+      addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 0);
+      expect(generateBreadcrumbStub).to.be.calledOnce;
     });
 
     context('when 5 players exist', () => {

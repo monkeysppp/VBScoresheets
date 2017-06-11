@@ -7,7 +7,6 @@ const ipc = electron.ipcRenderer;
 const state = document.querySelector('.add-first-squad');
 const debug = require('../debug.js');
 
-
 /**
  * init - Initialize the page handler, ataching the state manager and discovering any interactive elements
  *
@@ -26,6 +25,7 @@ function init(stateManager) {
   module.exports.internal.playerName = document.getElementById('input_add-first-squad');
   module.exports.internal.playerList = document.getElementById('add-first-squad_list');
   module.exports.internal.doneButton = document.getElementById('button_add-first-squad_done');
+  module.exports.internal.breadcrumb = document.getElementById('add-first-squad_breadcrumbs');
 
   module.exports.internal.playerAddButton.onclick = module.exports.internal.playerAddOnClick;
   module.exports.internal.playerName.oninput = module.exports.internal.playerNameOnInput;
@@ -120,6 +120,9 @@ function teamGetListener(event, filename, dataObj, seasonId) {
   module.exports.internal.playerName.value = '';
   playerNameOnInput();
 
+  // generate the breadcrumb
+  module.exports.internal.generateBreadcrumb();
+
   // Clean up the list div
   let clonePlayerList = module.exports.internal.playerList.cloneNode(false);
   module.exports.internal.playerList.parentNode.replaceChild(clonePlayerList, module.exports.internal.playerList);
@@ -134,6 +137,44 @@ function teamGetListener(event, filename, dataObj, seasonId) {
 
   // Scroll to the bottom of the list
   module.exports.internal.playerList.scrollTop = module.exports.internal.playerList.scrollHeight;
+}
+
+/**
+ * generateBreadcrumb - Generate the breadcrumb for this page:
+ *  Home > $TeamName
+ *
+ * Home links back to pick a team.
+ *
+ * @private
+ */
+function generateBreadcrumb() {
+  let cloneBreadcrumb = module.exports.internal.breadcrumb.cloneNode(false);
+  module.exports.internal.breadcrumb.parentNode.replaceChild(cloneBreadcrumb, module.exports.internal.breadcrumb);
+  module.exports.internal.breadcrumb = cloneBreadcrumb;
+
+  let spanHome = document.createElement('span');
+  spanHome.innerHTML = 'Home';
+  spanHome.className = 'link';
+  spanHome.onclick = () => {module.exports.internal.stateManager.showState('add-first-squad', 'pick-a-team');};
+  module.exports.internal.breadcrumb.appendChild(spanHome);
+
+  let spanSep1 = document.createElement('span');
+  spanSep1.innerHTML = '&nbsp;&gt;&nbsp;';
+  module.exports.internal.breadcrumb.appendChild(spanSep1);
+
+  let spanTeam = document.createElement('span');
+  spanTeam.innerHTML = module.exports.internal.dataObj.name;
+  spanTeam.className = 'link';
+  spanTeam.onclick = () => {module.exports.internal.stateManager.showState('add-first-squad', 'pick-a-season');};
+  module.exports.internal.breadcrumb.appendChild(spanTeam);
+
+  let spanSep2 = document.createElement('span');
+  spanSep2.innerHTML = '&nbsp;&gt;&nbsp;';
+  module.exports.internal.breadcrumb.appendChild(spanSep2);
+
+  let spanSeason = document.createElement('span');
+  spanSeason.innerHTML = module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].name;
+  module.exports.internal.breadcrumb.appendChild(spanSeason);
 }
 
 /**
@@ -167,12 +208,14 @@ module.exports = {
     playerAddOnClick: playerAddOnClick,
     playerNameOnInput: playerNameOnInput,
     doneOnClick: doneOnClick,
+    generateBreadcrumb: generateBreadcrumb,
     stateManager: undefined,
     playerAddButton: undefined,
     playerName: undefined,
     playerList: undefined,
     doneButton: undefined,
     pageComplete: undefined,
+    breadcrumb: undefined,
     filename: undefined,
     dataObj: undefined,
     seasonId: undefined

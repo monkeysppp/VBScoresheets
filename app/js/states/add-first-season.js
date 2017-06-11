@@ -127,7 +127,6 @@ function generateBreadcrumb() {
   let spanTeam = document.createElement('span');
   spanTeam.innerHTML = module.exports.internal.dataObj.name;
   module.exports.internal.breadcrumb.appendChild(spanTeam);
-
 }
 
 /**
