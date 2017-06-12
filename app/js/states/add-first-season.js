@@ -28,11 +28,11 @@ function init(stateManager) {
 }
 
 /**
- * teamSaveListener - React to team data being saved, by storing the season id
+ * teamDataSavedListener - React to team data being saved, by storing the season id
  *
  * @private
  */
-function teamSaveListener() {
+function teamDataSavedListener() {
   debug('team data saved, storing season selector');
   ipc.send('store-team-season', 0);
 }
@@ -48,7 +48,7 @@ function teamSeasonStoreListener() {
 }
 
 /**
- * teamGetListener - React to a request to get the known team data
+ * returnTeamDataListener - React to a request to get the known team data
  *
  * @param  {object} event    IPC Event
  * @param  {string} filename the filename that was loaded
@@ -56,7 +56,7 @@ function teamSeasonStoreListener() {
  *
  * @private
  */
-function teamGetListener(event, filename, dataObj) {
+function returnTeamDataListener(event, filename, dataObj) {
   debug('team data loaded');
   module.exports.internal.filename = filename;
   module.exports.internal.dataObj = dataObj;
@@ -134,9 +134,9 @@ function generateBreadcrumb() {
  */
 function attach() {
   debug('attaching add-first-season');
-  ipc.on('team-data-saved', module.exports.internal.teamSaveListener);
+  ipc.on('team-data-saved', module.exports.internal.teamDataSavedListener);
   ipc.on('team-season-stored', module.exports.internal.teamSeasonStoreListener);
-  ipc.on('return-team-data', module.exports.internal.teamGetListener);
+  ipc.on('return-team-data', module.exports.internal.returnTeamDataListener);
   ipc.send('get-team-data');
 }
 
@@ -145,9 +145,9 @@ function attach() {
  */
 function detach() {
   debug('detaching add-first-season');
-  ipc.removeListener('team-data-saved', module.exports.internal.teamSaveListener);
+  ipc.removeListener('team-data-saved', module.exports.internal.teamDataSavedListener);
   ipc.removeListener('team-season-stored', module.exports.internal.teamSeasonStoreListener);
-  ipc.removeListener('return-team-data', module.exports.internal.teamGetListener);
+  ipc.removeListener('return-team-data', module.exports.internal.returnTeamDataListener);
 }
 
 module.exports = {
@@ -157,9 +157,9 @@ module.exports = {
   attach: attach,
   detach: detach,
   internal: {
-    teamSaveListener: teamSaveListener,
+    teamDataSavedListener: teamDataSavedListener,
     teamSeasonStoreListener: teamSeasonStoreListener,
-    teamGetListener: teamGetListener,
+    returnTeamDataListener: returnTeamDataListener,
     seasonAddOnClick: seasonAddOnClick,
     seasonNameOnInput: seasonNameOnInput,
     generateBreadcrumb: generateBreadcrumb,

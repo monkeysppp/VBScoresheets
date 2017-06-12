@@ -27,11 +27,11 @@ function init(stateManager) {
 }
 
 /**
- * teamSaveListener - React to team data being saved, by switching state to 'add-first-season'
+ * teamDataSavedListener - React to team data being saved, by switching state to 'add-first-season'
  *
  * @private
  */
-function teamSaveListener() {
+function teamDataSavedListener() {
   module.exports.internal.stateManager.showState('add-first-team', 'add-first-season');
 }
 
@@ -66,7 +66,7 @@ function teamNameOnInput() {
  */
 function attach() {
   debug('attaching add-first-team');
-  ipc.on('team-data-saved', teamSaveListener);
+  ipc.on('team-data-saved', teamDataSavedListener);
 }
 
 /**
@@ -74,7 +74,7 @@ function attach() {
  */
 function detach() {
   debug('attaching add-first-team');
-  ipc.removeListener('team-data-saved', teamSaveListener);
+  ipc.removeListener('team-data-saved', teamDataSavedListener);
 }
 
 module.exports = {
@@ -84,7 +84,7 @@ module.exports = {
   attach: attach,
   detach: detach,
   internal: {
-    teamSaveListener: teamSaveListener,
+    teamDataSavedListener: teamDataSavedListener,
     teamAddOnClick: teamAddOnClick,
     teamNameOnInput: teamNameOnInput,
     stateManager: undefined,

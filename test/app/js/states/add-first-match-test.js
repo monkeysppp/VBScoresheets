@@ -74,12 +74,12 @@ describe('app/js/add-first-match', () => {
   describe('#attach', () => {
     it('registers for return-team-data', () => {
       addFirstMatch.attach();
-      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', addFirstMatch.internal.teamGetListener);
+      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', addFirstMatch.internal.returnTeamDataListener);
     });
 
     it('registers for team-data-saved', () => {
       addFirstMatch.attach();
-      expect(ipcRendererOnStub).to.be.calledWith('team-data-saved', addFirstMatch.internal.teamSaveListener);
+      expect(ipcRendererOnStub).to.be.calledWith('team-data-saved', addFirstMatch.internal.teamDataSavedListener);
     });
 
     it('registers for team-match-stored', () => {
@@ -97,12 +97,12 @@ describe('app/js/add-first-match', () => {
   describe('#detach', () => {
     it('deregisters for return-team-data', () => {
       addFirstMatch.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstMatch.internal.teamGetListener);
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstMatch.internal.returnTeamDataListener);
     });
 
     it('deregisters for team-data-saved', () => {
       addFirstMatch.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstMatch.internal.teamSaveListener);
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstMatch.internal.teamDataSavedListener);
     });
 
     it('deregisters for team-match-stored', () => {
@@ -470,18 +470,18 @@ describe('app/js/add-first-match', () => {
     });
   });
 
-  describe('#teamSaveListener', () => {
+  describe('#teamDataSavedListener', () => {
     beforeEach(() => {
       addFirstMatch.init({});
     });
 
     it('calls to store the match id', () => {
-      addFirstMatch.internal.teamSaveListener();
+      addFirstMatch.internal.teamDataSavedListener();
       expect(ipcRendererSendStub).to.be.calledWith('store-team-match', 0);
     });
   });
 
-  describe('#teamGetListener', () => {
+  describe('#returnTeamDataListener', () => {
     let dataObj = {
       name: 'team1',
       seasons: [
@@ -515,31 +515,31 @@ describe('app/js/add-first-match', () => {
     });
 
     it('locally stores the team data', () => {
-      addFirstMatch.internal.teamGetListener(undefined, undefined, dataObj, 0);
+      addFirstMatch.internal.returnTeamDataListener(undefined, undefined, dataObj, 0);
       expect(addFirstMatch.internal.dataObj).to.deep.equal(dataObj);
     });
 
     it('locally stores the filename', () => {
-      addFirstMatch.internal.teamGetListener(undefined, 'someFileName', dataObj, 0);
+      addFirstMatch.internal.returnTeamDataListener(undefined, 'someFileName', dataObj, 0);
       expect(addFirstMatch.internal.filename).to.equal('someFileName');
     });
 
     it('locally stores the seasonId', () => {
-      addFirstMatch.internal.teamGetListener(undefined, 'someFileName', dataObj, 2);
+      addFirstMatch.internal.returnTeamDataListener(undefined, 'someFileName', dataObj, 2);
       expect(addFirstMatch.internal.seasonId).to.equal(2);
     });
 
     it('clears the curent matchDate, matchOpponent and add button', () => {
       addFirstMatch.internal.matchDate.value = '2017-01-01';
       addFirstMatch.internal.matchOpponent.value = 'sometext';
-      addFirstMatch.internal.teamGetListener(undefined, undefined, dataObj, 0);
+      addFirstMatch.internal.returnTeamDataListener(undefined, undefined, dataObj, 0);
       expect(addFirstMatch.internal.matchDate.value).to.equal('');
       expect(addFirstMatch.internal.matchOpponent.value).to.equal('');
       expect(addFirstMatch.internal.matchAddButton.className).to.equal('button new-item-button-disabled');
     });
 
     it('calls to generate the breadcrumb', () => {
-      addFirstMatch.internal.teamGetListener(undefined, undefined, dataObj, 0);
+      addFirstMatch.internal.returnTeamDataListener(undefined, undefined, dataObj, 0);
       expect(generateBreadcrumbStub).to.be.calledOnce;
     });
 

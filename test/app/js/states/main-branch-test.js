@@ -71,7 +71,7 @@ describe('app/js/main-branch', () => {
   describe('#attach', () => {
     it('registers for return-team-data', () => {
       mainBranch.attach();
-      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', mainBranch.internal.teamGetListener);
+      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', mainBranch.internal.returnTeamDataListener);
     });
 
     it('sends a get-team-data event', () => {
@@ -84,7 +84,7 @@ describe('app/js/main-branch', () => {
   describe('#detach', () => {
     it('deregisters for return-team-data', () => {
       mainBranch.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', mainBranch.internal.teamGetListener);
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', mainBranch.internal.returnTeamDataListener);
     });
   });
 
@@ -240,7 +240,7 @@ describe('app/js/main-branch', () => {
     });
   });
 
-  describe('#teamGetListener', () => {
+  describe('#returnTeamDataListener', () => {
     let dataObj = {
       name: 'team1',
       seasons: [{name: 'season1'}]
@@ -261,17 +261,17 @@ describe('app/js/main-branch', () => {
     });
 
     it('locally stores the team data', () => {
-      mainBranch.internal.teamGetListener(undefined, undefined, dataObj, 0);
+      mainBranch.internal.returnTeamDataListener(undefined, undefined, dataObj, 0);
       expect(mainBranch.internal.dataObj).to.deep.equal(dataObj);
     });
 
     it('locally stores the seasonId', () => {
-      mainBranch.internal.teamGetListener(undefined, 'someFileName', dataObj, 2);
+      mainBranch.internal.returnTeamDataListener(undefined, 'someFileName', dataObj, 2);
       expect(mainBranch.internal.seasonId).to.equal(2);
     });
 
     it('calls to generate the breadcrumb', () => {
-      mainBranch.internal.teamGetListener(undefined, undefined, dataObj, 0);
+      mainBranch.internal.returnTeamDataListener(undefined, undefined, dataObj, 0);
       expect(generateBreadcrumbStub).to.be.calledOnce;
     });
   });

@@ -57,7 +57,7 @@ function seasonsOnClick() {
 }
 
 /**
- * teamGetListener - React to a request to get the known team data.  Populate the player list.
+ * returnTeamDataListener - React to a request to get the known team data.  Populate the player list.
  * If the number of players is 6 or more then enable the done button.
  *
  * @param  {object} event    IPC Event
@@ -67,7 +67,7 @@ function seasonsOnClick() {
  *
  * @private
  */
-function teamGetListener(event, filename, dataObj, seasonId) {
+function returnTeamDataListener(event, filename, dataObj, seasonId) {
   debug('team data loaded');
   module.exports.internal.dataObj = dataObj;
   module.exports.internal.seasonId = seasonId;
@@ -119,7 +119,7 @@ function generateBreadcrumb() {
  */
 function attach() {
   debug('attaching main-branch');
-  ipc.on('return-team-data', module.exports.internal.teamGetListener);
+  ipc.on('return-team-data', module.exports.internal.returnTeamDataListener);
   ipc.send('get-team-data');
 }
 
@@ -128,7 +128,7 @@ function attach() {
  */
 function detach() {
   debug('detaching main-branch');
-  ipc.removeListener('return-team-data', module.exports.internal.teamGetListener);
+  ipc.removeListener('return-team-data', module.exports.internal.returnTeamDataListener);
 }
 
 module.exports = {
@@ -138,7 +138,7 @@ module.exports = {
   attach: attach,
   detach: detach,
   internal: {
-    teamGetListener: teamGetListener,
+    returnTeamDataListener: returnTeamDataListener,
     playersOnClick: playersOnClick,
     matchesOnClick: matchesOnClick,
     seasonsOnClick: seasonsOnClick,

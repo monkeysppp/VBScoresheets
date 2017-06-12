@@ -76,12 +76,12 @@ describe('app/js/add-first-squad', () => {
   describe('#attach', () => {
     it('registers for return-team-data', () => {
       addFirstSquad.attach();
-      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', addFirstSquad.internal.teamGetListener);
+      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', addFirstSquad.internal.returnTeamDataListener);
     });
 
     it('registers for team-data-saved', () => {
       addFirstSquad.attach();
-      expect(ipcRendererOnStub).to.be.calledWith('team-data-saved', addFirstSquad.internal.teamSaveListener);
+      expect(ipcRendererOnStub).to.be.calledWith('team-data-saved', addFirstSquad.internal.teamDataSavedListener);
     });
 
     it('sends a get-team-data event', () => {
@@ -94,12 +94,12 @@ describe('app/js/add-first-squad', () => {
   describe('#detach', () => {
     it('deregisters for return-team-data', () => {
       addFirstSquad.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstSquad.internal.teamGetListener);
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstSquad.internal.returnTeamDataListener);
     });
 
     it('deregisters for team-data-saved', () => {
       addFirstSquad.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstSquad.internal.teamSaveListener);
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstSquad.internal.teamDataSavedListener);
     });
   });
 
@@ -337,18 +337,18 @@ describe('app/js/add-first-squad', () => {
     });
   });
 
-  describe('#teamSaveListener', () => {
+  describe('#teamDataSavedListener', () => {
     beforeEach(() => {
       addFirstSquad.init({});
     });
 
     it('calls to load the team data', () => {
-      addFirstSquad.internal.teamSaveListener();
+      addFirstSquad.internal.teamDataSavedListener();
       expect(ipcRendererSendStub).to.be.calledWith('get-team-data');
     });
   });
 
-  describe('#teamGetListener', () => {
+  describe('#returnTeamDataListener', () => {
     let dataObj = {
       name: 'team1',
       seasons: [
@@ -401,35 +401,35 @@ describe('app/js/add-first-squad', () => {
     });
 
     it('locally stores the team data', () => {
-      addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 0);
+      addFirstSquad.internal.returnTeamDataListener(undefined, undefined, dataObj, 0);
       expect(addFirstSquad.internal.dataObj).to.deep.equal(dataObj);
     });
 
     it('locally stores the filename', () => {
-      addFirstSquad.internal.teamGetListener(undefined, 'someFileName', dataObj, 0);
+      addFirstSquad.internal.returnTeamDataListener(undefined, 'someFileName', dataObj, 0);
       expect(addFirstSquad.internal.filename).to.equal('someFileName');
     });
 
     it('locally stores the seasonId', () => {
-      addFirstSquad.internal.teamGetListener(undefined, 'someFileName', dataObj, 2);
+      addFirstSquad.internal.returnTeamDataListener(undefined, 'someFileName', dataObj, 2);
       expect(addFirstSquad.internal.seasonId).to.equal(2);
     });
 
     it('clears the curent playerName input and add button', () => {
       addFirstSquad.internal.playerName.value = 'sometext';
-      addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 0);
+      addFirstSquad.internal.returnTeamDataListener(undefined, undefined, dataObj, 0);
       expect(addFirstSquad.internal.playerName.value).to.equal('');
       expect(addFirstSquad.internal.playerAddButton.className).to.equal('button new-item-button-disabled');
     });
 
     it('calls to generate the breadcrumb', () => {
-      addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 0);
+      addFirstSquad.internal.returnTeamDataListener(undefined, undefined, dataObj, 0);
       expect(generateBreadcrumbStub).to.be.calledOnce;
     });
 
     context('when no players exist', () => {
       beforeEach(() => {
-        addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 3);
+        addFirstSquad.internal.returnTeamDataListener(undefined, undefined, dataObj, 3);
       });
 
       it('does not enable the done button', () => {
@@ -440,7 +440,7 @@ describe('app/js/add-first-squad', () => {
 
     context('when 5 players exist', () => {
       beforeEach(() => {
-        addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 1);
+        addFirstSquad.internal.returnTeamDataListener(undefined, undefined, dataObj, 1);
       });
 
       it('adds the players to the list', () => {
@@ -455,7 +455,7 @@ describe('app/js/add-first-squad', () => {
 
     context('when 6 players exist', () => {
       beforeEach(() => {
-        addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 2);
+        addFirstSquad.internal.returnTeamDataListener(undefined, undefined, dataObj, 2);
       });
 
       it('enables the done button', () => {

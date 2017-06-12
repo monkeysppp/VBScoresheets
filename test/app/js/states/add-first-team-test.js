@@ -69,14 +69,14 @@ describe('app/js/add-first-team', () => {
   describe('#attach', () => {
     it('registers for team-data-saved', () => {
       addFirstTeam.attach();
-      expect(ipcRendererOnStub).to.be.calledWith('team-data-saved', addFirstTeam.internal.teamSaveListener);
+      expect(ipcRendererOnStub).to.be.calledWith('team-data-saved', addFirstTeam.internal.teamDataSavedListener);
     });
   });
 
   describe('#detach', () => {
     it('deregisters for team-data-saved', () => {
       addFirstTeam.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstTeam.internal.teamSaveListener);
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstTeam.internal.teamDataSavedListener);
     });
   });
 
@@ -174,7 +174,7 @@ describe('app/js/add-first-team', () => {
     });
   });
 
-  describe('#teamSaveListener', () => {
+  describe('#teamDataSavedListener', () => {
     let stateManagerStub;
     let showStateStub;
 
@@ -187,7 +187,7 @@ describe('app/js/add-first-team', () => {
     });
 
     it('calls to change state from add-first-team to add-first-season', () => {
-      addFirstTeam.internal.teamSaveListener();
+      addFirstTeam.internal.teamDataSavedListener();
       expect(showStateStub).to.be.calledWith('add-first-team', 'add-first-season');
     });
   });

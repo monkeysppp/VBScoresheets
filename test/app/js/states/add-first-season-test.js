@@ -72,12 +72,12 @@ describe('app/js/add-first-season', () => {
   describe('#attach', () => {
     it('registers for return-team-data', () => {
       addFirstSeason.attach();
-      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', addFirstSeason.internal.teamGetListener);
+      expect(ipcRendererOnStub).to.be.calledWith('return-team-data', addFirstSeason.internal.returnTeamDataListener);
     });
 
     it('registers for team-data-saved', () => {
       addFirstSeason.attach();
-      expect(ipcRendererOnStub).to.be.calledWith('team-data-saved', addFirstSeason.internal.teamSaveListener);
+      expect(ipcRendererOnStub).to.be.calledWith('team-data-saved', addFirstSeason.internal.teamDataSavedListener);
     });
 
     it('registers for team-season-stored', () => {
@@ -95,12 +95,12 @@ describe('app/js/add-first-season', () => {
   describe('#detach', () => {
     it('deregisters for return-team-data', () => {
       addFirstSeason.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstSeason.internal.teamGetListener);
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstSeason.internal.returnTeamDataListener);
     });
 
     it('deregisters for team-data-saved', () => {
       addFirstSeason.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstSeason.internal.teamSaveListener);
+      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstSeason.internal.teamDataSavedListener);
     });
 
     it('deregisters for team-season-stored', () => {
@@ -257,18 +257,18 @@ describe('app/js/add-first-season', () => {
     });
   });
 
-  describe('#teamSaveListener', () => {
+  describe('#teamDataSavedListener', () => {
     beforeEach(() => {
       addFirstSeason.init({});
     });
 
     it('calls to save the team season id', () => {
-      addFirstSeason.internal.teamSaveListener();
+      addFirstSeason.internal.teamDataSavedListener();
       expect(ipcRendererSendStub).to.be.calledWith('store-team-season', 0);
     });
   });
 
-  describe('#teamGetListener', () => {
+  describe('#returnTeamDataListener', () => {
     let stateManagerStub;
     let showStateStub;
     let generateBreadcrumbStub;
@@ -291,24 +291,24 @@ describe('app/js/add-first-season', () => {
     });
 
     it('locally stores the filename', () => {
-      addFirstSeason.internal.teamGetListener(undefined, 'someFileName', dataObj);
+      addFirstSeason.internal.returnTeamDataListener(undefined, 'someFileName', dataObj);
       expect(addFirstSeason.internal.filename).to.equal('someFileName');
     });
 
     it('locally stores the team data', () => {
-      addFirstSeason.internal.teamGetListener(undefined, undefined, dataObj);
+      addFirstSeason.internal.returnTeamDataListener(undefined, undefined, dataObj);
       expect(addFirstSeason.internal.dataObj).to.deep.equal(dataObj);
     });
 
     it('clears the curent seasonName input and add button', () => {
       addFirstSeason.internal.seasonName.value = 'sometext';
-      addFirstSeason.internal.teamGetListener(undefined, undefined, dataObj);
+      addFirstSeason.internal.returnTeamDataListener(undefined, undefined, dataObj);
       expect(addFirstSeason.internal.seasonName.value).to.equal('');
       expect(addFirstSeason.internal.seasonAddButton.className).to.equal('button new-item-button-disabled');
     });
 
     it('calls to generate the breadcrumb', () => {
-      addFirstSeason.internal.teamGetListener(undefined, undefined, dataObj);
+      addFirstSeason.internal.returnTeamDataListener(undefined, undefined, dataObj);
       expect(generateBreadcrumbStub).to.be.calledOnce;
     });
   });

@@ -83,17 +83,17 @@ function doneOnClick() {
 }
 
 /**
- * teamSaveListener - React to team data being saved, by reloading team data
+ * teamDataSavedListener - React to team data being saved, by reloading team data
  *
  * @private
  */
-function teamSaveListener() {
+function teamDataSavedListener() {
   debug('team data saved, reloading team data');
   ipc.send('get-team-data');
 }
 
 /**
- * teamGetListener - React to a request to get the known team data.  Populate the player list.
+ * returnTeamDataListener - React to a request to get the known team data.  Populate the player list.
  * If the number of players is 6 or more then enable the done button.
  *
  * @param  {object} event    IPC Event
@@ -103,7 +103,7 @@ function teamSaveListener() {
  *
  * @private
  */
-function teamGetListener(event, filename, dataObj, seasonId) {
+function returnTeamDataListener(event, filename, dataObj, seasonId) {
   debug('team data loaded - seasonId ' + seasonId);
   module.exports.internal.dataObj = dataObj;
   module.exports.internal.filename = filename;
@@ -185,8 +185,8 @@ function generateBreadcrumb() {
  */
 function attach() {
   debug('attaching add-first-squad');
-  ipc.on('team-data-saved', module.exports.internal.teamSaveListener);
-  ipc.on('return-team-data', module.exports.internal.teamGetListener);
+  ipc.on('team-data-saved', module.exports.internal.teamDataSavedListener);
+  ipc.on('return-team-data', module.exports.internal.returnTeamDataListener);
   ipc.send('get-team-data');
 }
 
@@ -195,8 +195,8 @@ function attach() {
  */
 function detach() {
   debug('detaching add-first-squad');
-  ipc.removeListener('team-data-saved', module.exports.internal.teamSaveListener);
-  ipc.removeListener('return-team-data', module.exports.internal.teamGetListener);
+  ipc.removeListener('team-data-saved', module.exports.internal.teamDataSavedListener);
+  ipc.removeListener('return-team-data', module.exports.internal.returnTeamDataListener);
 }
 
 module.exports = {
@@ -206,8 +206,8 @@ module.exports = {
   attach: attach,
   detach: detach,
   internal: {
-    teamSaveListener: teamSaveListener,
-    teamGetListener: teamGetListener,
+    teamDataSavedListener: teamDataSavedListener,
+    returnTeamDataListener: returnTeamDataListener,
     playerAddOnClick: playerAddOnClick,
     playerNameOnInput: playerNameOnInput,
     doneOnClick: doneOnClick,
