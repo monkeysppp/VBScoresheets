@@ -211,9 +211,15 @@ describe('app/js/pick-a-player', () => {
     });
 
     it('makes the team button show "pick-a-season"', () => {
-      expect(typeof breadcrumbParts[0].onclick).to.equal('function');
+      expect(typeof breadcrumbParts[2].onclick).to.equal('function');
       breadcrumbParts[2].onclick();
       expect(showStateStub).to.be.calledWith('pick-a-player', 'pick-a-season');
+    });
+
+    it('makes the season button show "main-branch"', () => {
+      expect(typeof breadcrumbParts[4].onclick).to.equal('function');
+      breadcrumbParts[4].onclick();
+      expect(showStateStub).to.be.calledWith('pick-a-player', 'main-branch');
     });
   });
 

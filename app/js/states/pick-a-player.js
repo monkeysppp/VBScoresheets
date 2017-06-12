@@ -161,6 +161,7 @@ function generateBreadcrumb() {
 
   let spanSeason = document.createElement('span');
   spanSeason.innerHTML = module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].name;
+  spanSeason.onclick = () => {module.exports.internal.stateManager.showState('pick-a-player', 'main-branch');};
   module.exports.internal.breadcrumb.appendChild(spanSeason);
 }
 

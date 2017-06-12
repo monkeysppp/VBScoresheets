@@ -30,9 +30,9 @@ function init(stateManager) {
 /**
  * returnTeamFilesListener - React to a return-team-files event by populating the team list div
  *
- * @param  {type} event        description
- * @param  {type} teamFileData description
- * @return {type}              description
+ * @param  {object} event        IPC Event
+ * @param  {object} teamFileData data of the team names and their files
+ * @private
  */
 function returnTeamFilesListener(event, teamFileData) {
   // Clean up the input text box
@@ -58,7 +58,7 @@ function returnTeamFilesListener(event, teamFileData) {
  * load that file as if it had been selected.
  *
  * @param  {object} event    IPC Event
- * @param  string} filename  the filename that was saved
+ * @param  {string} filename  the filename that was saved
  * @private
  */
 function teamDataSavedListener(event, filename) {
