@@ -164,6 +164,14 @@ function generateBreadcrumb() {
   spanSeason.className = 'link';
   spanSeason.onclick = () => {module.exports.internal.stateManager.showState('pick-a-player', 'main-branch');};
   module.exports.internal.breadcrumb.appendChild(spanSeason);
+
+  let spanSep3 = document.createElement('span');
+  spanSep3.innerHTML = '&nbsp;&gt;&nbsp;';
+  module.exports.internal.breadcrumb.appendChild(spanSep3);
+
+  let spanPlayers = document.createElement('span');
+  spanPlayers.innerHTML = 'Players';
+  module.exports.internal.breadcrumb.appendChild(spanPlayers);
 }
 
 /**

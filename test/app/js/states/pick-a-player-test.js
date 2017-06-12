@@ -196,12 +196,13 @@ describe('app/js/pick-a-player', () => {
       expect(breadcrumbParts[0].innerHTML).to.equal('Home');
       expect(breadcrumbParts[2].innerHTML).to.equal(dataObj.name);
       expect(breadcrumbParts[4].innerHTML).to.equal(dataObj.seasons[0].name);
+      expect(breadcrumbParts[6].innerHTML).to.equal('Players');
     });
 
     it('cleans out the old breadcrumb on each call', () => {
       pickAPlayer.internal.generateBreadcrumb();
       pickAPlayer.internal.generateBreadcrumb();
-      expect(breadcrumbParts.length).to.equal(5);
+      expect(breadcrumbParts.length).to.equal(7);
     });
 
     it('makes the home button show "pick-a-team"', () => {
