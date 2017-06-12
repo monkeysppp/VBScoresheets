@@ -63,6 +63,33 @@ div.breadcrumbs {
   padding-top: 7px;
 }
 
+div.team-list {
+  height: 200px;
+  width: 515px;
+  margin: auto;
+}
+
+div.season-list {
+  height: 200px;
+  width: 515px;
+  margin: auto;
+}
+
+div.player-list {
+  height: 170px;
+  width: 515px;
+  margin: auto;
+}
+
+div.scrollable {
+  overflow-y: scroll;
+}
+
+div.spaced-row {
+  padding-top: 10px;
+  padding-bottom: 15px;
+}
+
 div.link {
   cursor: pointer;
 }
@@ -111,7 +138,43 @@ span.link {
 
 .new-item-button:active {
   background-color: var(--main-button-active-green);
-  outline: none;
+}
+
+.radio-button-off {
+  border: none;
+  border-radius: 7px;
+  background-color: var(--main-button-grey);
+  color: var(--main-background-white);
+}
+
+.radio-button-off:hover {
+  background-color: var(--main-button-hover-green);
+}
+
+.radio-button-off:active {
+  background-color: var(--main-button-active-green);
+}
+
+.radio-button-on {
+  border: none;
+  border-radius: 7px;
+  background-color: var(--main-button-green);
+  color: var(--main-background-white);
+  cursor: default;
+}
+
+.group-left {
+  border-top-left-radius: 7px;
+  border-bottom-left-radius: 7px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.group-right {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
 }
 
 .done-button-disabled {
@@ -159,26 +222,4 @@ span.link {
   text-align: center;
   font-size: var(--main-font-size-big);
   color: var(--main-text-black);
-}
-
-div.team-list {
-  height: 200px;
-  width: 515px;
-  margin: auto;
-}
-
-div.season-list {
-  height: 200px;
-  width: 515px;
-  margin: auto;
-}
-
-div.player-list {
-  height: 170px;
-  width: 515px;
-  margin: auto;
-}
-
-div.scrollable {
-  overflow-y: scroll;
 }

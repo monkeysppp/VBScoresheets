@@ -71,7 +71,7 @@
     <div class="state pick-a-season">
       <div class="breadcrumbs" id="pick-a-season_breadcrumbs"></div>
       <div class="centre-instruction">
-        <p>Pick a season</p>
+        <p>Pick a season or start a new one</p>
         <div id="pick-a-season_list" class="scrollable season-list"></div>
         <input id="input_pick-a-season" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="2016/2017" size="20" />
         <button class="button new-item-button-disabled" id="button_pick-a-season_add">+</button>
@@ -81,7 +81,9 @@
     <div class="state pick-a-player">
       <div class="breadcrumbs" id="pick-a-player_breadcrumbs"></div>
       <div class="centre-instruction">
-        <p>Pick a player</p>
+        <p>Pick a player or add to your squad</p>
+        <input id="input_pick-a-player" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Player Name" size="20" />
+        <button class="button new-item-button-disabled" id="button_pick-a-player_add">+</button>
         <div id="pick-a-player_list" class="scrollable player-list"></div>
       </div>
     </div>
@@ -135,8 +137,20 @@
 
     <div class="state match-editor">
       <div class="breadcrumbs" id="match-editor_breadcrumbs"></div>
-      <div class="centre-instruction">
-        <p>Match editor</p>
+      <div class="centre-instruction scrollable">
+        <div class="spaced-row">
+          <input id="input_match-editor_venue" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Venue" size="25" />
+          <button class="button radio-button-on group-left" id="button_match-editor_home">Home</button><button class="button radio-button-off group-right" id="button_match-editor_away">Away</button>
+        </div>
+        <div class="spaced-row">
+          <input id="input_match-editor_date" class="new-item-input" type="date" maxlength="10" minlength="1" placeholder="01/01/2000" />
+          <input id="input_match-editor_time" class="new-item-input" type="time" maxlength="5" minlength="1" placeholder="Venue" size="15" />
+        </div>
+        <div class="spaced-row">
+          <span id="input_match-editor_team-heading-us"></span>
+          <span id="input_match-editor_team-heading-versus"> v </span>
+          <span id="input_match-editor_team-heading-them"></span>
+        </div>
       </div>
     </div>
 
