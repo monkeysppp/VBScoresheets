@@ -378,6 +378,9 @@ describe('app/js/add-first-squad', () => {
             {id: 5, name: 'Emma Emerton'},
             {id: 6, name: 'Freda Ferguson'},
           ]
+        },
+        {
+          name: 'season4'
         }
       ]
     };
@@ -424,6 +427,17 @@ describe('app/js/add-first-squad', () => {
       expect(generateBreadcrumbStub).to.be.calledOnce;
     });
 
+    context('when no players exist', () => {
+      beforeEach(() => {
+        addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 3);
+      });
+
+      it('does not enable the done button', () => {
+        expect(addFirstSquad.internal.pageComplete).to.equal(false);
+        expect(addFirstSquad.internal.doneButton.className).to.equal('button done-button-disabled');
+      });
+    });
+
     context('when 5 players exist', () => {
       beforeEach(() => {
         addFirstSquad.internal.teamGetListener(undefined, undefined, dataObj, 1);
@@ -433,7 +447,7 @@ describe('app/js/add-first-squad', () => {
         expect(addFirstSquad.internal.playerList.childNodes.length).to.equal(5);
       });
 
-      it('does not enable the bone button', () => {
+      it('does not enable the done button', () => {
         expect(addFirstSquad.internal.pageComplete).to.equal(false);
         expect(addFirstSquad.internal.doneButton.className).to.equal('button done-button-disabled');
       });

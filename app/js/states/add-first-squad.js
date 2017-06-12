@@ -104,11 +104,11 @@ function teamSaveListener() {
  * @private
  */
 function teamGetListener(event, filename, dataObj, seasonId) {
-  debug('team data loaded');
+  debug('team data loaded - seasonId ' + seasonId);
   module.exports.internal.dataObj = dataObj;
   module.exports.internal.filename = filename;
   module.exports.internal.seasonId = seasonId;
-  if (dataObj.seasons[seasonId].players.length >= 6) {
+  if (dataObj.seasons[seasonId].players && dataObj.seasons[seasonId].players.length >= 6) {
     module.exports.internal.pageComplete = true;
     module.exports.internal.doneButton.className = 'button done-button';
   } else {
@@ -128,12 +128,14 @@ function teamGetListener(event, filename, dataObj, seasonId) {
   module.exports.internal.playerList.parentNode.replaceChild(clonePlayerList, module.exports.internal.playerList);
   module.exports.internal.playerList = clonePlayerList;
 
-  dataObj.seasons[seasonId].players.forEach((player) => {
-    let span = document.createElement('span');
-    span.innerHTML = player.name;
-    span.className = 'list-item';
-    module.exports.internal.playerList.appendChild(span);
-  });
+  if (dataObj.seasons[seasonId].players) {
+    dataObj.seasons[seasonId].players.forEach((player) => {
+      let span = document.createElement('span');
+      span.innerHTML = player.name;
+      span.className = 'list-item';
+      module.exports.internal.playerList.appendChild(span);
+    });
+  }
 
   // Scroll to the bottom of the list
   module.exports.internal.playerList.scrollTop = module.exports.internal.playerList.scrollHeight;
