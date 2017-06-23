@@ -26,6 +26,7 @@ in the team name.
       ],
       "matches": [
         {
+          "id": 1,
           "venue": "Sports Centre",
           "home_or_away": "home",
           "date": "2017-05-21",

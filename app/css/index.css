@@ -81,6 +81,12 @@ div.player-list {
   margin: auto;
 }
 
+div.match-list {
+  height: 170px;
+  width: 515px;
+  margin: auto;
+}
+
 div.scrollable {
   overflow-y: scroll;
 }
