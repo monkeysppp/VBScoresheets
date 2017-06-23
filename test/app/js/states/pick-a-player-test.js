@@ -432,17 +432,6 @@ describe('app/js/pick-a-player', () => {
   });
 
   describe('#teamDataSavedListener', () => {
-    beforeEach(() => {
-      pickAPlayer.internal.dataObj = {
-        name: 'team1',
-        players: [
-          {name: 'abc'},
-          {name: 'xyz'},
-          {name: '123/456'}
-        ]
-      };
-    });
-
     it('calls to get the team data', () => {
       pickAPlayer.internal.teamDataSavedListener();
       expect(ipcRendererSendStub).to.be.calledWith('get-team-data');
