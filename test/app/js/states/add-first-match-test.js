@@ -151,11 +151,11 @@ describe('app/js/add-first-match', () => {
       });
 
       it('sets the oninput listener for the matchDate input', () => {
-        expect(addFirstMatch.internal.matchDate.oninput).to.equal(addFirstMatch.internal.matchDateOnInput);
+        expect(addFirstMatch.internal.matchDate.oninput).to.equal(addFirstMatch.internal.matchInputOnInput);
       });
 
       it('sets the oninput listener for the matchOpponent input', () => {
-        expect(addFirstMatch.internal.matchOpponent.oninput).to.equal(addFirstMatch.internal.matchOpponentOnInput);
+        expect(addFirstMatch.internal.matchOpponent.oninput).to.equal(addFirstMatch.internal.matchInputOnInput);
       });
     });
   });
@@ -259,9 +259,12 @@ describe('app/js/add-first-match', () => {
             ],
             matches: [
               {
+                id: 1,
                 date: '2017-10-20',
-                opponent: {
-                  name: 'Newtown City'
+                squads: {
+                  opponent: {
+                    name: 'Newtown City'
+                  }
                 }
               }
             ]
@@ -329,22 +332,9 @@ describe('app/js/add-first-match', () => {
         });
       });
     });
-
-    context('when the opponent name is zero length', () => {
-      beforeEach(() => {
-        addFirstMatch.internal.matchDate.value = '';
-        addFirstMatch.internal.matchAddOnClick();
-      });
-
-      it('disables the button', () => {
-        expect(ipcRendererSendStub).to.not.be.called;
-      });
-    });
-
-
   });
 
-  describe('#matchDateOnInput', () => {
+  describe('#matchInputOnInput', () => {
     beforeEach(() => {
       addFirstMatch.init({});
       addFirstMatch.internal.matchAddButton.className = 'null';
@@ -358,7 +348,7 @@ describe('app/js/add-first-match', () => {
       context('when date is not set', () => {
         beforeEach(() => {
           addFirstMatch.internal.matchDate.value = '';
-          addFirstMatch.internal.matchDate.oninput();
+          addFirstMatch.internal.matchInputOnInput();
         });
 
         it('sets the button class to disabled', () => {
@@ -369,7 +359,7 @@ describe('app/js/add-first-match', () => {
       context('when date is set', () => {
         beforeEach(() => {
           addFirstMatch.internal.matchDate.value = '2017-02-03';
-          addFirstMatch.internal.matchDate.oninput();
+          addFirstMatch.internal.matchInputOnInput();
         });
 
         it('sets the button class to disabled', () => {
@@ -386,7 +376,7 @@ describe('app/js/add-first-match', () => {
       context('when date is not set', () => {
         beforeEach(() => {
           addFirstMatch.internal.matchDate.value = '';
-          addFirstMatch.internal.matchDate.oninput();
+          addFirstMatch.internal.matchInputOnInput();
         });
 
         it('sets the button class to disabled', () => {
@@ -397,70 +387,7 @@ describe('app/js/add-first-match', () => {
       context('when date is set', () => {
         beforeEach(() => {
           addFirstMatch.internal.matchDate.value = '2017-02-03';
-          addFirstMatch.internal.matchDate.oninput();
-        });
-
-        it('sets the button class to enabled', () => {
-          expect(addFirstMatch.internal.matchAddButton.className).to.equal('button new-item-button');
-        });
-      });
-    });
-  });
-
-  describe('#matchOpponentOnInput', () => {
-    beforeEach(() => {
-      addFirstMatch.init({});
-      addFirstMatch.internal.matchAddButton.className = 'null';
-    });
-
-    context('when the date is not set', () => {
-      beforeEach(() => {
-        addFirstMatch.internal.matchDate.value = '';
-      });
-
-      context('when opponent input is zero length', () => {
-        beforeEach(() => {
-          addFirstMatch.internal.matchOpponent.value = '';
-          addFirstMatch.internal.matchOpponent.oninput();
-        });
-
-        it('sets the button class to disabled', () => {
-          expect(addFirstMatch.internal.matchAddButton.className).to.equal('button new-item-button-disabled');
-        });
-      });
-
-      context('when opponent input is longer than zero length', () => {
-        beforeEach(() => {
-          addFirstMatch.internal.matchOpponent.value = 'abc';
-          addFirstMatch.internal.matchOpponent.oninput();
-        });
-
-        it('sets the button class to disabled', () => {
-          expect(addFirstMatch.internal.matchAddButton.className).to.equal('button new-item-button-disabled');
-        });
-      });
-    });
-
-    context('when the date is set', () => {
-      beforeEach(() => {
-        addFirstMatch.internal.matchDate.value = '2017-01-02';
-      });
-
-      context('when opponent input is zero length', () => {
-        beforeEach(() => {
-          addFirstMatch.internal.matchOpponent.value = '';
-          addFirstMatch.internal.matchOpponent.oninput();
-        });
-
-        it('sets the button class to disabled', () => {
-          expect(addFirstMatch.internal.matchAddButton.className).to.equal('button new-item-button-disabled');
-        });
-      });
-
-      context('when opponent input is longer than zero length', () => {
-        beforeEach(() => {
-          addFirstMatch.internal.matchOpponent.value = 'abc';
-          addFirstMatch.internal.matchOpponent.oninput();
+          addFirstMatch.internal.matchInputOnInput();
         });
 
         it('sets the button class to enabled', () => {

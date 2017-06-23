@@ -25,8 +25,8 @@ function init(stateManager) {
   module.exports.internal.breadcrumb = document.getElementById('add-first-match_breadcrumbs');
 
   module.exports.internal.matchAddButton.onclick = module.exports.internal.matchAddOnClick;
-  module.exports.internal.matchDate.oninput = module.exports.internal.matchDateOnInput;
-  module.exports.internal.matchOpponent.oninput = module.exports.internal.matchOpponentOnInput;
+  module.exports.internal.matchDate.oninput = module.exports.internal.matchInputOnInput;
+  module.exports.internal.matchOpponent.oninput = module.exports.internal.matchInputOnInput;
 }
 
 /**
@@ -68,7 +68,7 @@ function returnTeamDataListener(event, filename, dataObj, seasonId) {
   // Clean up the input text box
   module.exports.internal.matchDate.value = '';
   module.exports.internal.matchOpponent.value = '';
-  matchDateOnInput();
+  matchInputOnInput();
 
   // generate the breadcrumb
   module.exports.internal.generateBreadcrumb();
@@ -84,9 +84,12 @@ function matchAddOnClick() {
   if (module.exports.internal.matchDate.value.length !== 0 && module.exports.internal.matchOpponent.value.length !== 0) {
     module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].matches = [
       {
+        id: 1,
         date: module.exports.internal.matchDate.value,
-        opponent: {
-          name: module.exports.internal.matchOpponent.value
+        squads: {
+          opponent: {
+            name: module.exports.internal.matchOpponent.value
+          }
         }
       }
     ];
@@ -96,26 +99,13 @@ function matchAddOnClick() {
 }
 
 /**
- * matchDateOnInput - An on-input handler for the match date field.  This greys out the
- * "add" button when there is no complete date in the date field.
+ * matchInputOnInput - An on-input handler for the match date and opponent fields.  This greys out the
+ * "add" button when there is no complete date in the date field, or no complete opponent in the opponent
+ * field.
  *
  * @private
  */
-function matchDateOnInput() {
-  if (module.exports.internal.matchDate.value.length === 0 || module.exports.internal.matchOpponent.value.length === 0) {
-    module.exports.internal.matchAddButton.className = 'button new-item-button-disabled';
-  } else {
-    module.exports.internal.matchAddButton.className = 'button new-item-button';
-  }
-}
-
-/**
- * matchOpponentOnInput - An on-input handler for the opponent name text field.  This greys out the
- * "add" button when there is no text in the opponent name.
- *
- * @private
- */
-function matchOpponentOnInput() {
+function matchInputOnInput() {
   if (module.exports.internal.matchDate.value.length === 0 || module.exports.internal.matchOpponent.value.length === 0) {
     module.exports.internal.matchAddButton.className = 'button new-item-button-disabled';
   } else {
@@ -194,8 +184,7 @@ module.exports = {
     teamMatchStoredListener: teamMatchStoredListener,
     returnTeamDataListener: returnTeamDataListener,
     matchAddOnClick: matchAddOnClick,
-    matchDateOnInput: matchDateOnInput,
-    matchOpponentOnInput: matchOpponentOnInput,
+    matchInputOnInput: matchInputOnInput,
     generateBreadcrumb: generateBreadcrumb,
     stateManager: undefined,
     matchAddButton: undefined,
