@@ -48,14 +48,16 @@ function teamDataSavedListener() {
  * @private
  */
 function teamMatchStoredListener(event, matchId) {
-  debug('team match selector stored, loading match-editor');
+  debug('team match selector stored');
   let seasons = module.exports.internal.dataObj.seasons;
   let seasonId = module.exports.internal.seasonId;
   if (matchId === seasons[seasonId].matches.length &&
     module.exports.internal.matchDate.value === seasons[seasonId].matches[seasons[seasonId].matches.length - 1].date &&
     module.exports.internal.matchOpponent.value == seasons[seasonId].matches[seasons[seasonId].matches.length - 1].squads.opponent.name) {
+    debug('just added this match so loading match-editor');
     module.exports.internal.stateManager.showState('pick-a-match', 'match-editor');
   } else {
+    debug('match selected from list so loading match-stats');
     module.exports.internal.stateManager.showState('pick-a-match', 'match-stats');
   }
 }
@@ -103,7 +105,7 @@ function returnTeamDataListener(event, filename, dataObj, seasonId) {
       span.className = 'list-item';
       span.onclick = () => {ipc.send('store-team-match', match.id);};
       module.exports.internal.matchList.appendChild(span);
-      debug('adding match ' + match.date + ' ' + match.squads.opponent.name + ' to match list ui');
+      debug('adding match ' + match.id + ' on '+ match.date + ' ' + match.squads.opponent.name + ' to match list ui');
     });
   }
 }
