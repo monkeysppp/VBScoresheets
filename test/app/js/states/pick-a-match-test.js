@@ -702,7 +702,6 @@ describe('app/js/pick-a-match', () => {
       pickAMatch.internal.matchOpponent.value = 'New City';
     });
 
-// TODO this does not work.  Picking the last in the list is the same as adding a new entry, so we can't compare list-length with choice indices
     context('when we just added the match', () => {
       it('shows the match-editor', () => {
         pickAMatch.internal.teamMatchStoredListener(undefined, 3);

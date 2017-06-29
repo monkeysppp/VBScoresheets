@@ -9,6 +9,9 @@
   --main-button-active-green: #559955;
 
   --main-font-size-big: 28px;
+  --main-font-size-small: 18px;
+
+  --main-border-bottom-small: 1px;
 }
 
 html,
@@ -115,6 +118,16 @@ span.link {
   border-left: none;
   border-right: none;
   border-bottom: solid var(--main-text-black);
+  background: var(--main-background-white);
+  color: var(--main-text-black);
+  outline: none;
+}
+
+.new-item-input-small {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: solid var(--main-text-black) var(--main-border-bottom-small);
   background: var(--main-background-white);
   color: var(--main-text-black);
   outline: none;
@@ -229,4 +242,8 @@ span.link {
   text-align: center;
   font-size: var(--main-font-size-big);
   color: var(--main-text-black);
+}
+
+.small-text {
+  font-size: var(--main-font-size-small);
 }
