@@ -112,7 +112,12 @@ function returnTeamDataListener(event, filename, dataObj, seasonId) {
   module.exports.internal.playerList = clonePlayerList;
 
   if (dataObj.seasons[seasonId].players) {
-    dataObj.seasons[seasonId].players.forEach((player) => {
+    dataObj.seasons[seasonId].players.sort((a, b) => {
+      if (a.name < b.name) {
+        return -1;
+      }
+      return 1;
+    }).forEach((player) => {
       let span = document.createElement('span');
       span.innerHTML = player.name;
       span.className = 'list-item';
