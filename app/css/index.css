@@ -82,9 +82,10 @@ div.player-list {
 }
 
 div.match-list {
-  height: 170px;
-  width: 515px;
+  height: 190px;
+  width: 625px;
   margin: auto;
+  margin-bottom: 10px;
 }
 
 div.scrollable {
