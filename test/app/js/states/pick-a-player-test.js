@@ -325,8 +325,8 @@ describe('app/js/pick-a-player', () => {
           players: [
             {id: 1, name: 'Alice Alison'},
             {id: 2, name: 'Bob Roberts'},
-            {id: 3, name: 'Charlie Charlson'},
-            {id: 4, name: 'Debbie Davis'},
+            {id: 3, name: 'Debbie Davis'},
+            {id: 4, name: 'Charlie Charlson'},
             {id: 5, name: 'Emma Emerton'},
             {id: 6, name: 'Freda Ferguson'},
           ]
@@ -386,32 +386,45 @@ describe('app/js/pick-a-player', () => {
         expect(listItems[0].innerHTML).to.equal(dataObj.seasons[1].players[0].name);
         expect(typeof listItems[0].onclick).to.equal('function');
         listItems[0].onclick();
-        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', 1);
+        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', dataObj.seasons[1].players[0].id);
 
         expect(listItems[1].innerHTML).to.equal(dataObj.seasons[1].players[1].name);
         expect(typeof listItems[1].onclick).to.equal('function');
         listItems[1].onclick();
-        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', 2);
+        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', dataObj.seasons[1].players[0].id);
 
         expect(listItems[2].innerHTML).to.equal(dataObj.seasons[1].players[2].name);
         expect(typeof listItems[2].onclick).to.equal('function');
         listItems[2].onclick();
-        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', 3);
+        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', dataObj.seasons[1].players[0].id);
 
         expect(listItems[3].innerHTML).to.equal(dataObj.seasons[1].players[3].name);
         expect(typeof listItems[3].onclick).to.equal('function');
         listItems[3].onclick();
-        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', 4);
+        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', dataObj.seasons[1].players[0].id);
 
         expect(listItems[4].innerHTML).to.equal(dataObj.seasons[1].players[4].name);
         expect(typeof listItems[4].onclick).to.equal('function');
         listItems[4].onclick();
-        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', 5);
+        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', dataObj.seasons[1].players[0].id);
 
         expect(listItems[5].innerHTML).to.equal(dataObj.seasons[1].players[5].name);
         expect(typeof listItems[5].onclick).to.equal('function');
         listItems[5].onclick();
-        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', 6);
+        expect(ipcRendererSendStub).to.be.calledWith('store-team-player', dataObj.seasons[1].players[0].id);
+      });
+
+      it('sorts the players by name', () => {
+        pickAPlayer.internal.returnTeamDataListener(undefined, undefined, dataObj, 1);
+
+        let listItems = pickAPlayer.internal.playerList.getElementsByClassName('list-item');
+
+        expect(listItems[0].innerHTML).to.equal('Alice Alison');
+        expect(listItems[1].innerHTML).to.equal('Bob Roberts');
+        expect(listItems[2].innerHTML).to.equal('Charlie Charlson');
+        expect(listItems[3].innerHTML).to.equal('Debbie Davis');
+        expect(listItems[4].innerHTML).to.equal('Emma Emerton');
+        expect(listItems[5].innerHTML).to.equal('Freda Ferguson');
       });
 
       it('get cleaned out on each load call', () => {
@@ -421,12 +434,12 @@ describe('app/js/pick-a-player', () => {
 
         let listItems = pickAPlayer.internal.playerList.getElementsByClassName('list-item');
         expect(pickAPlayer.internal.playerList.childNodes.length).to.equal(6);
-        expect(listItems[0].innerHTML).to.equal('Alice Alison');
-        expect(listItems[1].innerHTML).to.equal('Bob Roberts');
-        expect(listItems[2].innerHTML).to.equal('Charlie Charlson');
-        expect(listItems[3].innerHTML).to.equal('Debbie Davis');
-        expect(listItems[4].innerHTML).to.equal('Emma Emerton');
-        expect(listItems[5].innerHTML).to.equal('Freda Ferguson');
+        expect(listItems[0].innerHTML).to.equal(dataObj.seasons[1].players[0].name);
+        expect(listItems[1].innerHTML).to.equal(dataObj.seasons[1].players[1].name);
+        expect(listItems[2].innerHTML).to.equal(dataObj.seasons[1].players[2].name);
+        expect(listItems[3].innerHTML).to.equal(dataObj.seasons[1].players[3].name);
+        expect(listItems[4].innerHTML).to.equal(dataObj.seasons[1].players[4].name);
+        expect(listItems[5].innerHTML).to.equal(dataObj.seasons[1].players[5].name);
       });
     });
   });
