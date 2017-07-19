@@ -24,7 +24,7 @@
       <div class="centre-instruction">
         <p>Start by creating your first team</p>
         <input id="input_add-first-team" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Team Name" size="20" />
-        <button class="button new-item-button-disabled" id="button_add-first-team_add">+</button>
+        <button id="button_add-first-team_add" class="button new-item-button-disabled">+</button>
       </div>
     </div>
 
@@ -33,7 +33,7 @@
       <div class="centre-instruction">
         <p>Add your first season</p>
         <input id="input_add-first-season" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="2016/2017" size="20" />
-        <button class="button new-item-button-disabled" id="button_add-first-season_add">+</button>
+        <button id="button_add-first-season_add" class="button new-item-button-disabled">+</button>
       </div>
     </div>
 
@@ -43,8 +43,8 @@
         <p>Create your squad</p>
         <input id="input_add-first-squad" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Player Name" size="20" />
         <button class="button new-item-button-disabled" id="button_add-first-squad_add">+</button>
-        <div id="add-first-squad_list" class="scrollable player-list"></div>
-        <button class="button done-button-disabled" id="button_add-first-squad_done">Done</button>
+        <div id="add-first-squad_list" class="scrollable-fixed player-list"></div>
+        <button id="button_add-first-squad_done" class="button done-button-disabled">Done</button>
       </div>
     </div>
 
@@ -54,7 +54,7 @@
         <p>Add your first match</p>
         <input id="input_add-first-match_date" class="new-item-input" type="date" maxlength="10" minlength="1" placeholder="01/01/2000" />
         <input id="input_add-first-match_opponent" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Opponents" size="18" />
-        <button class="button new-item-button-disabled" id="button_add-first-match_add">+</button>
+        <button id="button_add-first-match_add" class="button new-item-button-disabled">+</button>
       </div>
     </div>
 
@@ -62,9 +62,9 @@
       <div class="breadcrumbs" id="pick-a-team_breadcrumbs"><span>Home</span></div>
       <div class="centre-instruction">
         <p>Pick a team</p>
-        <div id="pick-a-team_list" class="scrollable team-list"></div>
+        <div id="pick-a-team_list" class="scrollable-fixed team-list"></div>
         <input id="input_pick-a-team" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Add a new team" size="20" />
-        <button class="button new-item-button-disabled" id="button_pick-a-team_add">+</button>
+        <button id="button_pick-a-team_add" class="button new-item-button-disabled">+</button>
       </div>
     </div>
 
@@ -72,9 +72,9 @@
       <div class="breadcrumbs" id="pick-a-season_breadcrumbs"></div>
       <div class="centre-instruction">
         <p>Pick a season or start a new one</p>
-        <div id="pick-a-season_list" class="scrollable season-list"></div>
+        <div id="pick-a-season_list" class="scrollable-fixed season-list"></div>
         <input id="input_pick-a-season" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Add a new season" size="20" />
-        <button class="button new-item-button-disabled" id="button_pick-a-season_add">+</button>
+        <button id="button_pick-a-season_add" class="button new-item-button-disabled">+</button>
       </div>
     </div>
 
@@ -82,9 +82,9 @@
       <div class="breadcrumbs" id="pick-a-player_breadcrumbs"></div>
       <div class="centre-instruction">
         <p>Pick a player or add to your squad</p>
-        <div id="pick-a-player_list" class="scrollable player-list"></div>
+        <div id="pick-a-player_list" class="scrollable-fixed player-list"></div>
         <input id="input_pick-a-player" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Add a new player" size="20" />
-        <button class="button new-item-button-disabled" id="button_pick-a-player_add">+</button>
+        <button id="button_pick-a-player_add" class="button new-item-button-disabled">+</button>
       </div>
     </div>
 
@@ -92,10 +92,10 @@
       <div class="breadcrumbs" id="pick-a-match_breadcrumbs"></div>
       <div class="centre-instruction">
         <p>Pick a match</p>
-        <div id="pick-a-match_list" class="scrollable match-list"></div>
+        <div id="pick-a-match_list" class="scrollable-fixed match-list"></div>
         <input id="input_pick-a-match_date" class="new-item-input" type="date" maxlength="10" minlength="1" placeholder="01/01/2000" />
         <input id="input_pick-a-match_opponent" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Opponents" size="18" />
-        <button class="button new-item-button-disabled" id="button_pick-a-match_add">+</button>
+        <button id="button_pick-a-match_add" class="button new-item-button-disabled">+</button>
       </div>
     </div>
 
@@ -131,6 +131,7 @@
 
     <div class="state match-stats">
       <div class="breadcrumbs" id="match-stats_breadcrumbs"></div>
+      <button class="button radio-button-on" id="button_match-stats_edit">Edit</button>
       <div class="centre-instruction">
         <p>Match stats</p>
       </div>
@@ -138,19 +139,37 @@
 
     <div class="state match-editor">
       <div class="breadcrumbs" id="match-editor_breadcrumbs"></div>
-      <div class="centre-instruction scrollable small-text">
-        <div class="spaced-row">
-          <input id="input_match-editor_venue" class="new-item-input-small" type="text" maxlength="50" minlength="1" placeholder="Venue" size="25" />
-          <button class="button radio-button-on group-left" id="button_match-editor_home">Home</button><button class="button radio-button-off group-right" id="button_match-editor_away">Away</button>
-        </div>
-        <div class="spaced-row">
-          <input id="input_match-editor_date" class="new-item-input-small" type="date" maxlength="10" minlength="1" placeholder="01/01/2000" />
-          <input id="input_match-editor_time" class="new-item-input-small" type="time" maxlength="5" minlength="1" placeholder="Venue" size="15" />
-        </div>
-        <div class="spaced-row">
-          <span id="input_match-editor_team-heading-us"></span>
-          <span id="input_match-editor_team-heading-versus"> v </span>
-          <span id="input_match-editor_team-heading-them"></span>
+      <div class="scroll-wrap">
+        <div class="centre-instruction scrollable-full small-text">
+          <div class="spaced-row">
+            <span id="input_match-editor_team-heading-home"></span>
+            <span id="input_match-editor_team-heading-versus"> v </span>
+            <span id="input_match-editor_team-heading-away"></span>
+          </div>
+          <div class="spaced-row">
+            <input id="input_match-editor_venue" class="new-item-input-small" type="text" maxlength="50" minlength="1" placeholder="Venue" size="25" />
+            <button id="button_match-editor_home" class="button radio-button-on group-left">Home</button><button class="button radio-button-off group-right" id="button_match-editor_away">Away</button>
+          </div>
+          <div class="spaced-row">
+            <input id="input_match-editor_date" class="new-item-input-small" type="date" maxlength="10" minlength="1" placeholder="01/01/2000" />
+            <input id="input_match-editor_time" class="new-item-input-small" type="time" maxlength="5" minlength="1" placeholder="Venue" size="15" />
+          </div>
+          <div class="spaced-row">
+            <span>Squad</span>
+            <table id="match-editor_player_list" class="table-center">
+            </table>
+            <input id="input_match-editor_add-player" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Add a new player" size="20" />
+            <button id="button_match-editor_add-player" class="button new-item-button-disabled">+</button>
+          </div>
+          <div class="spaced-row">
+            <span>Opponents (optional)</span>
+            <div id="match-editor_opponent_list"></div>
+            <input id="input_match-editor_add-opponent-name" class="new-item-input" type="text" maxlength="50" minlength="1" placeholder="Add opposition player" size="20" />
+            <input id="input_match-editor_add-opponent-number" class="new-item-input" type="text" maxlength="2" minlength="1" placeholder="#" size="2" />
+            <button id="button_match-editor_add-opponent" class="button new-item-button-disabled">+</button>
+          </div>
+          <div id="div_match-editor_sets" class=""></div>
+          <div>&nbsp;</div>
         </div>
       </div>
     </div>

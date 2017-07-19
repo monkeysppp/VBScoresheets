@@ -1,4 +1,6 @@
 :root {
+  --window-min-width: 750px;
+
   --main-background-white: #EEEEEE;
   --main-text-black: #444444;
   --main-text-grey: #999999;
@@ -12,6 +14,9 @@
   --main-font-size-small: 18px;
 
   --main-border-bottom-small: 1px;
+
+  --top-band-height: 32px;
+  --breadcrumb-height: 34px;
 }
 
 html,
@@ -24,7 +29,7 @@ body {
 }
 
 .top-band {
-  height: auto;
+  height: var(--top-band-height);
   overflow: hidden;
 }
 
@@ -41,7 +46,7 @@ body {
   color: var(--main-background-white);
   cursor: pointer;
   float: right;
-  height: 32px;
+  height: var(--top-band-height);
   width: 64px;
   font-size: 22px;
   text-align: center;
@@ -57,6 +62,26 @@ body {
 
 div.state {
   display: none;
+  height: 100%;
+}
+
+div.scroll-wrap {
+  position: relative;
+  height: calc(100% - var(--breadcrumb-height));
+}
+
+div.scrollable-full {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  overflow: auto;
+  /*height: auto;*/
+}
+
+div.scrollable-fixed {
+  overflow-y: scroll;
 }
 
 div.breadcrumbs {
@@ -64,6 +89,7 @@ div.breadcrumbs {
   margin-right: 20px;
   padding-bottom: 7px;
   padding-top: 7px;
+  height: var(--breadcrumb-height);
 }
 
 div.team-list {
@@ -91,10 +117,6 @@ div.match-list {
   margin-bottom: 10px;
 }
 
-div.scrollable {
-  overflow-y: scroll;
-}
-
 div.spaced-row {
   padding-top: 10px;
   padding-bottom: 15px;
@@ -104,13 +126,19 @@ div.link {
   cursor: pointer;
 }
 
+div.set-box {
+  padding: 4px;
+  border: solid var(--main-text-black) 2px;
+  display: inline-table;
+}
+
 span.link {
   cursor: pointer;
 }
 
 #main {
     background: var(--main-background-white);
-    height: 100%;
+    height: calc(100% - var(--top-band-height));
 }
 
 .new-item-input {
@@ -131,6 +159,18 @@ span.link {
   background: var(--main-background-white);
   color: var(--main-text-black);
   outline: none;
+}
+
+.match-lineup-input {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: solid var(--main-text-black) var(--main-border-bottom-small);
+  background: var(--main-background-white);
+  color: var(--main-text-black);
+  outline: none;
+  width: 45px;
+  text-align: center;
 }
 
 .button {
@@ -246,4 +286,26 @@ span.link {
 
 .small-text {
   font-size: var(--main-font-size-small);
+}
+
+.table-center {
+  margin: auto;
+}
+
+table.set {
+  table-layout: fixed;
+  margin: auto;
+  width: var(--window-min-width);
+}
+
+th {
+  padding: 3px;
+}
+
+td {
+  padding: 3px;
+}
+
+td.box {
+  border: solid var(--main-text-black) 1px;
 }
