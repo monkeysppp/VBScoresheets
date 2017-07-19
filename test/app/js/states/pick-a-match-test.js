@@ -95,19 +95,29 @@ describe('app/js/pick-a-match', () => {
   });
 
   describe('#detach', () => {
+    it('returns a Promise', () => {
+      return expect(pickAMatch.detach()).to.not.be.rejected;
+    });
+
     it('deregisters for team-data-saved', () => {
-      pickAMatch.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', pickAMatch.internal.teamDataSavedListener);
+      return expect(pickAMatch.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', pickAMatch.internal.teamDataSavedListener);
+      });
     });
 
     it('deregisters for return-team-data', () => {
-      pickAMatch.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', pickAMatch.internal.returnTeamDataListener);
+      return expect(pickAMatch.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', pickAMatch.internal.returnTeamDataListener);
+      });
     });
 
     it('deregisters for team-match-stored', () => {
-      pickAMatch.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-match-stored', pickAMatch.internal.teamMatchStoredListener);
+      return expect(pickAMatch.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-match-stored', pickAMatch.internal.teamMatchStoredListener);
+      });
     });
   });
 

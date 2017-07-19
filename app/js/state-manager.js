@@ -68,20 +68,24 @@ function init(stateManager) {
  *
  * @param  {string} from name of the state to remove
  * @param  {string} to   name of the state to display
+ *
+ * @return {Promise} a promise to have completed the state change
  */
 function showState(from, to) {
   if (!to) {
     debug('state-manager changing state to ' + to);
     this.states[from].attach();
     this.states[from].state.style.display = 'block';
-    return;
+    return Promise.resolve();
   }
 
   debug('state-manager changing state from ' + from + ' to ' + to);
-  this.states[from].state.style.display = 'none';
-  this.states[from].detach();
-  this.states[to].attach();
-  this.states[to].state.style.display = 'block';
+  return this.states[from].detach().then(() => {
+    this.states[from].state.style.display = 'none';
+    this.states[to].attach();
+    this.states[to].state.style.display = 'block';
+    return Promise.resolve();
+  });
 }
 
 /**

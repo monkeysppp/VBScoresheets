@@ -121,9 +121,9 @@ describe('app/js/state-manager', () => {
 
     beforeEach(() => {
       fromAttachStub = sinon.stub();
-      fromDetachStub = sinon.stub();
+      fromDetachStub = sinon.stub().returns(Promise.resolve());
       toAttachStub = sinon.stub();
-      toDetachStub = sinon.stub();
+      toDetachStub = sinon.stub().returns(Promise.resolve());
 
       manager = stateManager.getStateManager();
       originalStates = manager.states;
@@ -145,27 +145,31 @@ describe('app/js/state-manager', () => {
       manager.states = originalStates;
     });
 
-    context('when called with one argument', () => {
+    context('when called with one state', () => {
       it('only turns on that state', () => {
-        manager.showState('to');
-        expect(fromAttachStub).to.not.be.called;
-        expect(fromDetachStub).to.not.be.called;
-        expect(toAttachStub).to.be.calledOnce;
-        expect(toDetachStub).to.not.be.called;
-        expect(manager.states.to.state.style.display).to.equal('block');
-        expect(manager.states.from.state.style.display).to.equal('start');
+        return expect(manager.showState('to')).to.not.be.rejected
+        .then(() => {
+          expect(fromAttachStub).to.not.be.called;
+          expect(fromDetachStub).to.not.be.called;
+          expect(toAttachStub).to.be.calledOnce;
+          expect(toDetachStub).to.not.be.called;
+          expect(manager.states.to.state.style.display).to.equal('block');
+          expect(manager.states.from.state.style.display).to.equal('start');
+        });
       });
     });
 
     context('when called with 2 states', () => {
       it('turns off from and turns on to', () => {
-        manager.showState('from', 'to');
-        expect(fromAttachStub).to.not.be.called;
-        expect(fromDetachStub).to.be.calledOnce;
-        expect(toAttachStub).to.be.calledOnce;
-        expect(toDetachStub).to.not.be.called;
-        expect(manager.states.to.state.style.display).to.equal('block');
-        expect(manager.states.from.state.style.display).to.equal('none');
+        return expect(manager.showState('from', 'to')).to.not.be.rejected
+        .then(() => {
+          expect(fromAttachStub).to.not.be.called;
+          expect(fromDetachStub).to.be.calledOnce;
+          expect(toAttachStub).to.be.calledOnce;
+          expect(toDetachStub).to.not.be.called;
+          expect(manager.states.to.state.style.display).to.equal('block');
+          expect(manager.states.from.state.style.display).to.equal('none');
+        });
       });
     });
   });

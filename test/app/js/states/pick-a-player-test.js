@@ -94,19 +94,29 @@ describe('app/js/pick-a-player', () => {
   });
 
   describe('#detach', () => {
+    it('returns a Promise', () => {
+      return expect(pickAPlayer.detach()).to.not.be.rejected;
+    });
+
     it('deregisters for team-data-saved', () => {
-      pickAPlayer.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', pickAPlayer.internal.teamDataSavedListener);
+      return expect(pickAPlayer.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', pickAPlayer.internal.teamDataSavedListener);
+      });
     });
 
     it('deregisters for return-team-data', () => {
-      pickAPlayer.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', pickAPlayer.internal.returnTeamDataListener);
+      return expect(pickAPlayer.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', pickAPlayer.internal.returnTeamDataListener);
+      });
     });
 
     it('deregisters for team-player-stored', () => {
-      pickAPlayer.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-player-stored', pickAPlayer.internal.teamPlayerStoredListener);
+      return expect(pickAPlayer.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-player-stored', pickAPlayer.internal.teamPlayerStoredListener);
+      });
     });
   });
 

@@ -119,13 +119,16 @@ function attach() {
 }
 
 /**
- * detach - attach the state code from the displayed ui and clean up any event handlers
+ * detach - detach the state code from the displayed ui and clean up any event handlers
+ *
+ * @return {Promise} a promise to have detached the state
  */
 function detach() {
   debug('detaching pick-a-team');
   ipc.removeListener('return-team-files', module.exports.internal.returnTeamFilesListener);
   ipc.removeListener('team-data-saved', module.exports.internal.teamDataSavedListener);
   ipc.removeListener('return-team-data', module.exports.internal.returnTeamDataListener);
+  return Promise.resolve();
 }
 
 module.exports = {

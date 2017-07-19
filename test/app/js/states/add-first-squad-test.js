@@ -92,14 +92,22 @@ describe('app/js/add-first-squad', () => {
   });
 
   describe('#detach', () => {
+    it('returns a Promise', () => {
+      return expect(addFirstSquad.detach()).to.not.be.rejected;
+    });
+
     it('deregisters for return-team-data', () => {
-      addFirstSquad.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstSquad.internal.returnTeamDataListener);
+      return expect(addFirstSquad.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstSquad.internal.returnTeamDataListener);
+      });
     });
 
     it('deregisters for team-data-saved', () => {
-      addFirstSquad.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstSquad.internal.teamDataSavedListener);
+      return expect(addFirstSquad.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstSquad.internal.teamDataSavedListener);
+      });
     });
   });
 

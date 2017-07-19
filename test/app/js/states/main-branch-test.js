@@ -82,9 +82,15 @@ describe('app/js/main-branch', () => {
   });
 
   describe('#detach', () => {
+    it('returns a Promise', () => {
+      return expect(mainBranch.detach()).to.not.be.rejected;
+    });
+
     it('deregisters for return-team-data', () => {
-      mainBranch.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', mainBranch.internal.returnTeamDataListener);
+      return expect(mainBranch.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', mainBranch.internal.returnTeamDataListener);
+      });
     });
   });
 

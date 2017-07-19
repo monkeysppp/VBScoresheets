@@ -94,19 +94,29 @@ describe('app/js/pick-a-season', () => {
   });
 
   describe('#detach', () => {
+    it('returns a Promise', () => {
+      return expect(pickASeason.detach()).to.not.be.rejected;
+    });
+
     it('deregisters for team-data-saved', () => {
-      pickASeason.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', pickASeason.internal.teamDataSavedListener);
+      return expect(pickASeason.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', pickASeason.internal.teamDataSavedListener);
+      });
     });
 
     it('deregisters for return-team-data', () => {
-      pickASeason.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', pickASeason.internal.returnTeamDataListener);
+      return expect(pickASeason.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', pickASeason.internal.returnTeamDataListener);
+      });
     });
 
     it('deregisters for team-season-stored', () => {
-      pickASeason.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-season-stored', pickASeason.internal.teamSeasonStoredListener);
+      return expect(pickASeason.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-season-stored', pickASeason.internal.teamSeasonStoredListener);
+      });
     });
   });
 

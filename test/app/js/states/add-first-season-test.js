@@ -93,19 +93,29 @@ describe('app/js/add-first-season', () => {
   });
 
   describe('#detach', () => {
+    it('returns a Promise', () => {
+      return expect(addFirstSeason.detach()).to.not.be.rejected;
+    });
+
     it('deregisters for return-team-data', () => {
-      addFirstSeason.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstSeason.internal.returnTeamDataListener);
+      return expect(addFirstSeason.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstSeason.internal.returnTeamDataListener);
+      });
     });
 
     it('deregisters for team-data-saved', () => {
-      addFirstSeason.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstSeason.internal.teamDataSavedListener);
+      return expect(addFirstSeason.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstSeason.internal.teamDataSavedListener);
+      });
     });
 
     it('deregisters for team-season-stored', () => {
-      addFirstSeason.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-season-stored', addFirstSeason.internal.teamSeasonStoreListener);
+      return expect(addFirstSeason.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-season-stored', addFirstSeason.internal.teamSeasonStoreListener);
+      });
     });
   });
 

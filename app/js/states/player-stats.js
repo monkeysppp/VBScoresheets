@@ -18,6 +18,13 @@ function init(stateManager) {
   }
 
   module.exports.internal.stateManager = stateManager;
+
+  let breadcrumb = document.getElementById('player-stats_breadcrumbs');
+  let spanHome = document.createElement('span');
+  spanHome.innerHTML = 'Home';
+  spanHome.className = 'link';
+  spanHome.onclick = () => {stateManager.showState('player-stats', 'pick-a-team');};
+  breadcrumb.appendChild(spanHome);
 }
 
 /**
@@ -29,9 +36,12 @@ function attach() {
 
 /**
  * detach - Clean up any event handlers
+ *
+ * @return {Promise} a promise to have detached the state
  */
 function detach() {
   debug('attaching player-stats');
+  return Promise.resolve();
 }
 
 module.exports = {

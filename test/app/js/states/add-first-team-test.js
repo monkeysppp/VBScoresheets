@@ -74,9 +74,15 @@ describe('app/js/add-first-team', () => {
   });
 
   describe('#detach', () => {
+    it('returns a Promise', () => {
+      return expect(addFirstTeam.detach()).to.not.be.rejected;
+    });
+
     it('deregisters for team-data-saved', () => {
-      addFirstTeam.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstTeam.internal.teamDataSavedListener);
+      return expect(addFirstTeam.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstTeam.internal.teamDataSavedListener);
+      });
     });
   });
 

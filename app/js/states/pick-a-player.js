@@ -192,12 +192,15 @@ function attach() {
 
 /**
  * detach - Clean up any event handlers
+ *
+ * @return {Promise} a promise to have detached the state
  */
 function detach() {
   debug('detaching add-first-squad');
   ipc.removeListener('team-data-saved', module.exports.internal.teamDataSavedListener);
   ipc.removeListener('return-team-data', module.exports.internal.returnTeamDataListener);
   ipc.removeListener('team-player-stored', module.exports.internal.teamPlayerStoredListener);
+  return Promise.resolve();
 }
 
 module.exports = {

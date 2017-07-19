@@ -70,10 +70,10 @@ describe('app/js/match-editor', () => {
   });
 
   describe('#attach', () => {
-    // it('registers for team-data-saved', () => {
-    //   matchEditor.attach();
-    //   expect(ipcRendererOnStub).to.be.calledWith('team-data-saved', matchEditor.internal.teamDataSavedListener);
-    // });
+    it('registers for team-data-saved', () => {
+      matchEditor.attach();
+      expect(ipcRendererOnStub).to.be.calledWith('team-data-saved', matchEditor.internal.teamDataSavedListener);
+    });
 
     it('registers for return-team-data', () => {
       matchEditor.attach();
@@ -88,14 +88,73 @@ describe('app/js/match-editor', () => {
   });
 
   describe('#detach', () => {
-    // it('deregisters for team-data-saved', () => {
-    //   matchEditor.detach();
-    //   expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', matchEditor.internal.teamDataSavedListener);
-    // });
+    let saveOnExitStub;
+
+    beforeEach(() => {
+      saveOnExitStub = sinon.stub(matchEditor.internal, 'saveOnExit').callsFake(() => {
+        matchEditor.internal.teamDataSavedPromiseResolver();
+      });
+    });
+
+    afterEach(() => {
+      saveOnExitStub.restore();
+    });
+
+    it('returns a Promise', () => {
+      return expect(matchEditor.detach()).to.not.be.rejected;
+    });
+
+    it('calls saveOnExit', () => {
+      return expect(matchEditor.detach()).to.not.be.rejected
+      .then(() => {
+        expect(saveOnExitStub).to.be.calledOnce;
+      });
+    });
 
     it('deregisters for return-team-data', () => {
-      matchEditor.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', matchEditor.internal.returnTeamDataListener);
+      return expect(matchEditor.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', matchEditor.internal.returnTeamDataListener);
+      });
+    });
+
+    it('deregisters for team-data-saved', () => {
+      return expect(matchEditor.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', matchEditor.internal.teamDataSavedListener);
+      });
+    });
+  });
+
+  describe('saveOnExit', () => {
+    let teamDataSavedListenerStub;
+
+    beforeEach(() => {
+      teamDataSavedListenerStub = sinon.stub(matchEditor.internal, 'teamDataSavedListenerStub');
+      matchEditor.internal.filename = 'someFile';
+      matchEditor.internal.dataObj = {match:{}};
+      matchEditor.internal.matchData = matchEditor.internal.dataObj.match;
+      matchEditor.init({});
+    });
+
+    afterEach(() => {
+      teamDataSavedListenerStub.restore();
+    });
+
+    it('calls to save the match data', () => {
+      matchEditor.internal.saveOnExit();
+      expect(ipcRendererSendStub).to.be.calledWith('save-team-data', 'someFile', {match:{}});
+    });
+
+    context('when match venue is defined', () => {
+      beforeEach(() => {
+        matchEditor.internal.matchVenue.value = 'sports hall';
+      });
+
+      it('saves the venue', () => {
+        matchEditor.internal.saveOnExit();
+        expect(ipcRendererSendStub).to.be.calledWith('save-team-data', 'someFile', {match:{venue:'sports hall'}});
+      });
     });
   });
 
@@ -130,12 +189,44 @@ describe('app/js/match-editor', () => {
         expect(matchEditor.internal.matchTime).to.equal(document.getElementById('input_match-editor_time'));
       });
 
-      it('finds the matchTeamNamesUs textbox', () => {
-        expect(matchEditor.internal.matchTeamNamesUs).to.equal(document.getElementById('input_match-editor_team-heading-us'));
+      it('finds the matchTeamNamesHome textbox', () => {
+        expect(matchEditor.internal.matchTeamNamesHome).to.equal(document.getElementById('input_match-editor_team-heading-home'));
       });
 
-      it('finds the matchTeamNamesThem textbox', () => {
-        expect(matchEditor.internal.matchTeamNamesThem).to.equal(document.getElementById('input_match-editor_team-heading-them'));
+      it('finds the matchTeamNamesAway textbox', () => {
+        expect(matchEditor.internal.matchTeamNamesAway).to.equal(document.getElementById('input_match-editor_team-heading-away'));
+      });
+
+      it('finds the squadList textbox', () => {
+        expect(matchEditor.internal.squadList).to.equal(document.getElementById('match-editor_player_list'));
+      });
+
+      it('finds the squadAddPlayerName textbox', () => {
+        expect(matchEditor.internal.squadAddPlayerName).to.equal(document.getElementById('input_match-editor_add-player'));
+      });
+
+      it('finds the squadAddPlayerButton textbox', () => {
+        expect(matchEditor.internal.squadAddPlayerButton).to.equal(document.getElementById('button_match-editor_add-player'));
+      });
+
+      it('finds the opponentList textbox', () => {
+        expect(matchEditor.internal.opponentList).to.equal(document.getElementById('match-editor_opponent_list'));
+      });
+
+      it('finds the opponentAddPlayerName textbox', () => {
+        expect(matchEditor.internal.opponentAddPlayerName).to.equal(document.getElementById('input_match-editor_add-opponent-name'));
+      });
+
+      it('finds the opponentAddPlayerNumber textbox', () => {
+        expect(matchEditor.internal.opponentAddPlayerNumber).to.equal(document.getElementById('input_match-editor_add-opponent-number'));
+      });
+
+      it('finds the opponentAddPlayerButton textbox', () => {
+        expect(matchEditor.internal.opponentAddPlayerButton).to.equal(document.getElementById('button_match-editor_add-opponent'));
+      });
+
+      it('finds the setsDiv', () => {
+        expect(matchEditor.internal.setsDiv).to.equal(document.getElementById('div_match-editor_sets'));
       });
 
       it('finds the breadcrumb div', () => {
@@ -239,6 +330,21 @@ describe('app/js/match-editor', () => {
     });
   });
 
+  describe('#teamDataSavedListener', () => {
+    let teamDataSavedPromiseResolverStub;
+
+    beforeEach(() => {
+      matchEditor.init({});
+      teamDataSavedPromiseResolverStub = sinon.stub();
+      matchEditor.internal.teamDataSavedPromiseResolver = teamDataSavedPromiseResolverStub;
+    });
+
+    it('calls to load the team data', () => {
+      matchEditor.internal.teamDataSavedListener();
+      expect(teamDataSavedPromiseResolverStub).to.be.calledOnce;
+    });
+  });
+
   describe('#returnTeamDataListener', () => {
     let stateManagerStub;
     let showStateStub;
@@ -255,8 +361,8 @@ describe('app/js/match-editor', () => {
             {id: 1, name: 'Alice Alison'},
             {id: 2, name: 'Bob Roberts'},
             {id: 3, name: 'Charlie Charlson'},
-            {id: 4, name: 'Debbie Davis'},
             {id: 5, name: 'Emma Emerton'},
+            {id: 4, name: 'Debbie Davis'},
             {id: 6, name: 'Freda Ferguson'},
           ],
           matches: [
@@ -415,17 +521,16 @@ describe('app/js/match-editor', () => {
 
       it('clears and populates the initial match data fields', () => {
         matchEditor.internal.matchDate.value = '2001-01-01';
-        matchEditor.internal.matchTeamNamesUs.value = 'someteam';
-        matchEditor.internal.matchTeamNamesThem.value = 'someteam';
-
+        matchEditor.internal.matchTeamNamesHome.value = 'someteam';
+        matchEditor.internal.matchTeamNamesAway.value = 'someteam';
         matchEditor.internal.matchTime.value = '01:00';
         matchEditor.internal.matchVenue.innerHTML = 'foo';
 
         matchEditor.internal.returnTeamDataListener(undefined, 'someFileName', dataObj, 1, 2);
 
         expect(matchEditor.internal.matchDate.value).to.equal(dataObj.seasons[1].matches[0].date);
-        expect(matchEditor.internal.matchTeamNamesUs.innerHTML).to.equal(dataObj.name);
-        expect(matchEditor.internal.matchTeamNamesThem.innerHTML).to.equal(dataObj.seasons[1].matches[0].squads.opponent.name);
+        expect(matchEditor.internal.matchTeamNamesHome.innerHTML).to.equal(dataObj.name);
+        expect(matchEditor.internal.matchTeamNamesAway.innerHTML).to.equal(dataObj.seasons[1].matches[0].squads.opponent.name);
 
         expect(matchEditor.internal.matchTime.value).to.equal('');
         expect(matchEditor.internal.matchVenue.value).to.equal('');
@@ -440,16 +545,16 @@ describe('app/js/match-editor', () => {
     context('with existing match data', () => {
       it('clears and populates the curent match data fields', () => {
         matchEditor.internal.matchDate.value = '2001-01-01';
-        matchEditor.internal.matchTeamNamesUs.value = 'someteam';
-        matchEditor.internal.matchTeamNamesThem.value = 'someteam';
+        matchEditor.internal.matchTeamNamesHome.value = 'someteam';
+        matchEditor.internal.matchTeamNamesAway.value = 'someteam';
 
         matchEditor.internal.matchTime.value = '01:00';
 
         matchEditor.internal.returnTeamDataListener(undefined, 'someFileName', dataObj, 1, 3);
 
         expect(matchEditor.internal.matchDate.value).to.equal(dataObj.seasons[1].matches[2].date);
-        expect(matchEditor.internal.matchTeamNamesUs.innerHTML).to.equal(dataObj.name);
-        expect(matchEditor.internal.matchTeamNamesThem.innerHTML).to.equal(dataObj.seasons[1].matches[2].squads.opponent.name);
+        expect(matchEditor.internal.matchTeamNamesHome.innerHTML).to.equal(dataObj.name);
+        expect(matchEditor.internal.matchTeamNamesAway.innerHTML).to.equal(dataObj.seasons[1].matches[2].squads.opponent.name);
 
         expect(matchEditor.internal.matchTime.value).to.equal(dataObj.seasons[1].matches[2].time);
         expect(matchEditor.internal.matchVenue.value).to.equal(dataObj.seasons[1].matches[2].venue);

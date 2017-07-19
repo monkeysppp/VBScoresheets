@@ -95,19 +95,29 @@ describe('app/js/add-first-match', () => {
   });
 
   describe('#detach', () => {
+    it('returns a Promise', () => {
+      return expect(addFirstMatch.detach()).to.not.be.rejected;
+    });
+
     it('deregisters for return-team-data', () => {
-      addFirstMatch.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstMatch.internal.returnTeamDataListener);
+      return expect(addFirstMatch.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('return-team-data', addFirstMatch.internal.returnTeamDataListener);
+      });
     });
 
     it('deregisters for team-data-saved', () => {
-      addFirstMatch.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstMatch.internal.teamDataSavedListener);
+      return expect(addFirstMatch.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-data-saved', addFirstMatch.internal.teamDataSavedListener);
+      });
     });
 
     it('deregisters for team-match-stored', () => {
-      addFirstMatch.detach();
-      expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-match-stored', addFirstMatch.internal.teamMatchStoredListener);
+      return expect(addFirstMatch.detach()).to.not.be.rejected
+      .then(() => {
+        expect(ipcRendererRemoveListenerStub).to.be.calledWith('team-match-stored', addFirstMatch.internal.teamMatchStoredListener);
+      });
     });
   });
 

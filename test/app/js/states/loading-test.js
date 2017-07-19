@@ -48,8 +48,8 @@ describe('app/js/add-first-team', () => {
   });
 
   describe('#detach', () => {
-    it('does nothing', () => {
-      loading.detach();
+    it('returns a Promise', () => {
+      return expect(loading.detach()).to.not.be.rejected;
     });
   });
 
