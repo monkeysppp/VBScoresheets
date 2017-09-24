@@ -9,6 +9,9 @@
   --main-button-green: #55BB55;
   --main-button-hover-green: #55EE55;
   --main-button-active-green: #559955;
+  --main-button-blue: #2570BB;
+  --main-button-hover-blue: #4590EE;
+  --main-button-active-blue: #334358;
 
   --main-font-size-big: 28px;
   --main-font-size-small: 18px;
@@ -17,6 +20,8 @@
 
   --top-band-height: 32px;
   --breadcrumb-height: 34px;
+
+  --breadcrumb-background: #CCCCCC;
 }
 
 html,
@@ -85,11 +90,12 @@ div.scrollable-fixed {
 }
 
 div.breadcrumbs {
-  margin-left: 20px;
-  margin-right: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
   padding-bottom: 7px;
   padding-top: 7px;
   height: var(--breadcrumb-height);
+  background: var(--breadcrumb-background);
 }
 
 div.team-list {
@@ -208,19 +214,34 @@ span.link {
 }
 
 .radio-button-off:hover {
-  background-color: var(--main-button-hover-green);
+  background-color: var(--main-button-hover-blue);
 }
 
 .radio-button-off:active {
-  background-color: var(--main-button-active-green);
+  background-color: var(--main-button-active-blue);
 }
 
 .radio-button-on {
   border: none;
   border-radius: 7px;
-  background-color: var(--main-button-green);
+  background-color: var(--main-button-blue);
   color: var(--main-background-white);
   cursor: default;
+}
+
+.cycle-button {
+  border: none;
+  border-radius: 7px;
+  background-color: var(--main-button-blue);
+  color: var(--main-background-white);
+}
+
+.cycle-button:hover {
+  background-color: var(--main-button-hover-blue);
+}
+
+.cycle-button:active {
+  background-color: var(--main-button-active-blue);
 }
 
 .group-left {
@@ -235,6 +256,20 @@ span.link {
   border-bottom-left-radius: 0px;
   border-top-right-radius: 7px;
   border-bottom-right-radius: 7px;
+}
+
+.group-top {
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.group-bottom {
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
 }
 
 .done-button-disabled {
@@ -308,4 +343,18 @@ td {
 
 td.box {
   border: solid var(--main-text-black) 1px;
+}
+
+input.checkbox {
+  width: 20px;
+  height: 20px;
+}
+
+input.radio {
+  width: 20px;
+  height: 20px;
+}
+
+.serve-receive-toggle {
+  width: 25px;
 }

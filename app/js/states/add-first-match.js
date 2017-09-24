@@ -86,6 +86,7 @@ function matchAddOnClick() {
       {
         id: 1,
         date: module.exports.internal.matchDate.value,
+        home_or_away: 'home',
         squads: {
           opponent: {
             name: module.exports.internal.matchOpponent.value

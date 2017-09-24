@@ -156,6 +156,75 @@ describe('app/js/match-editor', () => {
         expect(ipcRendererSendStub).to.be.calledWith('save-team-data', 'someFile', {match:{venue:'sports hall'}});
       });
     });
+
+    context('when home/away is defined', () => {
+      beforeEach(() => {
+        matchEditor.internal.matchData.home_or_away = 'away';
+      });
+
+      it('saves the home/away flag', () => {
+        matchEditor.internal.saveOnExit();
+        expect(ipcRendererSendStub).to.be.calledWith('save-team-data', 'someFile', {match:{home_or_away:'away'}});
+      });
+    });
+
+    context('when match start time is defined', () => {
+      beforeEach(() => {
+        matchEditor.internal.matchTime.value = '11:00';
+      });
+
+      it('saves the start time', () => {
+        matchEditor.internal.saveOnExit();
+        expect(ipcRendererSendStub).to.be.calledWith('save-team-data', 'someFile', {match:{time:'11:00'}});
+      });
+    });
+
+    context('when an mvp is selected', () => {
+      let dataObj = {
+        name: 'team1',
+        seasons: [
+          {
+            name: '2010/2011',
+            players: [
+              {id: 1, name: 'Alice Alison'},
+              {id: 2, name: 'Bob Roberts'},
+              {id: 3, name: 'Charlie Charlson'}
+            ],
+            matches: [
+              {
+                id: 1,
+                venue: 'Fortress Victory',
+                date: '2017-05-28',
+                home_or_away: 'home',
+                squads: {
+                  us: [
+                    {id: 1, number: 10},
+                    {id: 2, number: 3},
+                    {id: 3, number: 7}
+                  ],
+                  opponent: {
+                    name: 'New City'
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      };
+
+      let expectedDataObj = JSON.parse(JSON.stringify(dataObj));
+      expectedDataObj.seasons[0].matches[0].mvp = 2;
+
+      beforeEach(() => {
+        matchEditor.internal.returnTeamDataListener({}, 'somefile', dataObj, 0, 1);
+        document.getElementById('mvp-2').checked = true;
+      });
+
+      it('saves the mvp player id', () => {
+        matchEditor.internal.saveOnExit();
+        expect(ipcRendererSendStub).to.be.calledWith('save-team-data', 'somefile', expectedDataObj);
+      });
+    });
   });
 
   describe('#init', () => {
@@ -187,6 +256,14 @@ describe('app/js/match-editor', () => {
 
       it('finds the matchTime textbox', () => {
         expect(matchEditor.internal.matchTime).to.equal(document.getElementById('input_match-editor_time'));
+      });
+
+      it('finds the matchButtonHome button', () => {
+        expect(matchEditor.internal.matchButtonHome).to.equal(document.getElementById('button_match-editor_home'));
+      });
+
+      it('finds the matchButtonAway button', () => {
+        expect(matchEditor.internal.matchButtonAway).to.equal(document.getElementById('button_match-editor_away'));
       });
 
       it('finds the matchTeamNamesHome textbox', () => {
@@ -231,6 +308,14 @@ describe('app/js/match-editor', () => {
 
       it('finds the breadcrumb div', () => {
         expect(matchEditor.internal.breadcrumb).to.equal(document.getElementById('match-editor_breadcrumbs'));
+      });
+
+      it('sets the homeMatch onclick listener for the button', () => {
+        expect(matchEditor.internal.matchButtonHome.onclick).to.equal(matchEditor.internal.homeMatchOnClick);
+      });
+
+      it('sets the awayMatch onclick listener for the button', () => {
+        expect(matchEditor.internal.matchButtonAway.onclick).to.equal(matchEditor.internal.awayMatchOnClick);
       });
     });
   });
@@ -330,6 +415,150 @@ describe('app/js/match-editor', () => {
     });
   });
 
+  describe('#homeMatchOnClick', () => {
+    let stateManagerStub;
+    let homeButton;
+    let awayButton;
+
+    beforeEach(() => {
+      stateManagerStub = {};
+      matchEditor.internal.filename = 'someFile';
+      matchEditor.internal.dataObj = {name:'our name', match:{squads:{opponent:{name:'their name'}}}};
+      matchEditor.internal.matchData = matchEditor.internal.dataObj.match;
+      matchEditor.init(stateManagerStub);
+      homeButton = matchEditor.internal.matchButtonHome;
+      awayButton = matchEditor.internal.matchButtonAway;
+    });
+
+    context('when it is a home match', () => {
+      beforeEach(() => {
+        matchEditor.internal.matchData.home_or_away = 'home';
+      });
+
+      context('when it is clicked', () => {
+        beforeEach(() => {
+          matchEditor.internal.homeMatchOnClick();
+        });
+
+        it('the home button stays in the selected state', () => {
+          expect(homeButton.className).to.equal('button radio-button-on group-left');
+        });
+
+        it('the away button stays in the unselected state', () => {
+          expect(awayButton.className).to.equal('button radio-button-off group-right');
+        });
+
+        it('the home and away team names are set', () => {
+          expect(matchEditor.internal.matchTeamNamesHome.innerHTML).to.equal('our name');
+          expect(matchEditor.internal.matchTeamNamesAway.innerHTML).to.equal('their name');
+        });
+      });
+    });
+
+    context('when it is an away match', () => {
+      beforeEach(() => {
+        matchEditor.internal.matchData.home_or_away = 'away';
+        homeButton.className = 'radio-button-off';
+        awayButton.className = 'radio-button-on';
+      });
+
+      context('when it is clicked', () => {
+        beforeEach(() => {
+          matchEditor.internal.homeMatchOnClick();
+        });
+
+        it('sets the home button to the selected state', () => {
+          expect(homeButton.className).to.equal('button radio-button-on group-left');
+        });
+
+        it('sets the away button to the unselected state', () => {
+          expect(awayButton.className).to.equal('button radio-button-off group-right');
+        });
+
+        it('sets the match data as a home match', () => {
+          expect(matchEditor.internal.matchData.home_or_away).to.equal('home');
+        });
+
+        it('the home and away team names are set', () => {
+          expect(matchEditor.internal.matchTeamNamesHome.innerHTML).to.equal('our name');
+          expect(matchEditor.internal.matchTeamNamesAway.innerHTML).to.equal('their name');
+        });
+      });
+    });
+  });
+
+  describe('#awayMatchOnClick', () => {
+    let stateManagerStub;
+    let homeButton;
+    let awayButton;
+
+    beforeEach(() => {
+      stateManagerStub = {};
+      matchEditor.internal.filename = 'someFile';
+      matchEditor.internal.dataObj = {name:'our name', match:{squads:{opponent:{name:'their name'}}}};
+      matchEditor.internal.matchData = matchEditor.internal.dataObj.match;
+      matchEditor.init(stateManagerStub);
+      homeButton = matchEditor.internal.matchButtonHome;
+      awayButton = matchEditor.internal.matchButtonAway;
+    });
+
+    context('when it is a home match', () => {
+      beforeEach(() => {
+        matchEditor.internal.matchData.home_or_away = 'home';
+      });
+
+      context('when it is clicked', () => {
+        beforeEach(() => {
+          matchEditor.internal.awayMatchOnClick();
+        });
+
+        it('the away button stays in the selected state', () => {
+          expect(awayButton.className).to.equal('button radio-button-on group-right');
+        });
+
+        it('the home button stays in the unselected state', () => {
+          expect(homeButton.className).to.equal('button radio-button-off group-left');
+        });
+
+        it('sets the match data as an away match', () => {
+          expect(matchEditor.internal.matchData.home_or_away).to.equal('away');
+        });
+
+        it('the home and away team names are set', () => {
+          expect(matchEditor.internal.matchTeamNamesHome.innerHTML).to.equal('their name');
+          expect(matchEditor.internal.matchTeamNamesAway.innerHTML).to.equal('our name');
+        });
+      });
+    });
+
+    context('when it is an away match', () => {
+      beforeEach(() => {
+        matchEditor.internal.matchData.home_or_away = 'away';
+        awayButton.className = 'radio-button-off';
+        homeButton.className = 'radio-button-on';
+      });
+
+      context('when it is clicked', () => {
+        beforeEach(() => {
+          matchEditor.internal.awayMatchOnClick();
+        });
+
+        it('sets the away button to the selected state', () => {
+          expect(awayButton.className).to.equal('button radio-button-on group-right');
+        });
+
+        it('sets the home button to the unselected state', () => {
+          expect(homeButton.className).to.equal('button radio-button-off group-left');
+        });
+
+        it('the home and away team names are set', () => {
+          expect(matchEditor.internal.matchTeamNamesHome.innerHTML).to.equal('their name');
+          expect(matchEditor.internal.matchTeamNamesAway.innerHTML).to.equal('our name');
+        });
+      });
+    });
+  });
+
   describe('#teamDataSavedListener', () => {
     let teamDataSavedPromiseResolverStub;
 
@@ -364,11 +593,15 @@ describe('app/js/match-editor', () => {
             {id: 5, name: 'Emma Emerton'},
             {id: 4, name: 'Debbie Davis'},
             {id: 6, name: 'Freda Ferguson'},
+            {id: 7, name: 'Giorgia Georgeson'},
+            {id: 8, name: 'Hattit Hendricks'},
+            {id: 9, name: 'Irma Ilson'},
           ],
           matches: [
             {
               id: 2,
               date: '2017-05-21',
+              home_or_away: 'home',
               squads: {
                 opponent: {
                   name: 'Newtown City'
@@ -378,6 +611,7 @@ describe('app/js/match-editor', () => {
             {
               id: 1,
               date: '2017-05-14',
+              home_or_away: 'away',
               squads: {
                 opponent: {
                   name: 'New Town'
@@ -413,7 +647,7 @@ describe('app/js/match-editor', () => {
                   ]
                 }
               },
-              mvp: 1,
+              mvp: 4,
               sets: [
                 {
                   serve: true,
@@ -531,6 +765,8 @@ describe('app/js/match-editor', () => {
         expect(matchEditor.internal.matchDate.value).to.equal(dataObj.seasons[1].matches[0].date);
         expect(matchEditor.internal.matchTeamNamesHome.innerHTML).to.equal(dataObj.name);
         expect(matchEditor.internal.matchTeamNamesAway.innerHTML).to.equal(dataObj.seasons[1].matches[0].squads.opponent.name);
+        expect(matchEditor.internal.matchButtonHome.className).to.equal('button radio-button-on group-left');
+        expect(matchEditor.internal.matchButtonAway.className).to.equal('button radio-button-off group-right');
 
         expect(matchEditor.internal.matchTime.value).to.equal('');
         expect(matchEditor.internal.matchVenue.value).to.equal('');
@@ -553,11 +789,22 @@ describe('app/js/match-editor', () => {
         matchEditor.internal.returnTeamDataListener(undefined, 'someFileName', dataObj, 1, 3);
 
         expect(matchEditor.internal.matchDate.value).to.equal(dataObj.seasons[1].matches[2].date);
-        expect(matchEditor.internal.matchTeamNamesHome.innerHTML).to.equal(dataObj.name);
-        expect(matchEditor.internal.matchTeamNamesAway.innerHTML).to.equal(dataObj.seasons[1].matches[2].squads.opponent.name);
+        expect(matchEditor.internal.matchTeamNamesHome.innerHTML).to.equal(dataObj.seasons[1].matches[2].squads.opponent.name);
+        expect(matchEditor.internal.matchTeamNamesAway.innerHTML).to.equal(dataObj.name);
+        expect(matchEditor.internal.matchButtonHome.className).to.equal('button radio-button-off group-left');
+        expect(matchEditor.internal.matchButtonAway.className).to.equal('button radio-button-on group-right');
 
         expect(matchEditor.internal.matchTime.value).to.equal(dataObj.seasons[1].matches[2].time);
         expect(matchEditor.internal.matchVenue.value).to.equal(dataObj.seasons[1].matches[2].venue);
+
+        expect(document.getElementById('mvp-1').checked).to.equal(false);
+        expect(document.getElementById('mvp-2').checked).to.equal(false);
+        expect(document.getElementById('mvp-3').checked).to.equal(false);
+        expect(document.getElementById('mvp-4').checked).to.equal(true);
+        expect(document.getElementById('mvp-5').checked).to.equal(false);
+        expect(document.getElementById('mvp-6').checked).to.equal(false);
+        expect(document.getElementById('mvp-7').checked).to.equal(false);
+        expect(document.getElementById('mvp-8').checked).to.equal(false);
       });
     });
 

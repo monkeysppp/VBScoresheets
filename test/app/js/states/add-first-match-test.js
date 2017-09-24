@@ -271,6 +271,7 @@ describe('app/js/add-first-match', () => {
               {
                 id: 1,
                 date: '2017-10-20',
+                home_or_away: 'home',
                 squads: {
                   opponent: {
                     name: 'Newtown City'

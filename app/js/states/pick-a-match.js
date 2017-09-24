@@ -122,6 +122,7 @@ function matchAddOnClick() {
       {
         id: module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].matches.length + 1,
         date: module.exports.internal.matchDate.value,
+        home_or_away: 'home',
         squads: {
           opponent: {
             name: module.exports.internal.matchOpponent.value

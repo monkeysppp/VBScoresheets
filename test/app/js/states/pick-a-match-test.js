@@ -276,6 +276,7 @@ describe('app/js/pick-a-match', () => {
               {
                 id: 1,
                 date: '2017-05-21',
+                home_or_away: 'home',
                 squads: {
                   opponent: {
                     name: 'Newtown City'
@@ -306,6 +307,7 @@ describe('app/js/pick-a-match', () => {
               {
                 id: 1,
                 date: '2017-05-21',
+                home_or_away: 'home',
                 squads: {
                   opponent: {
                     name: 'Newtown City'
@@ -315,6 +317,7 @@ describe('app/js/pick-a-match', () => {
               {
                 id: 2,
                 date: '2017-10-20',
+                home_or_away: 'home',
                 squads: {
                   opponent: {
                     name: 'New Town'

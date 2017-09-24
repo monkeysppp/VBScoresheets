@@ -73,7 +73,7 @@ function init(stateManager) {
  */
 function showState(from, to) {
   if (!to) {
-    debug('state-manager changing state to ' + to);
+    debug('state-manager changing state to ' + from);
     this.states[from].attach();
     this.states[from].state.style.display = 'block';
     return Promise.resolve();

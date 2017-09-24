@@ -22,6 +22,8 @@ function init(stateManager) {
   module.exports.internal.matchVenue = document.getElementById('input_match-editor_venue');
   module.exports.internal.matchDate = document.getElementById('input_match-editor_date');
   module.exports.internal.matchTime = document.getElementById('input_match-editor_time');
+  module.exports.internal.matchButtonHome = document.getElementById('button_match-editor_home');
+  module.exports.internal.matchButtonAway = document.getElementById('button_match-editor_away');
   module.exports.internal.matchTeamNamesHome = document.getElementById('input_match-editor_team-heading-home');
   module.exports.internal.matchTeamNamesAway = document.getElementById('input_match-editor_team-heading-away');
   module.exports.internal.squadList = document.getElementById('match-editor_player_list');
@@ -33,6 +35,9 @@ function init(stateManager) {
   module.exports.internal.opponentAddPlayerButton = document.getElementById('button_match-editor_add-opponent');
   module.exports.internal.setsDiv = document.getElementById('div_match-editor_sets');
   module.exports.internal.breadcrumb = document.getElementById('match-editor_breadcrumbs');
+
+  module.exports.internal.matchButtonHome.onclick = module.exports.internal.homeMatchOnClick;
+  module.exports.internal.matchButtonAway.onclick = module.exports.internal.awayMatchOnClick;
 }
 
 /**
@@ -76,6 +81,12 @@ function returnTeamDataListener(event, filename, dataObj, seasonId, matchId) {
   module.exports.internal.matchTeamNamesHome.innerHTML = module.exports.internal.dataObj.name;
   module.exports.internal.matchTeamNamesAway.innerHTML = module.exports.internal.matchData.squads.opponent.name;
 
+  if (module.exports.internal.matchData.home_or_away === 'home') {
+    module.exports.internal.homeMatchOnClick();
+  } else {
+    module.exports.internal.awayMatchOnClick();
+  }
+
   if (module.exports.internal.matchData.venue) {
     module.exports.internal.matchVenue.value = module.exports.internal.matchData.venue;
   } else {
@@ -89,9 +100,9 @@ function returnTeamDataListener(event, filename, dataObj, seasonId, matchId) {
   }
 
   // Clean up the squad list div
-  // while(module.exports.internal.squadList.rows.length > 0) {
-  //   module.exports.internal.squadList.deleteRow(0);
-  // }
+  let cloneSquadListDiv = module.exports.internal.squadList.cloneNode(false);
+  module.exports.internal.squadList.parentNode.replaceChild(cloneSquadListDiv, module.exports.internal.squadList);
+  module.exports.internal.squadList = cloneSquadListDiv;
 
   // populate the squad list
   let trHeading = module.exports.internal.squadList.insertRow(0);
@@ -115,6 +126,12 @@ function returnTeamDataListener(event, filename, dataObj, seasonId, matchId) {
     let tdPlaying = trPlayer.insertCell(0);
     let playerCheckbox = document.createElement('input');
     playerCheckbox.type = 'checkbox';
+    playerCheckbox.className = 'checkbox';
+    playerCheckbox.name = 'playing-us';
+    playerCheckbox.id = player.id;
+    if (module.exports.internal.matchData.squads.us && module.exports.internal.matchData.squads.us.find((squadPlayer) => {return parseInt(squadPlayer.id) === player.id})) {
+      playerCheckbox.checked = true;
+    }
     tdPlaying.appendChild(playerCheckbox);
 
     // name
@@ -126,6 +143,7 @@ function returnTeamDataListener(event, filename, dataObj, seasonId, matchId) {
     let playerNumber = document.createElement('input');
     playerNumber.type = 'text';
     playerNumber.className = 'match-lineup-input';
+    playerNumber.name = 'match-lineup-us-' + player.id;
     playerNumber.maxLength = 2;
     playerNumber.minLength = 1;
     playerNumber.placeholder = '#';
@@ -136,6 +154,13 @@ function returnTeamDataListener(event, filename, dataObj, seasonId, matchId) {
     let tdMVP = trPlayer.insertCell(3);
     let mvp = document.createElement('input');
     mvp.type = 'radio';
+    mvp.className = 'radio';
+    mvp.name = 'mvp';
+    mvp.value = player.id;
+    mvp.id = 'mvp-us-' + player.id;
+    if (player.id === module.exports.internal.matchData.mvp) {
+      mvp.checked = true;
+    }
     tdMVP.appendChild(mvp);
   });
 
@@ -150,10 +175,18 @@ function returnTeamDataListener(event, filename, dataObj, seasonId, matchId) {
     });
   }
 
+  let cloneSetsDiv = module.exports.internal.setsDiv.cloneNode(false);
+  module.exports.internal.setsDiv.parentNode.replaceChild(cloneSetsDiv, module.exports.internal.setsDiv);
+  module.exports.internal.setsDiv = cloneSetsDiv;
+
   if (module.exports.internal.matchData.sets && module.exports.internal.matchData.sets.length > 0) {
     debug('sets exist');
   } else {
-    appendSet();
+    appendSet(undefined, 1);
+    appendSet(undefined, 2);
+    appendSet(undefined, 3);
+    appendSet(undefined, 4);
+    appendSet(undefined, 5);
   }
 }
 
@@ -177,68 +210,128 @@ function findMatch() {
  * @param  {type} setNumber description
  * @return {type}           description
  */
-function appendSet(/*setData, setNumber*/) {
-
-  let cloneSetsDiv = module.exports.internal.setsDiv.cloneNode(false);
-  module.exports.internal.setsDiv.parentNode.replaceChild(cloneSetsDiv, module.exports.internal.setsDiv);
-  module.exports.internal.setsDiv = cloneSetsDiv;
-
+function appendSet(setData, setNumber) {
   let setDiv;
 
-  // if (setData) {
-    // debug('set data exists ' + setNumber);
-  // } else {
-  setDiv = document.createElement('div');
+  if (setData) {
+    debug('set data exists ' + setNumber);
+  } else {
+    setDiv = document.createElement('div');
 
-  let setNameDiv = document.createElement('div');
-  setNameDiv.innerHTML = 'Set 1';
-  setDiv.appendChild(setNameDiv);
+    let setNameDiv = document.createElement('div');
+    setNameDiv.innerHTML = 'Set ' + setNumber;
+    setDiv.appendChild(setNameDiv);
 
-  let setDataDiv = document.createElement('div');
-  setDataDiv.className = 'set-box';
-  setDiv.appendChild(setDataDiv);
+    let setDataDiv = document.createElement('div');
+    setDataDiv.className = 'set-box';
+    setDiv.appendChild(setDataDiv);
 
-  let setTable = document.createElement('table');
-  setTable.className = 'set';
-  setDataDiv.appendChild(setTable);
+    let setTable = document.createElement('table');
+    setTable.className = 'set';
+    setDataDiv.appendChild(setTable);
 
-  let teamsRow = setTable.insertRow(0);
-  addTeamsRow(teamsRow);
+    let rowCounter = 0;
 
-  let serviceOrderRow = setTable.insertRow(1);
-  addServiceOrderRow(serviceOrderRow);
+    let teamsRow = setTable.insertRow(rowCounter++);
+    addTeamsRow(teamsRow, setNumber);
 
-  let serviceLineupRow = setTable.insertRow(2);
-  addServiceLineupRow(serviceLineupRow);
+    let serviceOrderRow = setTable.insertRow(rowCounter++);
+    addServiceOrderRow(serviceOrderRow);
 
-  let playerPositionRow = setTable.insertRow(3);
-  addPlayerPositionRow(playerPositionRow);
+    let serviceLineupRow = setTable.insertRow(rowCounter++);
+    addServiceLineupRow(serviceLineupRow);
 
-  let subsRowOne = setTable.insertRow(4);
-  addSubsRowOne(subsRowOne);
+    let playerPositionRow = setTable.insertRow(rowCounter++);
+    addPlayerPositionRow(playerPositionRow);
 
-  let subsRowTwo = setTable.insertRow(5);
-  addSubsRowTwo(subsRowTwo);
+    let subsRowOne = setTable.insertRow(rowCounter++);
+    addSubsRowOne(subsRowOne);
 
-  setTable.insertRow(6).insertCell(0).innerHTML = '&nbsp;';
-  // }
+    let subsRowTwo = setTable.insertRow(rowCounter++);
+    addSubsRowTwo(subsRowTwo);
+
+    let subsRowThree = setTable.insertRow(rowCounter++);
+    addSubsRowThree(subsRowThree);
+
+    setTable.insertRow(rowCounter++).insertCell(0).innerHTML = '&nbsp;';
+
+    let pointsRowOne = setTable.insertRow(rowCounter++);
+    addPointsRow(pointsRowOne, 1);
+    let pointsRowTwo = setTable.insertRow(rowCounter++);
+    addPointsRow(pointsRowTwo, 2);
+    let pointsRowThree = setTable.insertRow(rowCounter++);
+    addPointsRow(pointsRowThree, 3);
+    let pointsRowFour = setTable.insertRow(rowCounter++);
+    addPointsRow(pointsRowFour, 4);
+    let pointsRowFive = setTable.insertRow(rowCounter++);
+    addPointsRow(pointsRowFive, 5);
+
+    setTable.insertRow(rowCounter++).insertCell(0).innerHTML = '&nbsp;';
+
+    let timeoutRowOne = setTable.insertRow(rowCounter++);
+    addTimeoutRow(timeoutRowOne, 1);
+    let timeoutRowTwo = setTable.insertRow(rowCounter++);
+    addTimeoutRow(timeoutRowTwo, 2);
+  }
 
   module.exports.internal.setsDiv.appendChild(setDiv);
+
+  let setSpacer = document.createElement('div');
+  setSpacer.innerHTML = '&nbsp;<br>&nbsp;';
+  module.exports.internal.setsDiv.appendChild(setSpacer);
 }
 
-function addTeamsRow(teamsRow) {
+function addTeamsRow(teamsRow, setNumber) {
   let teamANameCell = teamsRow.insertCell(0);
-  teamANameCell.innerHTML = module.exports.internal.dataObj.name;
+  if (setNumber === 1 || setNumber === 3) {
+    teamANameCell.innerHTML = module.exports.internal.dataObj.name;
+  } else if (setNumber === 2 || setNumber === 4) {
+    teamANameCell.innerHTML = module.exports.internal.matchData.squads.opponent.name;
+  }
   teamANameCell.colSpan = 5;
+
   let teamARoleCell = teamsRow.insertCell(1);
-  teamARoleCell.innerHTML = 'S/R';
+  if (setNumber === 1) {
+    let teamAServeButton = document.createElement('button');
+    teamAServeButton.className = 'button radio-button-on group-top serve-receive-toggle';
+    teamAServeButton.innerHTML = 'S';
+    teamARoleCell.appendChild(teamAServeButton);
+    let teamAReceiveButton = document.createElement('button');
+    teamAReceiveButton.className = 'button radio-button-off group-bottom serve-receive-toggle';
+    teamAReceiveButton.innerHTML = 'R';
+    teamARoleCell.appendChild(teamAReceiveButton);
+  } else {
+    teamARoleCell.innerHTML = 'R';
+  }
+
   teamsRow.insertCell(2);
   teamsRow.insertCell(3);
+
   let teamBNameCell = teamsRow.insertCell(4);
-  teamBNameCell.innerHTML = module.exports.internal.matchData.squads.opponent.name;
+  if (setNumber === 1 || setNumber === 3) {
+    teamBNameCell.innerHTML = module.exports.internal.matchData.squads.opponent.name;
+  } else if (setNumber === 2 || setNumber === 4) {
+    teamBNameCell.innerHTML = module.exports.internal.dataObj.name;
+  }
   teamBNameCell.colSpan = 5;
-  let teamBRoleCell = teamsRow.insertCell(5);
-  teamBRoleCell.innerHTML = 'S/R';
+
+  if (setNumber === 1) {
+    let teamBRoleCell = teamsRow.insertCell(5);
+    let teamBServeButton = document.createElement('button');
+    teamBServeButton.className = 'button radio-button-off group-top serve-receive-toggle';
+    teamBServeButton.innerHTML = 'S';
+    teamBRoleCell.appendChild(teamBServeButton);
+    let teamBReceiveButton = document.createElement('button');
+    teamBReceiveButton.className = 'button radio-button-on group-bottom serve-receive-toggle';
+    teamBReceiveButton.innerHTML = 'R';
+    teamBRoleCell.appendChild(teamBReceiveButton);
+  } else {
+    teamARoleCell.innerHTML = 'S';
+  }
+}
+
+function swapServers() {
+  // ???
 }
 
 function addServiceOrderRow(serviceOrderRow) {
@@ -295,6 +388,7 @@ function addServiceLineupRow(serviceLineupRow) {
   sla1PlayerNumber.minLength = 1;
   sla1PlayerNumber.placeholder = '#';
   sla1PlayerNumber.size = 2;
+  sla1PlayerNumber.id = 'sla1';
   sla1.appendChild(sla1PlayerNumber);
   let sla2 = serviceLineupRow.insertCell(1);
   sla2.className = 'box';
@@ -306,6 +400,7 @@ function addServiceLineupRow(serviceLineupRow) {
   sla2PlayerNumber.minLength = 1;
   sla2PlayerNumber.placeholder = '#';
   sla2PlayerNumber.size = 2;
+  sla2PlayerNumber.id = 'sla2';
   sla2.appendChild(sla2PlayerNumber);
   let sla3 = serviceLineupRow.insertCell(2);
   sla3.className = 'box';
@@ -317,6 +412,7 @@ function addServiceLineupRow(serviceLineupRow) {
   sla3PlayerNumber.minLength = 1;
   sla3PlayerNumber.placeholder = '#';
   sla3PlayerNumber.size = 2;
+  sla3PlayerNumber.id = 'sla3';
   sla3.appendChild(sla3PlayerNumber);
   let sla4 = serviceLineupRow.insertCell(3);
   sla4.className = 'box';
@@ -328,6 +424,7 @@ function addServiceLineupRow(serviceLineupRow) {
   sla4PlayerNumber.minLength = 1;
   sla4PlayerNumber.placeholder = '#';
   sla4PlayerNumber.size = 2;
+  sla4PlayerNumber.id = 'sla4';
   sla4.appendChild(sla4PlayerNumber);
   let sla5 = serviceLineupRow.insertCell(4);
   sla5.className = 'box';
@@ -339,6 +436,7 @@ function addServiceLineupRow(serviceLineupRow) {
   sla5PlayerNumber.minLength = 1;
   sla5PlayerNumber.placeholder = '#';
   sla5PlayerNumber.size = 2;
+  sla5PlayerNumber.id = 'sla5';
   sla5.appendChild(sla5PlayerNumber);
   let sla6 = serviceLineupRow.insertCell(5);
   sla6.className = 'box';
@@ -350,6 +448,7 @@ function addServiceLineupRow(serviceLineupRow) {
   sla6PlayerNumber.minLength = 1;
   sla6PlayerNumber.placeholder = '#';
   sla6PlayerNumber.size = 2;
+  sla6PlayerNumber.id = 'sla6';
   sla6.appendChild(sla6PlayerNumber);
 
   let middleText = serviceLineupRow.insertCell(6);
@@ -366,6 +465,7 @@ function addServiceLineupRow(serviceLineupRow) {
   slb1PlayerNumber.minLength = 1;
   slb1PlayerNumber.placeholder = '#';
   slb1PlayerNumber.size = 2;
+  slb1PlayerNumber.id = 'slb1';
   slb1.appendChild(slb1PlayerNumber);
   let slb2 = serviceLineupRow.insertCell(8);
   slb2.className = 'box';
@@ -377,6 +477,7 @@ function addServiceLineupRow(serviceLineupRow) {
   slb2PlayerNumber.minLength = 1;
   slb2PlayerNumber.placeholder = '#';
   slb2PlayerNumber.size = 2;
+  slb2PlayerNumber.id = 'slb2';
   slb2.appendChild(slb2PlayerNumber);
   let slb3 = serviceLineupRow.insertCell(9);
   slb3.className = 'box';
@@ -388,6 +489,7 @@ function addServiceLineupRow(serviceLineupRow) {
   slb3PlayerNumber.minLength = 1;
   slb3PlayerNumber.placeholder = '#';
   slb3PlayerNumber.size = 2;
+  slb3PlayerNumber.id = 'slb3';
   slb3.appendChild(slb3PlayerNumber);
   let slb4 = serviceLineupRow.insertCell(10);
   slb4.className = 'box';
@@ -399,6 +501,7 @@ function addServiceLineupRow(serviceLineupRow) {
   slb4PlayerNumber.minLength = 1;
   slb4PlayerNumber.placeholder = '#';
   slb4PlayerNumber.size = 2;
+  slb4PlayerNumber.id = 'slb4';
   slb4.appendChild(slb4PlayerNumber);
   let slb5 = serviceLineupRow.insertCell(11);
   slb5.className = 'box';
@@ -410,6 +513,7 @@ function addServiceLineupRow(serviceLineupRow) {
   slb5PlayerNumber.minLength = 1;
   slb5PlayerNumber.placeholder = '#';
   slb5PlayerNumber.size = 2;
+  slb5PlayerNumber.id = 'slb5';
   slb5.appendChild(slb5PlayerNumber);
   let slb6 = serviceLineupRow.insertCell(12);
   slb6.className = 'box';
@@ -421,6 +525,7 @@ function addServiceLineupRow(serviceLineupRow) {
   slb6PlayerNumber.minLength = 1;
   slb6PlayerNumber.placeholder = '#';
   slb6PlayerNumber.size = 2;
+  slb6PlayerNumber.id = 'slb6';
   slb6.appendChild(slb6PlayerNumber);
 }
 
@@ -428,32 +533,32 @@ function addPlayerPositionRow(playerPositionRow) {
   let ppa1 = playerPositionRow.insertCell(0);
   let ppa1Position = document.createElement('button');
   ppa1Position.innerHTML = 'M';
-  ppa1Position.className = 'button new-item-button';
+  ppa1Position.className = 'button cycle-button';
   ppa1.appendChild(ppa1Position);
   let ppa2 = playerPositionRow.insertCell(1);
   let ppa2Position = document.createElement('button');
   ppa2Position.innerHTML = 'S';
-  ppa2Position.className = 'button new-item-button';
+  ppa2Position.className = 'button cycle-button';
   ppa2.appendChild(ppa2Position);
   let ppa3 = playerPositionRow.insertCell(2);
   let ppa3Position = document.createElement('button');
   ppa3Position.innerHTML = '4';
-  ppa3Position.className = 'button new-item-button';
+  ppa3Position.className = 'button cycle-button';
   ppa3.appendChild(ppa3Position);
   let ppa4 = playerPositionRow.insertCell(3);
   let ppa4Position = document.createElement('button');
   ppa4Position.innerHTML = 'M';
-  ppa4Position.className = 'button new-item-button';
+  ppa4Position.className = 'button cycle-button';
   ppa4.appendChild(ppa4Position);
   let ppa5 = playerPositionRow.insertCell(4);
   let ppa5Position = document.createElement('button');
   ppa5Position.innerHTML = 'O';
-  ppa5Position.className = 'button new-item-button';
+  ppa5Position.className = 'button cycle-button';
   ppa5.appendChild(ppa5Position);
   let ppa6 = playerPositionRow.insertCell(5);
   let ppa6Position = document.createElement('button');
   ppa6Position.innerHTML = '4';
-  ppa6Position.className = 'button new-item-button';
+  ppa6Position.className = 'button cycle-button';
   ppa6.appendChild(ppa6Position);
 
   let middleText = playerPositionRow.insertCell(6);
@@ -567,6 +672,246 @@ function addSubsRowTwo(subSecondRow) {
   sb6.className = 'box';
 }
 
+function addSubsRowThree(subThirdRow) {
+  let sa1 = subThirdRow.insertCell(0);
+  sa1.className = 'box';
+  let sa2 = subThirdRow.insertCell(1);
+  sa2.className = 'box';
+  let sa3 = subThirdRow.insertCell(2);
+  sa3.className = 'box';
+  let sa4 = subThirdRow.insertCell(3);
+  sa4.className = 'box';
+  let sa5 = subThirdRow.insertCell(4);
+  sa5.className = 'box';
+  let sa6 = subThirdRow.insertCell(5);
+  sa6.className = 'box';
+
+  subThirdRow.insertCell(6).innerHTML = '&nbsp;';
+  subThirdRow.insertCell(7);
+
+  let sb1 = subThirdRow.insertCell(8);
+  sb1.className = 'box';
+  let sb2 = subThirdRow.insertCell(9);
+  sb2.className = 'box';
+  let sb3 = subThirdRow.insertCell(10);
+  sb3.className = 'box';
+  let sb4 = subThirdRow.insertCell(11);
+  sb4.className = 'box';
+  let sb5 = subThirdRow.insertCell(12);
+  sb5.className = 'box';
+  let sb6 = subThirdRow.insertCell(13);
+  sb6.className = 'box';
+}
+
+function addPointsRow(pointsRow, rowNumber) {
+  let cellCount = 0;
+
+  let pra1 = pointsRow.insertCell(cellCount++);
+  pra1.className = 'box';
+  let pra1Score = document.createElement('input');
+  pra1Score.type = 'text';
+  pra1Score.type = 'text';
+  pra1Score.className = 'match-lineup-input';
+  pra1Score.maxLength = 2;
+  pra1Score.minLength = 1;
+  pra1Score.placeholder = '#';
+  pra1Score.size = 2;
+  pra1.appendChild(pra1Score);
+  let pra2 = pointsRow.insertCell(cellCount++);
+  pra2.className = 'box';
+  let pra2Score = document.createElement('input');
+  pra2Score.type = 'text';
+  pra2Score.type = 'text';
+  pra2Score.className = 'match-lineup-input';
+  pra2Score.maxLength = 2;
+  pra2Score.minLength = 1;
+  pra2Score.placeholder = '#';
+  pra2Score.size = 2;
+  pra2.appendChild(pra2Score);
+  let pra3 = pointsRow.insertCell(cellCount++);
+  pra3.className = 'box';
+  let pra3Score = document.createElement('input');
+  pra3Score.type = 'text';
+  pra3Score.type = 'text';
+  pra3Score.className = 'match-lineup-input';
+  pra3Score.maxLength = 2;
+  pra3Score.minLength = 1;
+  pra3Score.placeholder = '#';
+  pra3Score.size = 2;
+  pra3.appendChild(pra3Score);
+  let pra4 = pointsRow.insertCell(cellCount++);
+  pra4.className = 'box';
+  let pra4Score = document.createElement('input');
+  pra4Score.type = 'text';
+  pra4Score.type = 'text';
+  pra4Score.className = 'match-lineup-input';
+  pra4Score.maxLength = 2;
+  pra4Score.minLength = 1;
+  pra4Score.placeholder = '#';
+  pra4Score.size = 2;
+  pra4.appendChild(pra4Score);
+  let pra5 = pointsRow.insertCell(cellCount++);
+  pra5.className = 'box';
+  let pra5Score = document.createElement('input');
+  pra5Score.type = 'text';
+  pra5Score.type = 'text';
+  pra5Score.className = 'match-lineup-input';
+  pra5Score.maxLength = 2;
+  pra5Score.minLength = 1;
+  pra5Score.placeholder = '#';
+  pra5Score.size = 2;
+  pra5.appendChild(pra5Score);
+  let pra6 = pointsRow.insertCell(cellCount++);
+  pra6.className = 'box';
+  let pra6Score = document.createElement('input');
+  pra6Score.type = 'text';
+  pra6Score.type = 'text';
+  pra6Score.className = 'match-lineup-input';
+  pra6Score.maxLength = 2;
+  pra6Score.minLength = 1;
+  pra6Score.placeholder = '#';
+  pra6Score.size = 2;
+  pra6.appendChild(pra6Score);
+
+  if (rowNumber === 1) {
+    let middleText = pointsRow.insertCell(cellCount++);
+    middleText.colSpan = 2;
+    middleText.rowSpan = 2;
+    middleText.innerHTML = 'Service Rounds';
+  } else if (rowNumber > 2) {
+    let middleText = pointsRow.insertCell(cellCount++);
+    middleText.colSpan = 2;
+  }
+
+  let prb1 = pointsRow.insertCell(cellCount++);
+  prb1.className = 'box';
+  let prb1Score = document.createElement('input');
+  prb1Score.type = 'text';
+  prb1Score.type = 'text';
+  prb1Score.className = 'match-lineup-input';
+  prb1Score.maxLength = 2;
+  prb1Score.minLength = 1;
+  prb1Score.placeholder = '#';
+  prb1Score.size = 2;
+  prb1.appendChild(prb1Score);
+  let prb2 = pointsRow.insertCell(cellCount++);
+  prb2.className = 'box';
+  let prb2Score = document.createElement('input');
+  prb2Score.type = 'text';
+  prb2Score.type = 'text';
+  prb2Score.className = 'match-lineup-input';
+  prb2Score.maxLength = 2;
+  prb2Score.minLength = 1;
+  prb2Score.placeholder = '#';
+  prb2Score.size = 2;
+  prb2.appendChild(prb2Score);
+  let prb3 = pointsRow.insertCell(cellCount++);
+  prb3.className = 'box';
+  let prb3Score = document.createElement('input');
+  prb3Score.type = 'text';
+  prb3Score.type = 'text';
+  prb3Score.className = 'match-lineup-input';
+  prb3Score.maxLength = 2;
+  prb3Score.minLength = 1;
+  prb3Score.placeholder = '#';
+  prb3Score.size = 2;
+  prb3.appendChild(prb3Score);
+  let prb4 = pointsRow.insertCell(cellCount++);
+  prb4.className = 'box';
+  let prb4Score = document.createElement('input');
+  prb4Score.type = 'text';
+  prb4Score.type = 'text';
+  prb4Score.className = 'match-lineup-input';
+  prb4Score.maxLength = 2;
+  prb4Score.minLength = 1;
+  prb4Score.placeholder = '#';
+  prb4Score.size = 2;
+  prb4.appendChild(prb4Score);
+  let prb5 = pointsRow.insertCell(cellCount++);
+  prb5.className = 'box';
+  let prb5Score = document.createElement('input');
+  prb5Score.type = 'text';
+  prb5Score.type = 'text';
+  prb5Score.className = 'match-lineup-input';
+  prb5Score.maxLength = 2;
+  prb5Score.minLength = 1;
+  prb5Score.placeholder = '#';
+  prb5Score.size = 2;
+  prb5.appendChild(prb5Score);
+  let prb6 = pointsRow.insertCell(cellCount++);
+  prb6.className = 'box';
+  let prb6Score = document.createElement('input');
+  prb6Score.type = 'text';
+  prb6Score.type = 'text';
+  prb6Score.className = 'match-lineup-input';
+  prb6Score.maxLength = 2;
+  prb6Score.minLength = 1;
+  prb6Score.placeholder = '#';
+  prb6Score.size = 2;
+  prb6.appendChild(prb6Score);
+}
+
+function addTimeoutRow(timeoutRow, rowNumber) {
+  let leftSpace = timeoutRow.insertCell(0);
+  leftSpace.colSpan = 5;
+
+  let toa = timeoutRow.insertCell(1);
+  toa.className = 'box';
+  if (rowNumber == 1) {
+    let toaTO = document.createElement('button');
+    toaTO.innerHTML = '+';
+    toaTO.className = 'button new-item-button';
+    toa.appendChild(toaTO);
+  } else {
+    toa.innerHTML = '&nbsp;';
+  }
+
+  let middleText = timeoutRow.insertCell(2);
+  middleText.colSpan = 2;
+  if (rowNumber == 1) {
+    middleText.innerHTML = '"T"';
+  }
+
+  let tob = timeoutRow.insertCell(3);
+  tob.className = 'box';
+  if (rowNumber == 1) {
+    let tobTO = document.createElement('button');
+    tobTO.innerHTML = '+';
+    tobTO.className = 'button new-item-button';
+    tob.appendChild(tobTO);
+  } else {
+    tob.innerHTML = '&nbsp;';
+  }
+}
+
+/**
+ * homeMatchOnClick - A click handler for when the "home" match button is clicked.
+ *
+ * @private
+ */
+function homeMatchOnClick() {
+  module.exports.internal.matchButtonHome.className = 'button radio-button-on group-left';
+  module.exports.internal.matchButtonAway.className = 'button radio-button-off group-right';
+  module.exports.internal.matchData.home_or_away = 'home';
+
+  module.exports.internal.matchTeamNamesHome.innerHTML = module.exports.internal.dataObj.name;
+  module.exports.internal.matchTeamNamesAway.innerHTML = module.exports.internal.matchData.squads.opponent.name;
+}
+
+/**
+ * awayMatchOnClick - A click handler for when the "home" match button is clicked.
+ *
+ * @private
+ */
+function awayMatchOnClick() {
+  module.exports.internal.matchButtonAway.className = 'button radio-button-on group-right';
+  module.exports.internal.matchButtonHome.className = 'button radio-button-off group-left';
+  module.exports.internal.matchData.home_or_away = 'away';
+
+  module.exports.internal.matchTeamNamesHome.innerHTML = module.exports.internal.matchData.squads.opponent.name;
+  module.exports.internal.matchTeamNamesAway.innerHTML = module.exports.internal.dataObj.name;
+}
+
 /**
  * generateBreadcrumb - Generate the breadcrumb for this page:
  *  Home > $TeamName > $SeasonName > Matches > $MatchDate $matchOpponent
@@ -662,13 +1007,33 @@ function detach() {
  */
 function saveOnExit() {
   debug('saving match data');
+
   if (module.exports.internal.matchVenue.value.length > 0) {
     module.exports.internal.matchData.venue = module.exports.internal.matchVenue.value;
   }
 
+  if (module.exports.internal.matchTime.value) {
+    module.exports.internal.matchData.time = module.exports.internal.matchTime.value;
+  }
+
+  if (document.querySelector('input[name="mvp"]:checked')) {
+    module.exports.internal.matchData.mvp = parseInt(document.querySelector('input[name="mvp"]:checked').value);
+  }
+
+  if (document.querySelector('input[name="playing-us"]:checked')) {
+    module.exports.internal.matchData.squads.us = [];
+    document.querySelectorAll('input[name="playing-us"]:checked').forEach((squadPlayer) => {
+      let playerEntry = {};
+      playerEntry.id = squadPlayer.id;
+      // if ()
+      // 'match-lineup-us-' + player.id;
+      playerEntry.number = 10;
+      module.exports.internal.matchData.squads.us.push(playerEntry);
+    });
+  }
+
   ipc.send('save-team-data', module.exports.internal.filename, module.exports.internal.dataObj);
 }
-
 
 module.exports = {
   name: 'match-editor',
@@ -679,6 +1044,8 @@ module.exports = {
   internal: {
     teamDataSavedListener: teamDataSavedListener,
     returnTeamDataListener: returnTeamDataListener,
+    homeMatchOnClick: homeMatchOnClick,
+    awayMatchOnClick: awayMatchOnClick,
     generateBreadcrumb: generateBreadcrumb,
     findMatch: findMatch,
     saveOnExit: saveOnExit,
@@ -687,6 +1054,8 @@ module.exports = {
     matchVenue: undefined,
     matchDate: undefined,
     matchTime: undefined,
+    matchButtonHome: undefined,
+    matchButtonAway: undefined,
     matchTeamNamesHome: undefined,
     matchTeamNamesAway: undefined,
     squadList: undefined,
