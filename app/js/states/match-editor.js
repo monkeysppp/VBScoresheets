@@ -129,7 +129,7 @@ function returnTeamDataListener(event, filename, dataObj, seasonId, matchId) {
     playerCheckbox.className = 'checkbox';
     playerCheckbox.name = 'playing-us';
     playerCheckbox.id = player.id;
-    if (module.exports.internal.matchData.squads.us && module.exports.internal.matchData.squads.us.find((squadPlayer) => {return parseInt(squadPlayer.id) === player.id})) {
+    if (module.exports.internal.matchData.squads.us && module.exports.internal.matchData.squads.us.find((squadPlayer) => {return parseInt(squadPlayer.id) === player.id;})) {
       playerCheckbox.checked = true;
     }
     tdPlaying.appendChild(playerCheckbox);
@@ -330,9 +330,9 @@ function addTeamsRow(teamsRow, setNumber) {
   }
 }
 
-function swapServers() {
-  // ???
-}
+// function swapServers() {
+//   // ???
+// }
 
 function addServiceOrderRow(serviceOrderRow) {
   let soa1 = serviceOrderRow.insertCell(0);
