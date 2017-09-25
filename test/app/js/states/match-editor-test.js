@@ -217,7 +217,7 @@ describe('app/js/match-editor', () => {
 
       beforeEach(() => {
         matchEditor.internal.returnTeamDataListener({}, 'somefile', dataObj, 0, 1);
-        document.getElementById('mvp-2').checked = true;
+        document.getElementById('mvp-us-2').checked = true;
       });
 
       it('saves the mvp player id', () => {
@@ -797,14 +797,14 @@ describe('app/js/match-editor', () => {
         expect(matchEditor.internal.matchTime.value).to.equal(dataObj.seasons[1].matches[2].time);
         expect(matchEditor.internal.matchVenue.value).to.equal(dataObj.seasons[1].matches[2].venue);
 
-        expect(document.getElementById('mvp-1').checked).to.equal(false);
-        expect(document.getElementById('mvp-2').checked).to.equal(false);
-        expect(document.getElementById('mvp-3').checked).to.equal(false);
-        expect(document.getElementById('mvp-4').checked).to.equal(true);
-        expect(document.getElementById('mvp-5').checked).to.equal(false);
-        expect(document.getElementById('mvp-6').checked).to.equal(false);
-        expect(document.getElementById('mvp-7').checked).to.equal(false);
-        expect(document.getElementById('mvp-8').checked).to.equal(false);
+        expect(document.getElementById('mvp-us-1').checked).to.equal(false);
+        expect(document.getElementById('mvp-us-2').checked).to.equal(false);
+        expect(document.getElementById('mvp-us-3').checked).to.equal(false);
+        expect(document.getElementById('mvp-us-4').checked).to.equal(true);
+        expect(document.getElementById('mvp-us-5').checked).to.equal(false);
+        expect(document.getElementById('mvp-us-6').checked).to.equal(false);
+        expect(document.getElementById('mvp-us-7').checked).to.equal(false);
+        expect(document.getElementById('mvp-us-8').checked).to.equal(false);
       });
     });
 

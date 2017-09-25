@@ -144,6 +144,14 @@ function returnTeamDataListener(event, filename, dataObj, seasonId, matchId) {
     playerNumber.type = 'text';
     playerNumber.className = 'match-lineup-input';
     playerNumber.name = 'match-lineup-us-' + player.id;
+    playerNumber.id = 'match-lineup-us-' + player.id;
+    if (module.exports.internal.matchData.squads.us) {
+      module.exports.internal.matchData.squads.us.forEach((squadPlayer) => {
+        if (parseInt(squadPlayer.id) === player.id && squadPlayer.number) {
+          playerNumber.value = squadPlayer.number;
+        }
+      });
+    }
     playerNumber.maxLength = 2;
     playerNumber.minLength = 1;
     playerNumber.placeholder = '#';
@@ -214,7 +222,7 @@ function appendSet(setData, setNumber) {
   let setDiv;
 
   if (setData) {
-    debug('set data exists ' + setNumber);
+    // debug('set data exists ' + setNumber);
   } else {
     setDiv = document.createElement('div');
 
@@ -1024,10 +1032,8 @@ function saveOnExit() {
     module.exports.internal.matchData.squads.us = [];
     document.querySelectorAll('input[name="playing-us"]:checked').forEach((squadPlayer) => {
       let playerEntry = {};
-      playerEntry.id = squadPlayer.id;
-      // if ()
-      // 'match-lineup-us-' + player.id;
-      playerEntry.number = 10;
+      playerEntry.id = parseInt(squadPlayer.id);
+      playerEntry.number = parseInt(document.getElementById('match-lineup-us-' + squadPlayer.id).value);
       module.exports.internal.matchData.squads.us.push(playerEntry);
     });
   }
