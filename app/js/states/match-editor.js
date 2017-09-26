@@ -221,66 +221,66 @@ function findMatch() {
 function appendSet(setData, setNumber) {
   let setDiv;
 
-  if (setData) {
+  // if (setData) {
     // debug('set data exists ' + setNumber);
-  } else {
-    setDiv = document.createElement('div');
+  // } else {
+  setDiv = document.createElement('div');
 
-    let setNameDiv = document.createElement('div');
-    setNameDiv.innerHTML = 'Set ' + setNumber;
-    setDiv.appendChild(setNameDiv);
+  let setNameDiv = document.createElement('div');
+  setNameDiv.innerHTML = 'Set ' + setNumber;
+  setDiv.appendChild(setNameDiv);
 
-    let setDataDiv = document.createElement('div');
-    setDataDiv.className = 'set-box';
-    setDiv.appendChild(setDataDiv);
+  let setDataDiv = document.createElement('div');
+  setDataDiv.className = 'set-box';
+  setDiv.appendChild(setDataDiv);
 
-    let setTable = document.createElement('table');
-    setTable.className = 'set';
-    setDataDiv.appendChild(setTable);
+  let setTable = document.createElement('table');
+  setTable.className = 'set';
+  setDataDiv.appendChild(setTable);
 
-    let rowCounter = 0;
+  let rowCounter = 0;
 
-    let teamsRow = setTable.insertRow(rowCounter++);
-    addTeamsRow(teamsRow, setNumber);
+  let teamsRow = setTable.insertRow(rowCounter++);
+  addTeamsRow(teamsRow, setNumber);
 
-    let serviceOrderRow = setTable.insertRow(rowCounter++);
-    addServiceOrderRow(serviceOrderRow);
+  let serviceOrderRow = setTable.insertRow(rowCounter++);
+  addServiceOrderRow(serviceOrderRow);
 
-    let serviceLineupRow = setTable.insertRow(rowCounter++);
-    addServiceLineupRow(serviceLineupRow);
+  let serviceLineupRow = setTable.insertRow(rowCounter++);
+  addServiceLineupRow(serviceLineupRow);
 
-    let playerPositionRow = setTable.insertRow(rowCounter++);
-    addPlayerPositionRow(playerPositionRow);
+  let playerPositionRow = setTable.insertRow(rowCounter++);
+  addPlayerPositionRow(playerPositionRow);
 
-    let subsRowOne = setTable.insertRow(rowCounter++);
-    addSubsRowOne(subsRowOne);
+  let subsRowOne = setTable.insertRow(rowCounter++);
+  addSubsRowOne(subsRowOne);
 
-    let subsRowTwo = setTable.insertRow(rowCounter++);
-    addSubsRowTwo(subsRowTwo);
+  let subsRowTwo = setTable.insertRow(rowCounter++);
+  addSubsRowTwo(subsRowTwo);
 
-    let subsRowThree = setTable.insertRow(rowCounter++);
-    addSubsRowThree(subsRowThree);
+  let subsRowThree = setTable.insertRow(rowCounter++);
+  addSubsRowThree(subsRowThree);
 
-    setTable.insertRow(rowCounter++).insertCell(0).innerHTML = '&nbsp;';
+  setTable.insertRow(rowCounter++).insertCell(0).innerHTML = '&nbsp;';
 
-    let pointsRowOne = setTable.insertRow(rowCounter++);
-    addPointsRow(pointsRowOne, 1);
-    let pointsRowTwo = setTable.insertRow(rowCounter++);
-    addPointsRow(pointsRowTwo, 2);
-    let pointsRowThree = setTable.insertRow(rowCounter++);
-    addPointsRow(pointsRowThree, 3);
-    let pointsRowFour = setTable.insertRow(rowCounter++);
-    addPointsRow(pointsRowFour, 4);
-    let pointsRowFive = setTable.insertRow(rowCounter++);
-    addPointsRow(pointsRowFive, 5);
+  let pointsRowOne = setTable.insertRow(rowCounter++);
+  addPointsRow(pointsRowOne, 1);
+  let pointsRowTwo = setTable.insertRow(rowCounter++);
+  addPointsRow(pointsRowTwo, 2);
+  let pointsRowThree = setTable.insertRow(rowCounter++);
+  addPointsRow(pointsRowThree, 3);
+  let pointsRowFour = setTable.insertRow(rowCounter++);
+  addPointsRow(pointsRowFour, 4);
+  let pointsRowFive = setTable.insertRow(rowCounter++);
+  addPointsRow(pointsRowFive, 5);
 
-    setTable.insertRow(rowCounter++).insertCell(0).innerHTML = '&nbsp;';
+  setTable.insertRow(rowCounter++).insertCell(0).innerHTML = '&nbsp;';
 
-    let timeoutRowOne = setTable.insertRow(rowCounter++);
-    addTimeoutRow(timeoutRowOne, 1);
-    let timeoutRowTwo = setTable.insertRow(rowCounter++);
-    addTimeoutRow(timeoutRowTwo, 2);
-  }
+  let timeoutRowOne = setTable.insertRow(rowCounter++);
+  addTimeoutRow(timeoutRowOne, 1);
+  let timeoutRowTwo = setTable.insertRow(rowCounter++);
+  addTimeoutRow(timeoutRowTwo, 2);
+  // }
 
   module.exports.internal.setsDiv.appendChild(setDiv);
 
