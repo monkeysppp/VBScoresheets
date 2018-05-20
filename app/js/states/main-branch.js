@@ -1,32 +1,32 @@
 
-'use strict';
+'use strict'
 
-const electron = require('electron');
-const ipc = electron.ipcRenderer;
+const electron = require('electron')
+const ipc = electron.ipcRenderer
 
-const state = document.querySelector('.main-branch');
-const debug = require('../debug.js');
+const state = document.querySelector('.main-branch')
+const debug = require('../debug.js')
 
 /**
  * init - Initialize the page handler, ataching the state manager and discovering any interactive elements
  *
  * @param  {object} stateManager the state-manager for this state to send instructions to
  */
-function init(stateManager) {
+function init (stateManager) {
   if (!stateManager) {
-    throw new Error('no state-manager given');
+    throw new Error('no state-manager given')
   }
 
-  module.exports.internal.stateManager = stateManager;
+  module.exports.internal.stateManager = stateManager
 
-  module.exports.internal.players = document.getElementById('main-branch_players');
-  module.exports.internal.matches = document.getElementById('main-branch_matches');
-  module.exports.internal.seasons = document.getElementById('main-branch_season');
-  module.exports.internal.breadcrumb = document.getElementById('main-branch_breadcrumbs');
+  module.exports.internal.players = document.getElementById('main-branch_players')
+  module.exports.internal.matches = document.getElementById('main-branch_matches')
+  module.exports.internal.seasons = document.getElementById('main-branch_season')
+  module.exports.internal.breadcrumb = document.getElementById('main-branch_breadcrumbs')
 
-  module.exports.internal.players.onclick = module.exports.internal.playersOnClick;
-  module.exports.internal.matches.onclick = module.exports.internal.matchesOnClick;
-  module.exports.internal.seasons.onclick = module.exports.internal.seasonsOnClick;
+  module.exports.internal.players.onclick = module.exports.internal.playersOnClick
+  module.exports.internal.matches.onclick = module.exports.internal.matchesOnClick
+  module.exports.internal.seasons.onclick = module.exports.internal.seasonsOnClick
 }
 
 /**
@@ -34,8 +34,8 @@ function init(stateManager) {
  *
  * @private
  */
-function playersOnClick() {
-  module.exports.internal.stateManager.showState('main-branch', 'pick-a-player');
+function playersOnClick () {
+  module.exports.internal.stateManager.showState('main-branch', 'pick-a-player')
 }
 
 /**
@@ -43,8 +43,8 @@ function playersOnClick() {
  *
  * @private
  */
-function matchesOnClick() {
-  module.exports.internal.stateManager.showState('main-branch', 'pick-a-match');
+function matchesOnClick () {
+  module.exports.internal.stateManager.showState('main-branch', 'pick-a-match')
 }
 
 /**
@@ -52,8 +52,8 @@ function matchesOnClick() {
  *
  * @private
  */
-function seasonsOnClick() {
-  module.exports.internal.stateManager.showState('main-branch', 'season-stats');
+function seasonsOnClick () {
+  module.exports.internal.stateManager.showState('main-branch', 'season-stats')
 }
 
 /**
@@ -67,13 +67,13 @@ function seasonsOnClick() {
  *
  * @private
  */
-function returnTeamDataListener(event, filename, dataObj, seasonId) {
-  debug('team data loaded');
-  module.exports.internal.dataObj = dataObj;
-  module.exports.internal.seasonId = seasonId;
+function returnTeamDataListener (event, filename, dataObj, seasonId) {
+  debug('team data loaded')
+  module.exports.internal.dataObj = dataObj
+  module.exports.internal.seasonId = seasonId
 
   // generate the breadcrumb
-  module.exports.internal.generateBreadcrumb();
+  module.exports.internal.generateBreadcrumb()
 }
 
 /**
@@ -84,43 +84,43 @@ function returnTeamDataListener(event, filename, dataObj, seasonId) {
  *
  * @private
  */
-function generateBreadcrumb() {
-  let cloneBreadcrumb = module.exports.internal.breadcrumb.cloneNode(false);
-  module.exports.internal.breadcrumb.parentNode.replaceChild(cloneBreadcrumb, module.exports.internal.breadcrumb);
-  module.exports.internal.breadcrumb = cloneBreadcrumb;
+function generateBreadcrumb () {
+  let cloneBreadcrumb = module.exports.internal.breadcrumb.cloneNode(false)
+  module.exports.internal.breadcrumb.parentNode.replaceChild(cloneBreadcrumb, module.exports.internal.breadcrumb)
+  module.exports.internal.breadcrumb = cloneBreadcrumb
 
-  let spanHome = document.createElement('span');
-  spanHome.innerHTML = 'Home';
-  spanHome.className = 'link';
-  spanHome.onclick = () => {module.exports.internal.stateManager.showState('main-branch', 'pick-a-team');};
-  module.exports.internal.breadcrumb.appendChild(spanHome);
+  let spanHome = document.createElement('span')
+  spanHome.innerHTML = 'Home'
+  spanHome.className = 'link'
+  spanHome.onclick = () => { module.exports.internal.stateManager.showState('main-branch', 'pick-a-team') }
+  module.exports.internal.breadcrumb.appendChild(spanHome)
 
-  let spanSep1 = document.createElement('span');
-  spanSep1.innerHTML = '&nbsp;&gt;&nbsp;';
-  module.exports.internal.breadcrumb.appendChild(spanSep1);
+  let spanSep1 = document.createElement('span')
+  spanSep1.innerHTML = '&nbsp;&gt;&nbsp;'
+  module.exports.internal.breadcrumb.appendChild(spanSep1)
 
-  let spanTeam = document.createElement('span');
-  spanTeam.innerHTML = module.exports.internal.dataObj.name;
-  spanTeam.className = 'link';
-  spanTeam.onclick = () => {module.exports.internal.stateManager.showState('main-branch', 'pick-a-season');};
-  module.exports.internal.breadcrumb.appendChild(spanTeam);
+  let spanTeam = document.createElement('span')
+  spanTeam.innerHTML = module.exports.internal.dataObj.name
+  spanTeam.className = 'link'
+  spanTeam.onclick = () => { module.exports.internal.stateManager.showState('main-branch', 'pick-a-season') }
+  module.exports.internal.breadcrumb.appendChild(spanTeam)
 
-  let spanSep2 = document.createElement('span');
-  spanSep2.innerHTML = '&nbsp;&gt;&nbsp;';
-  module.exports.internal.breadcrumb.appendChild(spanSep2);
+  let spanSep2 = document.createElement('span')
+  spanSep2.innerHTML = '&nbsp;&gt;&nbsp;'
+  module.exports.internal.breadcrumb.appendChild(spanSep2)
 
-  let spanSeason = document.createElement('span');
-  spanSeason.innerHTML = module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].name;
-  module.exports.internal.breadcrumb.appendChild(spanSeason);
+  let spanSeason = document.createElement('span')
+  spanSeason.innerHTML = module.exports.internal.dataObj.seasons[module.exports.internal.seasonId].name
+  module.exports.internal.breadcrumb.appendChild(spanSeason)
 }
 
 /**
  * attach - Set up any event handlers
  */
-function attach() {
-  debug('attaching main-branch');
-  ipc.on('return-team-data', module.exports.internal.returnTeamDataListener);
-  ipc.send('get-team-data');
+function attach () {
+  debug('attaching main-branch')
+  ipc.on('return-team-data', module.exports.internal.returnTeamDataListener)
+  ipc.send('get-team-data')
 }
 
 /**
@@ -128,10 +128,10 @@ function attach() {
  *
  * @return {Promise} a promise to have detached the state
  */
-function detach() {
-  debug('detaching main-branch');
-  ipc.removeListener('return-team-data', module.exports.internal.returnTeamDataListener);
-  return Promise.resolve();
+function detach () {
+  debug('detaching main-branch')
+  ipc.removeListener('return-team-data', module.exports.internal.returnTeamDataListener)
+  return Promise.resolve()
 }
 
 module.exports = {
@@ -154,4 +154,4 @@ module.exports = {
     dataObj: undefined,
     seasonId: undefined
   }
-};
+}

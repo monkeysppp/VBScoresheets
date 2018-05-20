@@ -1,25 +1,25 @@
 
-'use strict';
+'use strict'
 
-const state = document.querySelector('.loading');
+const state = document.querySelector('.loading')
 
 /**
  * init - attach the state manager
  *
  * @param  {object} stateManager the state-manager for this state to send instructions to
  */
-function init(stateManager) {
+function init (stateManager) {
   if (!stateManager) {
-    throw new Error('no state-manager given');
+    throw new Error('no state-manager given')
   }
 
-  module.exports.internal.stateManager = stateManager;
+  module.exports.internal.stateManager = stateManager
 }
 
 /**
  * attach - attach the state code to the displayed ui and set up any event handlers
  */
-function attach() {
+function attach () {
 }
 
 /**
@@ -27,8 +27,8 @@ function attach() {
  *
  * @return {Promise} a promise to have detached the state
  */
-function detach() {
-  return Promise.resolve();
+function detach () {
+  return Promise.resolve()
 }
 
 module.exports = {
@@ -40,4 +40,4 @@ module.exports = {
   internal: {
     stateManager: undefined
   }
-};
+}

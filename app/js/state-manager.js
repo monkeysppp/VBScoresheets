@@ -1,40 +1,40 @@
 
-'use strict';
+'use strict'
 
-const addFirstMatch = require('./states/add-first-match.js');
-const addFirstSeason = require('./states/add-first-season.js');
-const addFirstSquad = require('./states/add-first-squad.js');
-const addFirstTeam = require('./states/add-first-team.js');
-const loading = require('./states/loading.js');
-const mainBranch = require('./states/main-branch.js');
-const matchEditor = require('./states/match-editor.js');
-const matchStats = require('./states/match-stats.js');
-const pickAMatch = require('./states/pick-a-match.js');
-const pickAPlayer = require('./states/pick-a-player.js');
-const pickASeason = require('./states/pick-a-season.js');
-const pickATeam = require('./states/pick-a-team.js');
-const playerStats = require('./states/player-stats.js');
-const seasonStats = require('./states/season-stats.js');
+const addFirstMatch = require('./states/add-first-match.js')
+const addFirstSeason = require('./states/add-first-season.js')
+const addFirstSquad = require('./states/add-first-squad.js')
+const addFirstTeam = require('./states/add-first-team.js')
+const loading = require('./states/loading.js')
+const mainBranch = require('./states/main-branch.js')
+const matchEditor = require('./states/match-editor.js')
+const matchStats = require('./states/match-stats.js')
+const pickAMatch = require('./states/pick-a-match.js')
+const pickAPlayer = require('./states/pick-a-player.js')
+const pickASeason = require('./states/pick-a-season.js')
+const pickATeam = require('./states/pick-a-team.js')
+const playerStats = require('./states/player-stats.js')
+const seasonStats = require('./states/season-stats.js')
 
-let self;
+let self
 
-const debug = require('./debug.js');
+const debug = require('./debug.js')
 
-let states = {};
-states[addFirstMatch.name] = addFirstMatch;
-states[addFirstSeason.name] = addFirstSeason;
-states[addFirstSquad.name] = addFirstSquad;
-states[addFirstTeam.name] = addFirstTeam;
-states[loading.name] = loading;
-states[mainBranch.name] = mainBranch;
-states[matchEditor.name] = matchEditor;
-states[matchStats.name] = matchStats;
-states[pickAMatch.name] = pickAMatch;
-states[pickAPlayer.name] = pickAPlayer;
-states[pickASeason.name] = pickASeason;
-states[pickATeam.name] = pickATeam;
-states[playerStats.name] = playerStats;
-states[seasonStats.name] = seasonStats;
+let states = {}
+states[addFirstMatch.name] = addFirstMatch
+states[addFirstSeason.name] = addFirstSeason
+states[addFirstSquad.name] = addFirstSquad
+states[addFirstTeam.name] = addFirstTeam
+states[loading.name] = loading
+states[mainBranch.name] = mainBranch
+states[matchEditor.name] = matchEditor
+states[matchStats.name] = matchStats
+states[pickAMatch.name] = pickAMatch
+states[pickAPlayer.name] = pickAPlayer
+states[pickASeason.name] = pickASeason
+states[pickATeam.name] = pickATeam
+states[playerStats.name] = playerStats
+states[seasonStats.name] = seasonStats
 
 /**
  * init - Initialize all of the states in the state manager
@@ -42,21 +42,21 @@ states[seasonStats.name] = seasonStats;
  * @param  {object} stateManager a bit like a this
  * @private
  */
-function init(stateManager) {
-  addFirstMatch.init(stateManager);
-  addFirstSeason.init(stateManager);
-  addFirstSquad.init(stateManager);
-  addFirstTeam.init(stateManager);
-  loading.init(stateManager);
-  mainBranch.init(stateManager);
-  matchEditor.init(stateManager);
-  matchStats.init(stateManager);
-  pickAMatch.init(stateManager);
-  pickAPlayer.init(stateManager);
-  pickASeason.init(stateManager);
-  pickATeam.init(stateManager);
-  playerStats.init(stateManager);
-  seasonStats.init(stateManager);
+function init (stateManager) {
+  addFirstMatch.init(stateManager)
+  addFirstSeason.init(stateManager)
+  addFirstSquad.init(stateManager)
+  addFirstTeam.init(stateManager)
+  loading.init(stateManager)
+  mainBranch.init(stateManager)
+  matchEditor.init(stateManager)
+  matchStats.init(stateManager)
+  pickAMatch.init(stateManager)
+  pickAPlayer.init(stateManager)
+  pickASeason.init(stateManager)
+  pickATeam.init(stateManager)
+  playerStats.init(stateManager)
+  seasonStats.init(stateManager)
 }
 
 /**
@@ -71,21 +71,21 @@ function init(stateManager) {
  *
  * @return {Promise} a promise to have completed the state change
  */
-function showState(from, to) {
+function showState (from, to) {
   if (!to) {
-    debug('state-manager changing state to ' + from);
-    this.states[from].attach();
-    this.states[from].state.style.display = 'block';
-    return Promise.resolve();
+    debug('state-manager changing state to ' + from)
+    this.states[from].attach()
+    this.states[from].state.style.display = 'block'
+    return Promise.resolve()
   }
 
-  debug('state-manager changing state from ' + from + ' to ' + to);
+  debug('state-manager changing state from ' + from + ' to ' + to)
   return this.states[from].detach().then(() => {
-    this.states[from].state.style.display = 'none';
-    this.states[to].attach();
-    this.states[to].state.style.display = 'block';
-    return Promise.resolve();
-  });
+    this.states[from].state.style.display = 'none'
+    this.states[to].attach()
+    this.states[to].state.style.display = 'block'
+    return Promise.resolve()
+  })
 }
 
 /**
@@ -93,18 +93,18 @@ function showState(from, to) {
  *
  * @return {object}  A state manager
  */
-function getStateManager() {
+function getStateManager () {
   if (!self) {
-    debug('creating the state-manager');
+    debug('creating the state-manager')
     self = {
       showState: showState,
       states: states
-    };
+    }
 
-    module.exports.internal.init(self);
+    module.exports.internal.init(self)
   }
 
-  return self;
+  return self
 }
 
 module.exports = {
@@ -112,4 +112,4 @@ module.exports = {
   internal: {
     init: init
   }
-};
+}

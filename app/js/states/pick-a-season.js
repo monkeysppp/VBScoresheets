@@ -1,31 +1,31 @@
 
-'use strict';
+'use strict'
 
-const electron = require('electron');
-const ipc = electron.ipcRenderer;
+const electron = require('electron')
+const ipc = electron.ipcRenderer
 
-const state = document.querySelector('.pick-a-season');
-const debug = require('../debug.js');
+const state = document.querySelector('.pick-a-season')
+const debug = require('../debug.js')
 
 /**
  * init - Initialize the page handler, ataching the state manager and discovering any interactive elements
  *
  * @param  {object} stateManager the state-manager for this state to send instructions to
  */
-function init(stateManager) {
+function init (stateManager) {
   if (!stateManager) {
-    throw new Error('no state-manager given');
+    throw new Error('no state-manager given')
   }
 
-  module.exports.internal.stateManager = stateManager;
+  module.exports.internal.stateManager = stateManager
 
-  module.exports.internal.seasonAddButton = document.getElementById('button_pick-a-season_add');
-  module.exports.internal.seasonName = document.getElementById('input_pick-a-season');
-  module.exports.internal.seasonList = document.getElementById('pick-a-season_list');
-  module.exports.internal.breadcrumb = document.getElementById('pick-a-season_breadcrumbs');
+  module.exports.internal.seasonAddButton = document.getElementById('button_pick-a-season_add')
+  module.exports.internal.seasonName = document.getElementById('input_pick-a-season')
+  module.exports.internal.seasonList = document.getElementById('pick-a-season_list')
+  module.exports.internal.breadcrumb = document.getElementById('pick-a-season_breadcrumbs')
 
-  module.exports.internal.seasonAddButton.onclick = module.exports.internal.seasonAddOnClick;
-  module.exports.internal.seasonName.oninput = module.exports.internal.seasonNameOnInput;
+  module.exports.internal.seasonAddButton.onclick = module.exports.internal.seasonAddOnClick
+  module.exports.internal.seasonName.oninput = module.exports.internal.seasonNameOnInput
 }
 
 /**
@@ -38,30 +38,30 @@ function init(stateManager) {
  *
  * @private
  */
-function returnTeamDataListener(event, filename, dataObj) {
-  debug('team data loaded');
-  module.exports.internal.dataObj = dataObj;
-  module.exports.internal.filename = filename;
+function returnTeamDataListener (event, filename, dataObj) {
+  debug('team data loaded')
+  module.exports.internal.dataObj = dataObj
+  module.exports.internal.filename = filename
 
   // Clean up the input text box
-  module.exports.internal.seasonName.value = '';
-  seasonNameOnInput();
+  module.exports.internal.seasonName.value = ''
+  seasonNameOnInput()
 
   // generate the breadcrumb
-  module.exports.internal.generateBreadcrumb();
+  module.exports.internal.generateBreadcrumb()
 
   // clean up any pre-existing content
-  let cloneSeasonList = module.exports.internal.seasonList.cloneNode(false);
-  module.exports.internal.seasonList.parentNode.replaceChild(cloneSeasonList, module.exports.internal.seasonList);
-  module.exports.internal.seasonList = cloneSeasonList;
+  let cloneSeasonList = module.exports.internal.seasonList.cloneNode(false)
+  module.exports.internal.seasonList.parentNode.replaceChild(cloneSeasonList, module.exports.internal.seasonList)
+  module.exports.internal.seasonList = cloneSeasonList
 
   dataObj.seasons.forEach((elem, index) => {
-    let span = document.createElement('span');
-    span.innerHTML = elem.name;
-    span.className = 'list-item';
-    span.onclick = () => {ipc.send('store-team-season', index);};
-    module.exports.internal.seasonList.appendChild(span);
-  });
+    let span = document.createElement('span')
+    span.innerHTML = elem.name
+    span.className = 'list-item'
+    span.onclick = () => { ipc.send('store-team-season', index) }
+    module.exports.internal.seasonList.appendChild(span)
+  })
 }
 
 /**
@@ -70,8 +70,8 @@ function returnTeamDataListener(event, filename, dataObj) {
  *
  * @private
  */
-function teamDataSavedListener() {
-  ipc.send('store-team-season', module.exports.internal.dataObj.seasons.length - 1);
+function teamDataSavedListener () {
+  ipc.send('store-team-season', module.exports.internal.dataObj.seasons.length - 1)
 }
 
 /**
@@ -86,16 +86,15 @@ function teamDataSavedListener() {
  *
  * @private
  */
-function teamSeasonStoredListener(event, seasonId) {
+function teamSeasonStoredListener (event, seasonId) {
   if (!module.exports.internal.dataObj.seasons[seasonId].players || module.exports.internal.dataObj.seasons[seasonId].players.length < 6) {
-    module.exports.internal.stateManager.showState('pick-a-season', 'add-first-squad');
+    module.exports.internal.stateManager.showState('pick-a-season', 'add-first-squad')
   } else if (!module.exports.internal.dataObj.seasons[seasonId].matches) {
-    module.exports.internal.stateManager.showState('pick-a-season', 'add-first-match');
+    module.exports.internal.stateManager.showState('pick-a-season', 'add-first-match')
   } else {
-    module.exports.internal.stateManager.showState('pick-a-season', 'main-branch');
+    module.exports.internal.stateManager.showState('pick-a-season', 'main-branch')
   }
 }
-
 
 /**
  * seasonAddOnClick - A click handler for when the "add season" button is clicked.  This only
@@ -103,10 +102,10 @@ function teamSeasonStoredListener(event, seasonId) {
  *
  * @private
  */
-function seasonAddOnClick() {
+function seasonAddOnClick () {
   if (module.exports.internal.seasonName.value.length > 0) {
-    module.exports.internal.dataObj.seasons.push({name:module.exports.internal.seasonName.value});
-    ipc.send('save-team-data', module.exports.internal.filename, module.exports.internal.dataObj);
+    module.exports.internal.dataObj.seasons.push({name: module.exports.internal.seasonName.value})
+    ipc.send('save-team-data', module.exports.internal.filename, module.exports.internal.dataObj)
   }
 }
 
@@ -116,11 +115,11 @@ function seasonAddOnClick() {
  *
  * @private
  */
-function seasonNameOnInput() {
+function seasonNameOnInput () {
   if (module.exports.internal.seasonName.value.length === 0) {
-    module.exports.internal.seasonAddButton.className = 'button new-item-button-disabled';
+    module.exports.internal.seasonAddButton.className = 'button new-item-button-disabled'
   } else {
-    module.exports.internal.seasonAddButton.className = 'button new-item-button';
+    module.exports.internal.seasonAddButton.className = 'button new-item-button'
   }
 }
 
@@ -132,35 +131,35 @@ function seasonNameOnInput() {
  *
  * @private
  */
-function generateBreadcrumb() {
-  let cloneBreadcrumb = module.exports.internal.breadcrumb.cloneNode(false);
-  module.exports.internal.breadcrumb.parentNode.replaceChild(cloneBreadcrumb, module.exports.internal.breadcrumb);
-  module.exports.internal.breadcrumb = cloneBreadcrumb;
+function generateBreadcrumb () {
+  let cloneBreadcrumb = module.exports.internal.breadcrumb.cloneNode(false)
+  module.exports.internal.breadcrumb.parentNode.replaceChild(cloneBreadcrumb, module.exports.internal.breadcrumb)
+  module.exports.internal.breadcrumb = cloneBreadcrumb
 
-  let spanHome = document.createElement('span');
-  spanHome.innerHTML = 'Home';
-  spanHome.className = 'link';
-  spanHome.onclick = () => {module.exports.internal.stateManager.showState('pick-a-season', 'pick-a-team');};
-  module.exports.internal.breadcrumb.appendChild(spanHome);
+  let spanHome = document.createElement('span')
+  spanHome.innerHTML = 'Home'
+  spanHome.className = 'link'
+  spanHome.onclick = () => { module.exports.internal.stateManager.showState('pick-a-season', 'pick-a-team') }
+  module.exports.internal.breadcrumb.appendChild(spanHome)
 
-  let spanSep1 = document.createElement('span');
-  spanSep1.innerHTML = '&nbsp;&gt;&nbsp;';
-  module.exports.internal.breadcrumb.appendChild(spanSep1);
+  let spanSep1 = document.createElement('span')
+  spanSep1.innerHTML = '&nbsp;&gt;&nbsp;'
+  module.exports.internal.breadcrumb.appendChild(spanSep1)
 
-  let spanTeam = document.createElement('span');
-  spanTeam.innerHTML = module.exports.internal.dataObj.name;
-  module.exports.internal.breadcrumb.appendChild(spanTeam);
+  let spanTeam = document.createElement('span')
+  spanTeam.innerHTML = module.exports.internal.dataObj.name
+  module.exports.internal.breadcrumb.appendChild(spanTeam)
 }
 
 /**
  * attach - attach the state code to the displayed ui and set up any event handlers
  */
-function attach() {
-  debug('attaching pick-a-season');
-  ipc.on('return-team-data', module.exports.internal.returnTeamDataListener);
-  ipc.on('team-data-saved', module.exports.internal.teamDataSavedListener);
-  ipc.on('team-season-stored', module.exports.internal.teamSeasonStoredListener);
-  ipc.send('get-team-data');
+function attach () {
+  debug('attaching pick-a-season')
+  ipc.on('return-team-data', module.exports.internal.returnTeamDataListener)
+  ipc.on('team-data-saved', module.exports.internal.teamDataSavedListener)
+  ipc.on('team-season-stored', module.exports.internal.teamSeasonStoredListener)
+  ipc.send('get-team-data')
 }
 
 /**
@@ -168,12 +167,12 @@ function attach() {
  *
  * @return {Promise} a promise to have detached the state
  */
-function detach() {
-  debug('detaching pick-a-season');
-  ipc.removeListener('return-team-data', module.exports.internal.returnTeamDataListener);
-  ipc.removeListener('team-data-saved', module.exports.internal.teamDataSavedListener);
-  ipc.removeListener('team-season-stored', module.exports.internal.teamSeasonStoredListener);
-  return Promise.resolve();
+function detach () {
+  debug('detaching pick-a-season')
+  ipc.removeListener('return-team-data', module.exports.internal.returnTeamDataListener)
+  ipc.removeListener('team-data-saved', module.exports.internal.teamDataSavedListener)
+  ipc.removeListener('team-season-stored', module.exports.internal.teamSeasonStoredListener)
+  return Promise.resolve()
 }
 
 module.exports = {
@@ -197,4 +196,4 @@ module.exports = {
     filename: undefined,
     dataObj: undefined
   }
-};
+}

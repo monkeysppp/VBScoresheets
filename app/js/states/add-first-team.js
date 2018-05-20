@@ -1,29 +1,29 @@
 
-'use strict';
+'use strict'
 
-const electron = require('electron');
-const ipc = electron.ipcRenderer;
+const electron = require('electron')
+const ipc = electron.ipcRenderer
 
-const state = document.querySelector('.add-first-team');
-const debug = require('../debug.js');
+const state = document.querySelector('.add-first-team')
+const debug = require('../debug.js')
 
 /**
  * init - Initialize the page handler, ataching the state manager and discovering any interactive elements
  *
  * @param  {object} stateManager the state-manager for this state to send instructions to
  */
-function init(stateManager) {
+function init (stateManager) {
   if (!stateManager) {
-    throw new Error('no state-manager given');
+    throw new Error('no state-manager given')
   }
 
-  module.exports.internal.stateManager = stateManager;
+  module.exports.internal.stateManager = stateManager
 
-  module.exports.internal.teamAddButton = document.getElementById('button_add-first-team_add');
-  module.exports.internal.teamName = document.getElementById('input_add-first-team');
+  module.exports.internal.teamAddButton = document.getElementById('button_add-first-team_add')
+  module.exports.internal.teamName = document.getElementById('input_add-first-team')
 
-  module.exports.internal.teamAddButton.onclick = module.exports.internal.teamAddOnClick;
-  module.exports.internal.teamName.oninput = module.exports.internal.teamNameOnInput;
+  module.exports.internal.teamAddButton.onclick = module.exports.internal.teamAddOnClick
+  module.exports.internal.teamName.oninput = module.exports.internal.teamNameOnInput
 }
 
 /**
@@ -31,8 +31,8 @@ function init(stateManager) {
  *
  * @private
  */
-function teamDataSavedListener() {
-  module.exports.internal.stateManager.showState('add-first-team', 'add-first-season');
+function teamDataSavedListener () {
+  module.exports.internal.stateManager.showState('add-first-team', 'add-first-season')
 }
 
 /**
@@ -41,9 +41,9 @@ function teamDataSavedListener() {
  *
  * @private
  */
-function teamAddOnClick() {
+function teamAddOnClick () {
   if (module.exports.internal.teamName.value.length > 0) {
-    ipc.send('save-team-data', undefined, {name:module.exports.internal.teamName.value});
+    ipc.send('save-team-data', undefined, {name: module.exports.internal.teamName.value})
   }
 }
 
@@ -53,20 +53,20 @@ function teamAddOnClick() {
  *
  * @private
  */
-function teamNameOnInput() {
+function teamNameOnInput () {
   if (module.exports.internal.teamName.value.length === 0) {
-    module.exports.internal.teamAddButton.className = 'button new-item-button-disabled';
+    module.exports.internal.teamAddButton.className = 'button new-item-button-disabled'
   } else {
-    module.exports.internal.teamAddButton.className = 'button new-item-button';
+    module.exports.internal.teamAddButton.className = 'button new-item-button'
   }
 }
 
 /**
  * attach - Set up any event handlers
  */
-function attach() {
-  debug('attaching add-first-team');
-  ipc.on('team-data-saved', teamDataSavedListener);
+function attach () {
+  debug('attaching add-first-team')
+  ipc.on('team-data-saved', teamDataSavedListener)
 }
 
 /**
@@ -74,10 +74,10 @@ function attach() {
  *
  * @return {Promise} a promise to have detached the state
  */
-function detach() {
-  debug('attaching add-first-team');
-  ipc.removeListener('team-data-saved', teamDataSavedListener);
-  return Promise.resolve();
+function detach () {
+  debug('attaching add-first-team')
+  ipc.removeListener('team-data-saved', teamDataSavedListener)
+  return Promise.resolve()
 }
 
 module.exports = {
@@ -94,4 +94,4 @@ module.exports = {
     teamAddButton: undefined,
     teamName: undefined
   }
-};
+}
