@@ -5,6 +5,7 @@ env:
   - CXX=g++-4.8
 addons:
   apt:
+    update: true
     sources:
       - ubuntu-toolchain-r-test
     packages:
